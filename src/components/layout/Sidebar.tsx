@@ -6,8 +6,6 @@ import {
   Activity,
   Clock,
   Settings,
-  Cpu,
-  WifiOff,
 } from 'lucide-react';
 import { useHardware } from '../../context/HardwareContext';
 
@@ -21,13 +19,11 @@ const NAV_ITEMS = [
 ];
 
 export const Sidebar: React.FC = () => {
-  const { activePage, setActivePage, connectionStatus, toggleConnection } = useHardware();
-
-  const isConnected = connectionStatus === 'connected';
+  const { activePage, setActivePage } = useHardware();
 
   return (
     <aside
-      className="w-64 h-[calc(100vh-2.5rem)] my-5 ml-5 mr-3 flex flex-col justify-between p-6 rounded-[32px] select-none shrink-0 z-30 transition-all duration-300"
+      className="w-64 h-[calc(100vh-2.5rem)] my-5 ml-5 mr-3 flex flex-col p-6 rounded-[32px] select-none shrink-0 z-30 transition-all duration-300"
       style={{
         background: 'rgba(255, 255, 255, 0.65)',
         backdropFilter: 'blur(28px)',
@@ -76,7 +72,7 @@ export const Sidebar: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActivePage(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 group text-left ${
+                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 group text-left cursor-pointer ${
                   isActive
                     ? 'text-blue-600 shadow-sm border border-blue-400/30'
                     : 'text-slate-600 hover:text-[#172033] hover:bg-white/40'
@@ -99,7 +95,7 @@ export const Sidebar: React.FC = () => {
                   <span>{item.label}</span>
                 </div>
 
-                {/* Active right indicator dot (seen in Reference Image 1 & 2) */}
+                {/* Active right indicator dot */}
                 {isActive && (
                   <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3B82F6]" />
                 )}
@@ -107,67 +103,6 @@ export const Sidebar: React.FC = () => {
             );
           })}
         </nav>
-      </div>
-
-      {/* Bottom ESP32 Hardware Status Panel (matches exact miniature in Reference Images) */}
-      <div
-        onClick={toggleConnection}
-        title="Click to connect / disconnect physical ESP32"
-        className="group relative cursor-pointer p-4 rounded-2xl transition-all duration-200 hover:bg-white/80 border border-white/80"
-        style={{
-          background: 'rgba(255, 255, 255, 0.6)',
-          boxShadow: '0 8px 20px -6px rgba(70, 100, 170, 0.06)',
-        }}
-      >
-        {/* Miniature 3D ESP32 Microcontroller Illustration */}
-        <div className="w-full flex items-center justify-center mb-2.5">
-          <div
-            className="w-16 h-12 rounded-md relative flex items-center justify-center p-1 transition-transform group-hover:scale-105"
-            style={{
-              background: 'linear-gradient(135deg, #1E293B 0%, #0F172A 100%)',
-              boxShadow: '0 4px 10px rgba(0, 0, 0, 0.25), inset 0 1px 2px rgba(255, 255, 255, 0.2)',
-              border: '1px solid #334155',
-            }}
-          >
-            {/* Wi-Fi PCB Antenna Trace (Gold/Copper) */}
-            <div className="absolute top-1 left-2 right-2 h-1.5 border-t border-b border-amber-400/80 opacity-70" />
-
-            {/* ESP32 IC Core with silver label */}
-            <div className="w-7 h-7 rounded-sm bg-slate-800 border border-slate-600 flex flex-col items-center justify-center text-[5px] text-slate-300 font-mono shadow-inner">
-              <span className="text-amber-400 font-bold leading-none">ESP32</span>
-              <span className="text-[4px] text-slate-400 scale-90">WROOM</span>
-            </div>
-
-            {/* Left and Right Header Pins */}
-            <div className="absolute -left-1 top-2 bottom-2 flex flex-col justify-between">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-1.5 h-1 bg-amber-400 rounded-sm shadow-sm" />
-              ))}
-            </div>
-            <div className="absolute -right-1 top-2 bottom-2 flex flex-col justify-between">
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="w-1.5 h-1 bg-amber-400 rounded-sm shadow-sm" />
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Status text */}
-        <div className="flex items-center gap-2">
-          <span
-            className={`w-2.5 h-2.5 rounded-full ${
-              isConnected
-                ? 'bg-emerald-500 shadow-[0_0_8px_#10B981] animate-pulse'
-                : 'bg-rose-500 shadow-[0_0_8px_#EF4444]'
-            }`}
-          />
-          <span className="text-xs font-bold text-[#172033]">
-            {isConnected ? 'ESP32 Online' : 'ESP32 Offline'}
-          </span>
-        </div>
-        <p className="text-[11px] text-slate-400 mt-0.5 ml-4.5">
-          {isConnected ? 'All systems ready' : 'Device not connected'}
-        </p>
       </div>
     </aside>
   );
