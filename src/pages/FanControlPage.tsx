@@ -322,14 +322,11 @@ export const FanControlPage: React.FC = () => {
         {/* 3. Fan Status */}
         <MetricCard
           icon={Wind}
-          iconBgColor="bg-blue-50 dark:bg-blue-950/40 text-blue-500"
-          iconColor="text-blue-500"
+          iconBgColor="bg-sky-50 dark:bg-sky-950/40 text-sky-500"
+          iconColor="text-sky-500"
           label="Fan Status"
-          value={isConnected ? (climateData.fanStatus === 'running' ? 'Running' : 'Stopped') : 'Offline'}
-          statusDot={{
-            color: isFanRunning ? '#10B981' : '#94A3B8',
-            text: isFanRunning ? 'Running' : 'Stopped',
-          }}
+          statusText={isConnected ? (climateData.fanStatus === 'running' ? 'Running' : 'Stopped') : 'Offline'}
+          statusDotColor={isFanRunning ? '#10B981' : '#94A3B8'}
           waveType="bars"
           fanSpeed={climateData.fanSpeed}
         />
@@ -340,8 +337,8 @@ export const FanControlPage: React.FC = () => {
           iconBgColor="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500"
           iconColor="text-emerald-500"
           label="Air Quality"
-          value=""
-          statusDot={{ color: '#10B981', text: isConnected ? climateData.airQualityStatus : 'Offline' }}
+          statusText={isConnected ? climateData.airQualityStatus : 'Offline'}
+          statusDotColor="#10B981"
           waveType="green"
         />
       </div>

@@ -6,145 +6,183 @@ interface MetricCardProps {
   iconBgColor?: string;
   iconColor?: string;
   label: string;
-  value: string | number;
+  value?: string | number;
   unit?: string;
   badge?: {
     text: string;
     type?: 'positive' | 'neutral' | 'purple' | 'green';
   };
-  statusDot?: {
-    color: string;
-    text: string;
-  };
+  statusText?: string;
+  statusDotColor?: string;
   waveType?: 'blue' | 'purple' | 'green' | 'bars';
   fanSpeed?: number;
 }
 
 export const MetricCard: React.FC<MetricCardProps> = ({
   icon: Icon,
-  iconBgColor = 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-500',
-  iconColor = 'text-blue-500',
+  iconBgColor = 'bg-sky-50 dark:bg-sky-950/40 text-sky-500',
+  iconColor = 'text-sky-500',
   label,
   value,
   unit,
   badge,
-  statusDot,
+  statusText,
+  statusDotColor = '#10B981',
   waveType = 'blue',
   fanSpeed = 75,
 }) => {
   return (
     <div
-      className="relative overflow-hidden rounded-[26px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none glass-card"
+      className="relative overflow-hidden rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none glass-card flex flex-col justify-between"
       style={{
-        background: 'var(--glass-card-bg)',
-        borderColor: 'var(--glass-card-border)',
-        boxShadow: 'var(--glass-card-shadow)',
+        background: 'var(--glass-card-bg, rgba(255, 255, 255, 0.72))',
+        backdropFilter: 'blur(24px)',
+        WebkitBackdropFilter: 'blur(24px)',
+        border: '1.5px solid var(--glass-card-border, rgba(255, 255, 255, 0.9))',
+        boxShadow:
+          '0 16px 36px -10px rgba(70, 100, 170, 0.08), 0 2px 6px rgba(255, 255, 255, 0.8) inset',
       }}
     >
-      {/* Top row: Icon + Label */}
-      <div className="flex items-center gap-3 mb-3">
-        <div
-          className={`w-9 h-9 rounded-xl flex items-center justify-center border border-white/90 dark:border-white/10 shadow-sm ${iconBgColor}`}
-        >
-          <Icon className={`w-5 h-5 ${iconColor}`} />
-        </div>
-        <span className="text-xs font-semibold text-[var(--text-muted)] tracking-wide">{label}</span>
-      </div>
-
-      {/* Middle row: Large Value & Badges */}
-      <div className="flex items-baseline justify-between mb-2">
-        <div className="flex items-baseline gap-1">
-          <span className="text-[28px] font-extrabold text-[var(--text-main)] tracking-tight">{value}</span>
-          {unit && <span className="text-sm font-semibold text-[var(--text-muted)]">{unit}</span>}
-        </div>
-
-        {badge && (
+      <div>
+        {/* Top row: Circular Icon Container + Label */}
+        <div className="flex items-center gap-3 mb-2.5">
           <div
-            className={`text-[11px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5 ${
-              badge.type === 'purple'
-                ? 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40'
-                : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40'
-            }`}
+            className={`w-10 h-10 rounded-full flex items-center justify-center border border-white/90 dark:border-white/10 shadow-sm ${iconBgColor}`}
           >
-            <span>{badge.text}</span>
+            <Icon className={`w-5 h-5 ${iconColor}`} />
           </div>
-        )}
+          <span className="text-xs font-semibold text-[var(--text-muted,text-slate-500)] tracking-wide">
+            {label}
+          </span>
+        </div>
 
-        {statusDot && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-main)]">
-            <span
-              className="w-2 h-2 rounded-full"
-              style={{
-                backgroundColor: statusDot.color,
-                boxShadow: `0 0 6px ${statusDot.color}`,
-              }}
-            />
-            <span>{statusDot.text}</span>
-          </div>
-        )}
+        {/* Middle row: Large Value & Badges OR Status Text with Glowing Dot */}
+        <div className="flex items-baseline justify-between mb-2">
+          {statusText ? (
+            <div className="flex items-center gap-2">
+              <span
+                className="w-2.5 h-2.5 rounded-full shrink-0"
+                style={{
+                  backgroundColor: statusDotColor,
+                  boxShadow: `0 0 8px ${statusDotColor}`,
+                }}
+              />
+              <span className="text-[24px] font-extrabold text-[var(--text-main,#172033)] tracking-tight">
+                {statusText}
+              </span>
+            </div>
+          ) : (
+            <div className="flex items-baseline gap-1">
+              <span className="text-[28px] font-extrabold text-[var(--text-main,#172033)] tracking-tight">
+                {value}
+              </span>
+              {unit && (
+                <span className="text-sm font-semibold text-[var(--text-muted,text-slate-500)]">
+                  {unit}
+                </span>
+              )}
+            </div>
+          )}
+
+          {badge && (
+            <div
+              className={`text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-0.5 ${
+                badge.type === 'purple'
+                  ? 'text-purple-600 dark:text-purple-400 bg-purple-50/80 dark:bg-purple-950/40 border border-purple-200/50'
+                  : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/50'
+              }`}
+            >
+              <span>{badge.text}</span>
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Bottom Visualization: Wave or Equalizer Bar Graph */}
-      <div className="h-9 w-full flex items-end overflow-hidden pt-1">
+      {/* Bottom Visualization: Exact Waves & Ascending Bars matching the design */}
+      <div className="h-10 w-full flex items-end overflow-hidden pt-1">
         {waveType === 'bars' ? (
-          // 8-bar equalizer graphic for Fan Status
-          <div className="w-full flex items-end justify-between gap-1.5 h-6 px-1">
-            {[15, 25, 38, 50, 62, 75, 88, 100].map((threshold, idx) => {
+          // 10 Ascending Equalizer Bars for Fan Status
+          <div className="w-full flex items-end justify-end gap-1.5 h-9 px-1">
+            {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((threshold, idx) => {
               const isActive = fanSpeed >= threshold;
-              const barHeight = 6 + idx * 2.4;
+              const barHeights = [4, 7, 10, 13, 16, 20, 24, 28, 32, 36];
+              const barHeight = barHeights[idx];
               return (
                 <div
                   key={idx}
-                  className="w-full rounded-t-sm transition-all duration-300"
+                  className="w-2 rounded-t-sm transition-all duration-300"
                   style={{
                     height: `${barHeight}px`,
                     background: isActive
                       ? 'linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%)'
-                      : 'var(--equalizer-inactive)',
-                    boxShadow: isActive ? '0 1px 4px rgba(59, 130, 246, 0.35)' : 'none',
+                      : 'rgba(219, 234, 254, 0.45)',
+                    boxShadow: isActive ? '0 2px 6px rgba(59, 130, 246, 0.35)' : 'none',
                   }}
                 />
               );
             })}
           </div>
         ) : waveType === 'blue' ? (
-          // Smooth blue sine wave (Temperature)
-          <svg className="w-full h-7 overflow-visible" viewBox="0 0 200 30" fill="none">
-            <path
-              d="M0,18 C30,8 60,26 100,16 C140,6 170,24 200,15"
-              stroke="#38BDF8"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </svg>
-        ) : waveType === 'purple' ? (
-          // Smooth purple sine wave (Humidity)
-          <svg className="w-full h-7 overflow-visible" viewBox="0 0 200 30" fill="none">
-            <path
-              d="M0,20 C35,26 65,8 100,20 C135,28 165,10 200,18"
-              stroke="#C084FC"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-            />
-          </svg>
-        ) : (
-          // Smooth green hill wave with gentle gradient fill (Air Quality / Health)
-          <svg className="w-full h-7 overflow-visible" viewBox="0 0 200 30" fill="none">
+          // Smooth Blue Sine Wave with Translucent Cyan-Blue Gradient Fill
+          <svg className="w-full h-8 overflow-visible" viewBox="0 0 200 32" preserveAspectRatio="none">
             <defs>
-              <linearGradient id="greenWaveFill" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.3" />
-                <stop offset="100%" stopColor="#4ADE80" stopOpacity="0" />
+              <linearGradient id="blueWaveFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#38BDF8" stopOpacity="0.0" />
               </linearGradient>
             </defs>
             <path
-              d="M0,24 C40,24 70,8 120,8 C160,8 180,22 200,20 L200,30 L0,30 Z"
+              d="M 0,22 C 20,28 35,10 65,12 C 95,14 110,26 135,14 C 160,2 180,24 200,12 L 200,32 L 0,32 Z"
+              fill="url(#blueWaveFill)"
+            />
+            <path
+              d="M 0,22 C 20,28 35,10 65,12 C 95,14 110,26 135,14 C 160,2 180,24 200,12"
+              stroke="#0EA5E9"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
+        ) : waveType === 'purple' ? (
+          // Smooth Purple Sine Wave with Translucent Lavender Gradient Fill
+          <svg className="w-full h-8 overflow-visible" viewBox="0 0 200 32" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="purpleWaveFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#C084FC" stopOpacity="0.35" />
+                <stop offset="100%" stopColor="#C084FC" stopOpacity="0.0" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 0,20 C 25,12 45,26 75,16 C 105,6 125,24 155,14 C 175,6 185,22 200,12 L 200,32 L 0,32 Z"
+              fill="url(#purpleWaveFill)"
+            />
+            <path
+              d="M 0,20 C 25,12 45,26 75,16 C 105,6 125,24 155,14 C 175,6 185,22 200,12"
+              stroke="#A855F7"
+              strokeWidth="2.5"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </svg>
+        ) : (
+          // Smooth Green Hill Wave with Translucent Emerald Gradient Fill
+          <svg className="w-full h-8 overflow-visible" viewBox="0 0 200 32" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="greenWaveFill" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#4ADE80" stopOpacity="0.38" />
+                <stop offset="100%" stopColor="#4ADE80" stopOpacity="0.0" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 0,26 C 30,26 50,22 80,24 C 110,26 130,6 160,6 C 180,6 190,16 200,18 L 200,32 L 0,32 Z"
               fill="url(#greenWaveFill)"
             />
             <path
-              d="M0,24 C40,24 70,8 120,8 C160,8 180,22 200,20"
-              stroke="#4ADE80"
+              d="M 0,26 C 30,26 50,22 80,24 C 110,26 130,6 160,6 C 180,6 190,16 200,18"
+              stroke="#22C55E"
               strokeWidth="2.5"
               strokeLinecap="round"
+              fill="none"
             />
           </svg>
         )}

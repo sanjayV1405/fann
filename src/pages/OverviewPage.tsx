@@ -9,15 +9,12 @@ import {
   Wind,
   ShieldCheck,
   Zap,
-  Sparkles,
-  Hand,
-  Cpu,
+  Leaf,
 } from 'lucide-react';
 import { useHardware } from '../context/HardwareContext';
 import { ClimateRing3D } from '../components/ui/ClimateRing3D';
 import { ThreeFan3D } from '../components/ui/ThreeFan3D';
 import { MetricCard } from '../components/ui/MetricCard';
-import { calculateAutoSpeed } from '../types';
 
 export const OverviewPage: React.FC = () => {
   const {
@@ -25,8 +22,6 @@ export const OverviewPage: React.FC = () => {
     connectionStatus,
     pendingSpeed,
     setPendingSpeed,
-    pendingMode,
-    setFanMode,
     isApplyingSpeed,
     applyFanSettings,
     setActivePage,
@@ -35,8 +30,6 @@ export const OverviewPage: React.FC = () => {
 
   const isConnected = connectionStatus === 'connected';
   const isFanRunning = isConnected && climateData.fanStatus === 'running';
-  const currentMode = climateData.fanMode || pendingMode;
-  const autoSpeed = calculateAutoSpeed(climateData.temperature);
 
   const tempObj = formatTemp(climateData.temperature);
 
@@ -113,7 +106,7 @@ export const OverviewPage: React.FC = () => {
             }}
           >
             {/* Widget Header */}
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center justify-between mb-4">
               <div className="flex items-center gap-2.5">
                 <div className="w-8 h-8 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/50 dark:border-blue-800/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
                   <Fan className="w-4 h-4" />
@@ -127,218 +120,85 @@ export const OverviewPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Mode Switcher: Manual vs Automatic */}
-            <div className="grid grid-cols-2 gap-1.5 p-1 rounded-2xl bg-black/5 dark:bg-white/10 border border-black/5 dark:border-white/10 mb-4">
-              <button
-                onClick={() => setFanMode('manual')}
-                disabled={!isConnected || isApplyingSpeed}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  currentMode === 'manual'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                }`}
-              >
-                <Hand className="w-3.5 h-3.5" />
-                <span>Manual</span>
-              </button>
+            {/* Fan Preview & Speed readout */}
+            <div className="flex items-center justify-between px-2 py-1 mb-4">
+              <div className="flex items-center justify-center shrink-0">
+                <ThreeFan3D
+                  size="sm"
+                  speed={pendingSpeed}
+                  isRunning={isFanRunning}
+                  showVortex={false}
+                />
+              </div>
 
-              <button
-                onClick={() => setFanMode('automatic')}
-                disabled={!isConnected || isApplyingSpeed}
-                className={`py-1.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
-                  currentMode === 'automatic'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25'
-                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
-                }`}
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Automatic</span>
-              </button>
+              <div className="text-right">
+                <span className="text-xs font-semibold text-[var(--text-subtle)] block mb-0.5">Speed</span>
+                <span className="text-3xl font-extrabold text-[var(--text-main)] tracking-tight">
+                  {isConnected ? `${pendingSpeed}%` : '--%'}
+                </span>
+              </div>
             </div>
 
-            {currentMode === 'automatic' ? (
-              /* Automatic Mode: No manual speed controls; shows live room temp and auto-regulated speed based on sensors */
-              <div className="space-y-4">
-                {/* Fan Preview & Dual Readouts: Room Temperature & Auto Fan Speed */}
-                <div className="flex items-center justify-between px-2 py-1">
-                  <div className="flex items-center justify-center shrink-0">
-                    <ThreeFan3D
-                      size="sm"
-                      speed={autoSpeed}
-                      isRunning={isFanRunning}
-                      showVortex={false}
-                    />
-                  </div>
-
-                  <div className="flex items-center gap-4 text-right">
-                    <div>
-                      <span className="text-[11px] font-semibold text-[var(--text-subtle)] block mb-0.5">
-                        Room Temp
-                      </span>
-                      <span className="text-xl xl:text-2xl font-extrabold text-amber-500 tracking-tight flex items-center justify-end gap-1">
-                        <Thermometer className="w-4 h-4 text-amber-500 shrink-0" />
-                        {isConnected ? `${tempObj.display}${tempObj.unit}` : '--°C'}
-                      </span>
-                    </div>
-
-                    <div className="pl-3 border-l border-black/10 dark:border-white/10">
-                      <span className="text-[11px] font-semibold text-[var(--text-subtle)] block mb-0.5">
-                        Fan Speed
-                      </span>
-                      <span className="text-2xl xl:text-3xl font-extrabold text-[var(--text-main)] tracking-tight">
-                        {isConnected ? `${autoSpeed}%` : '--%'}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Sensor Regulation Status Card */}
-                <div className="p-3.5 rounded-2xl bg-blue-500/10 dark:bg-blue-500/10 border border-blue-500/20 space-y-2">
-                  <div className="flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
-                    <span className="flex items-center gap-1.5">
-                      <Cpu className="w-3.5 h-3.5" />
-                      Sensor Auto-Regulation
-                    </span>
-                    <span className="flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[10px] font-bold">
-                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
-                      Active
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-[var(--text-muted)] leading-relaxed">
-                    Automatic mode uses live thermal sensors. Fan speed adjusts automatically based on room temperature.
-                  </p>
-
-                  {/* Temperature Brackets indicator */}
-                  <div className="grid grid-cols-4 gap-1.5 pt-1 border-t border-black/5 dark:border-white/10 text-center">
-                    <div
-                      className={`p-1.5 rounded-lg transition-colors ${
-                        autoSpeed === 25
-                          ? 'bg-blue-500 text-white font-bold shadow-sm'
-                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
-                      }`}
-                    >
-                      <div className="text-[10px] opacity-80">&lt;22°C</div>
-                      <div className="text-xs font-bold">25%</div>
-                    </div>
-                    <div
-                      className={`p-1.5 rounded-lg transition-colors ${
-                        autoSpeed === 50
-                          ? 'bg-blue-500 text-white font-bold shadow-sm'
-                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
-                      }`}
-                    >
-                      <div className="text-[10px] opacity-80">22-26°C</div>
-                      <div className="text-xs font-bold">50%</div>
-                    </div>
-                    <div
-                      className={`p-1.5 rounded-lg transition-colors ${
-                        autoSpeed === 80
-                          ? 'bg-blue-500 text-white font-bold shadow-sm'
-                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
-                      }`}
-                    >
-                      <div className="text-[10px] opacity-80">26-30°C</div>
-                      <div className="text-xs font-bold">80%</div>
-                    </div>
-                    <div
-                      className={`p-1.5 rounded-lg transition-colors ${
-                        autoSpeed === 100
-                          ? 'bg-blue-500 text-white font-bold shadow-sm'
-                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
-                      }`}
-                    >
-                      <div className="text-[10px] opacity-80">&gt;30°C</div>
-                      <div className="text-xs font-bold">100%</div>
-                    </div>
-                  </div>
-                </div>
+            {/* Speed Slider Bar */}
+            <div className="space-y-3 mb-4">
+              <div className="relative flex items-center">
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  step="5"
+                  disabled={!isConnected}
+                  value={pendingSpeed}
+                  onChange={(e) => setPendingSpeed(Number(e.target.value))}
+                  className="w-full h-2.5 rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none"
+                  style={{
+                    background: `linear-gradient(to right, #3B82F6 0%, #60A5FA ${pendingSpeed}%, var(--slider-bg) ${pendingSpeed}%, var(--slider-bg) 100%)`,
+                  }}
+                />
               </div>
-            ) : (
-              /* Manual Mode: Full slider, presets, and Apply Speed button */
-              <div>
-                {/* Fan Preview & Speed readout */}
-                <div className="flex items-center justify-between px-2 py-1 mb-4">
-                  <div className="flex items-center justify-center shrink-0">
-                    <ThreeFan3D
-                      size="sm"
-                      speed={pendingSpeed}
-                      isRunning={isFanRunning}
-                      showVortex={false}
-                    />
-                  </div>
 
-                  <div className="text-right">
-                    <span className="text-xs font-semibold text-[var(--text-subtle)] block mb-0.5">Speed</span>
-                    <span className="text-3xl font-extrabold text-[var(--text-main)] tracking-tight">
-                      {isConnected ? `${pendingSpeed}%` : '--%'}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Speed Slider Bar */}
-                <div className="space-y-3 mb-4">
-                  <div className="relative flex items-center">
-                    <input
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="5"
+              {/* Presets: Low, Medium, High, Max */}
+              <div className="grid grid-cols-4 gap-2">
+                {presets.map((preset) => {
+                  const isActive = pendingSpeed === preset.val;
+                  return (
+                    <button
+                      key={preset.label}
+                      onClick={() => setPendingSpeed(preset.val)}
                       disabled={!isConnected}
-                      value={pendingSpeed}
-                      onChange={(e) => setPendingSpeed(Number(e.target.value))}
-                      className="w-full h-2.5 rounded-lg appearance-none cursor-pointer accent-blue-600 focus:outline-none"
-                      style={{
-                        background: `linear-gradient(to right, #3B82F6 0%, #60A5FA ${pendingSpeed}%, var(--slider-bg) ${pendingSpeed}%, var(--slider-bg) 100%)`,
-                      }}
-                    />
-                  </div>
-
-                  {/* Presets: Low, Medium, High, Max */}
-                  <div className="grid grid-cols-4 gap-2">
-                    {presets.map((preset) => {
-                      const isActive = pendingSpeed === preset.val;
-                      return (
-                        <button
-                          key={preset.label}
-                          onClick={() => setPendingSpeed(preset.val)}
-                          disabled={!isConnected}
-                          className={`py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                            isActive
-                              ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25 border border-blue-400'
-                              : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/10'
-                          }`}
-                        >
-                          {preset.label}
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* Apply Speed Button */}
-                <button
-                  onClick={applyFanSettings}
-                  disabled={!isConnected || isApplyingSpeed}
-                  className="w-full py-2.5 px-4 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/90 dark:border-white/10 shadow-sm flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-md cursor-pointer disabled:opacity-50"
-                >
-                  <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 fill-blue-500" />
-                  <span>{isApplyingSpeed ? 'Transmitting...' : 'Apply Speed'}</span>
-                </button>
+                      className={`py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${isActive
+                        ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25 border border-blue-400'
+                        : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/10'
+                        }`}
+                    >
+                      {preset.label}
+                    </button>
+                  );
+                })}
               </div>
-            )}
+            </div>
+
+            {/* Apply Speed Button */}
+            <button
+              onClick={applyFanSettings}
+              disabled={!isConnected || isApplyingSpeed}
+              className="w-full py-2.5 px-4 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/90 dark:border-white/10 shadow-sm flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-md cursor-pointer disabled:opacity-50"
+            >
+              <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 fill-blue-500" />
+              <span>{isApplyingSpeed ? 'Transmitting...' : 'Apply Speed'}</span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Bottom 4 Metric Cards */}
+      {/* Bottom 4 Metric Cards (Exact match to reference box graphs) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 pt-2">
-        {/* 1. Temperature */}
+        {/* 1. Current Temperature */}
         <MetricCard
           icon={Thermometer}
           iconBgColor="bg-sky-50 dark:bg-sky-950/40 text-sky-500"
           iconColor="text-sky-500"
-          label="Temperature"
+          label="Current Temperature"
           value={isConnected ? `${climateData.temperature}°C` : '--°C'}
           badge={{ text: '↑ 0.2°', type: 'green' }}
           waveType="blue"
@@ -355,25 +215,26 @@ export const OverviewPage: React.FC = () => {
           waveType="purple"
         />
 
-        {/* 3. Air Quality */}
+        {/* 3. Fan Status */}
         <MetricCard
           icon={Wind}
+          iconBgColor="bg-sky-50 dark:bg-sky-950/40 text-sky-500"
+          iconColor="text-sky-500"
+          label="Fan Status"
+          statusText={isConnected ? (climateData.fanStatus === 'running' ? 'Running' : 'Stopped') : 'Offline'}
+          statusDotColor={isFanRunning ? '#10B981' : '#94A3B8'}
+          waveType="bars"
+          fanSpeed={climateData.fanSpeed}
+        />
+
+        {/* 4. Air Quality */}
+        <MetricCard
+          icon={Leaf}
           iconBgColor="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500"
           iconColor="text-emerald-500"
           label="Air Quality"
-          value={isConnected ? climateData.airQualityStatus : '--'}
-          statusDot={{ color: '#10B981', text: '' }}
-          waveType="green"
-        />
-
-        {/* 4. Sensor Health */}
-        <MetricCard
-          icon={ShieldCheck}
-          iconBgColor="bg-emerald-50 dark:bg-emerald-950/40 text-emerald-500"
-          iconColor="text-emerald-500"
-          label="Sensor Health"
-          value=""
-          statusDot={{ color: '#10B981', text: 'Healthy' }}
+          statusText={isConnected ? climateData.airQualityStatus : 'Offline'}
+          statusDotColor="#10B981"
           waveType="green"
         />
       </div>
