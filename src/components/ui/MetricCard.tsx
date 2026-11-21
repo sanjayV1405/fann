@@ -33,14 +33,13 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
   return (
     <div
-      className="relative overflow-hidden rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none glass-card flex flex-col justify-between min-h-[156px]"
+      className="relative overflow-hidden rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-none select-none glass-card flex flex-col justify-between dark:shadow-none min-h-[156px]"
       style={{
-        background: 'var(--glass-card-bg, rgba(255, 255, 255, 0.72))',
+        background: 'var(--glass-card-bg)',
         backdropFilter: 'blur(24px)',
         WebkitBackdropFilter: 'blur(24px)',
-        border: '1.5px solid var(--glass-card-border, rgba(255, 255, 255, 0.9))',
-        boxShadow:
-          '0 16px 36px -10px rgba(70, 100, 170, 0.08), 0 2px 6px rgba(255, 255, 255, 0.8) inset',
+        border: '1.5px solid var(--glass-card-border)',
+        boxShadow: 'var(--glass-card-shadow)',
       }}
     >
       <div>

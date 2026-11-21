@@ -87,7 +87,7 @@
 
   --glass-card-bg: rgba(18, 26, 43, 0.74);
   --glass-card-border: rgba(255, 255, 255, 0.11);
-  --glass-card-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55), 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+  --glass-card-shadow: none;
 
   --input-bg: rgba(14, 20, 34, 0.75);
   --input-border: rgba(255, 255, 255, 0.14);
@@ -169,6 +169,10 @@ html.theme-transition *::after {
   -webkit-backdrop-filter: blur(24px);
   border: 1.5px solid var(--glass-card-border);
   box-shadow: var(--glass-card-shadow);
+}
+
+.dark .glass-card {
+  box-shadow: none !important;
 }
 
 .glass-surface-sm {
