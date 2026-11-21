@@ -424,14 +424,10 @@ export const EnvironmentPage: React.FC = () => {
             </div>
 
             {/* Right side status badge */}
-            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/50 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0 z-10">
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/50 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
               <Sparkles className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
               <span>Eco Mode</span>
             </div>
-
-            {/* Floating translucent glass spheres from reference image */}
-            <div className="absolute -right-2 -bottom-2 w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-400/15 to-blue-500/20 blur-[1px] pointer-events-none border border-white/20" />
-            <div className="absolute right-12 -top-2 w-10 h-10 rounded-full bg-gradient-to-tr from-purple-400/15 to-indigo-500/15 blur-[1px] pointer-events-none border border-white/20" />
           </div>
         </div>
       </div>
