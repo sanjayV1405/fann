@@ -38,25 +38,6 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
             filter: 'blur(55px)',
           }}
         />
-
-        {/* Atmospheric Floating Foliage Accent */}
-        <div
-          className="absolute -bottom-6 -left-6 w-36 h-36 pointer-events-none transition-opacity duration-500"
-          style={{ opacity: 'var(--foliage-opacity)' }}
-        >
-          <svg viewBox="0 0 100 100" fill="none" className="w-full h-full rotate-45">
-            <path
-              d="M10 90 C 20 50 60 20 90 10 C 90 50 60 80 10 90 Z"
-              fill="url(#ambientFoliageGrad)"
-            />
-            <defs>
-              <linearGradient id="ambientFoliageGrad" x1="0%" y1="100%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#16A34A" />
-                <stop offset="100%" stopColor="#86EFAC" />
-              </linearGradient>
-            </defs>
-          </svg>
-        </div>
       </div>
 
       {/* Main Persistent Sidebar */}
