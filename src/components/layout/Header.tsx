@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Wifi, WifiOff, Bell, Check, X } from 'lucide-react';
+import { Wifi, WifiOff, Bell, Check } from 'lucide-react';
 import { useHardware } from '../../context/HardwareContext';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
@@ -7,8 +7,6 @@ export const Header: React.FC = () => {
   const {
     connectionStatus,
     toggleConnection,
-    searchQuery,
-    setSearchQuery,
     events,
   } = useHardware();
 
@@ -17,36 +15,7 @@ export const Header: React.FC = () => {
   const isConnected = connectionStatus === 'connected';
 
   return (
-    <header className="relative flex items-center justify-between h-16 px-6 z-20 select-none">
-      {/* Search Input Bar */}
-      <div className="relative w-80 max-w-full">
-        <div
-          className="flex items-center gap-2.5 px-4 py-2 rounded-full transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-400/40 glass-inset"
-          style={{
-            background: 'var(--input-bg)',
-            border: '1.5px solid var(--input-border)',
-            boxShadow: 'var(--glass-shadow-sm)',
-          }}
-        >
-          <Search className="w-4 h-4 text-[var(--text-subtle)] shrink-0" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search anything..."
-            className="w-full bg-transparent text-sm text-[var(--text-main)] placeholder-[var(--text-subtle)] outline-none"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="text-[var(--text-subtle)] hover:text-[var(--text-main)] p-0.5 transition-colors"
-            >
-              <X className="w-3.5 h-3.5" />
-            </button>
-          )}
-        </div>
-      </div>
-
+    <header className="relative flex items-center justify-end h-16 px-6 z-20 select-none">
       {/* Right Controls: Status Pill + Theme Toggle + Notification Bell */}
       <div className="flex items-center gap-3">
         {/* Connected Status Pill */}
