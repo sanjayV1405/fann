@@ -106,15 +106,6 @@ export const Sidebar: React.FC = () => {
           })}
         </nav>
       </div>
-
-      {/* Subtle Bottom Brand Anchor */}
-      <div className="pt-3 border-t border-black/5 dark:border-white/10 flex items-center justify-between text-[11px] text-[var(--text-subtle)] px-2">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="font-semibold text-[var(--text-muted)]">AIRLOOP OS</span>
-        </div>
-        <span className="text-[10px] font-medium tracking-wide">v2.4.0</span>
-      </div>
     </aside>
   );
 };
