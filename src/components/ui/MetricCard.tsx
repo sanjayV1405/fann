@@ -85,11 +85,10 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
           {badge && (
             <div
-              className={`text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-0.5 ${
-                badge.type === 'purple'
-                  ? 'text-purple-600 dark:text-purple-400 bg-purple-50/80 dark:bg-purple-950/40 border border-purple-200/50'
-                  : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/50'
-              }`}
+              className={`text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-0.5 ${badge.type === 'purple'
+                ? 'text-purple-600 dark:text-purple-400 bg-purple-50/80 dark:bg-purple-950/40 border border-purple-200/50'
+                : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/50'
+                }`}
             >
               <span>{badge.text}</span>
             </div>

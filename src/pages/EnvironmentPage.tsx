@@ -10,6 +10,7 @@ import {
   Check,
   Sprout,
   Sparkles,
+  ChevronRight,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -346,18 +347,18 @@ export const EnvironmentPage: React.FC = () => {
       </div>
 
       {/* Bottom Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Left Column: Insights Card */}
-        <div className="lg:col-span-7">
+        <div>
           <div
-            className="rounded-[30px] p-5 select-none flex items-center justify-between gap-4 glass-card"
+            className="rounded-[30px] p-5 select-none flex items-center justify-between gap-4 glass-card h-full"
             style={{
               background: 'var(--glass-card-bg)',
               borderColor: 'var(--glass-card-border)',
               boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 min-w-0">
               <div
                 className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-white/80 dark:border-white/10"
                 style={{
@@ -368,7 +369,7 @@ export const EnvironmentPage: React.FC = () => {
                 <Lightbulb className="w-6 h-6 text-blue-500 fill-blue-400/40" />
               </div>
 
-              <div>
+              <div className="min-w-0">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)] mb-0.5">
                   <Lightbulb className="w-3.5 h-3.5 text-amber-500 fill-amber-400/40" />
                   <span>Climate Insights</span>
@@ -378,30 +379,59 @@ export const EnvironmentPage: React.FC = () => {
                 </p>
               </div>
             </div>
+
+            {/* Right arrow button matching reference image */}
+            <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-[var(--text-muted)] shrink-0">
+              <ChevronRight className="w-4 h-4" />
+            </div>
           </div>
         </div>
 
         {/* Right Column: Decorative Living Atmosphere Card */}
-        <div className="lg:col-span-5">
+        <div>
           <div
-            className="rounded-[30px] p-4 select-none flex items-center justify-between relative overflow-hidden glass-card"
+            className="rounded-[30px] p-5 select-none flex items-center justify-between gap-4 relative overflow-hidden glass-card h-full"
             style={{
               background: 'var(--glass-card-bg)',
               borderColor: 'var(--glass-card-border)',
               boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
-            {/* Plant Atmosphere Visual */}
-            <div className="flex items-center gap-4 z-10">
-              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-teal-400/20 to-emerald-400/10 border border-emerald-500/30 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm shadow-emerald-500/10">
-                <Sprout className="w-6 h-6 stroke-[2.2]" />
+            {/* Plant Atmosphere Visual & Content */}
+            <div className="flex items-center gap-4 z-10 min-w-0">
+              <div
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-white/80 dark:border-white/10"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.18) 0%, rgba(20, 184, 166, 0.22) 100%)',
+                  boxShadow: '0 4px 14px rgba(16, 185, 129, 0.18)',
+                }}
+              >
+                <Sprout className="w-6 h-6 text-emerald-500" />
               </div>
 
-              <div>
-                <p className="text-xs font-bold text-[var(--text-main)]">A healthier space,</p>
-                <p className="text-xs text-[var(--text-muted)]">a happier you.</p>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)] mb-0.5">
+                  <Leaf className="w-3.5 h-3.5 text-emerald-500 fill-emerald-400/40" />
+                  <span>Living Atmosphere</span>
+                </div>
+                <p className="text-xs font-bold text-[var(--text-main)] leading-snug">
+                  A healthier space, a happier you.
+                </p>
+                <p className="text-[11px] text-[var(--text-muted)] font-medium leading-relaxed">
+                  Active botanical air purification maintains natural humidity and balance.
+                </p>
               </div>
             </div>
+
+            {/* Right side status badge */}
+            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-emerald-50/80 dark:bg-emerald-950/60 border border-emerald-200/60 dark:border-emerald-800/50 text-[11px] font-bold text-emerald-600 dark:text-emerald-400 shrink-0 z-10">
+              <Sparkles className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
+              <span>Eco Mode</span>
+            </div>
+
+            {/* Floating translucent glass spheres from reference image */}
+            <div className="absolute -right-2 -bottom-2 w-16 h-16 rounded-full bg-gradient-to-tr from-cyan-400/15 to-blue-500/20 blur-[1px] pointer-events-none border border-white/20" />
+            <div className="absolute right-12 -top-2 w-10 h-10 rounded-full bg-gradient-to-tr from-purple-400/15 to-indigo-500/15 blur-[1px] pointer-events-none border border-white/20" />
           </div>
         </div>
       </div>
