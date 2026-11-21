@@ -4,6 +4,7 @@ import { HardwareProvider, useHardware } from './context/HardwareContext';
 import { AppShell } from './components/layout/AppShell';
 import { OverviewPage } from './pages/OverviewPage';
 import { FanControlPage } from './pages/FanControlPage';
+import { FansPage } from './pages/FansPage';
 import { EnvironmentPage } from './pages/EnvironmentPage';
 import { SensorStatusPage } from './pages/SensorStatusPage';
 import { HistoryPage } from './pages/HistoryPage';
@@ -16,6 +17,7 @@ const PageContent: React.FC = () => {
     <AnimatePresence mode="wait">
       {activePage === 'overview' && <OverviewPage key="overview" />}
       {activePage === 'fan' && <FanControlPage key="fan" />}
+      {activePage === 'fans' && <FansPage key="fans" />}
       {activePage === 'environment' && <EnvironmentPage key="environment" />}
       {activePage === 'sensors' && <SensorStatusPage key="sensors" />}
       {activePage === 'history' && <HistoryPage key="history" />}

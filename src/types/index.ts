@@ -29,6 +29,21 @@ export interface ClimateData {
   port: number;
 }
 
+export interface FanDevice {
+  id: string;
+  name: string;
+  room: string;
+  speed: number;
+  targetSpeed: number;
+  mode: FanMode;
+  status: FanStatus;
+  rpm: number;
+  powerWatts: number;
+  temperature: number;
+  espPinOrIp?: string;
+  isDemo?: boolean;
+}
+
 export interface ClimateTrendPoint {
   time: string;
   temperature: number;

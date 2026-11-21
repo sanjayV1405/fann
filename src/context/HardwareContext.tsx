@@ -4,7 +4,9 @@ import {
   ClimateData,
   ClimateTrendPoint,
   ConnectionStatus,
+  FanDevice,
   FanMode,
+  FanStatus,
   SensorDetail,
   SystemEvent,
   UserSettings,
@@ -59,6 +61,15 @@ interface HardwareContextType {
   setPendingMode: (mode: FanMode) => void;
   isApplyingSpeed: boolean;
   applyFanSettings: () => Promise<boolean>;
+
+  // Multi-Fan Management
+  fans: FanDevice[];
+  activeFanId: string;
+  activeFan: FanDevice;
+  setActiveFanId: (id: string) => void;
+  addFan: (fan: Omit<FanDevice, 'id'>) => FanDevice;
+  updateFan: (id: string, partial: Partial<FanDevice>) => void;
+  deleteFan: (id: string) => void;
 
   // Trends & History
   historyRange: '1h' | '24h' | '7d';
@@ -129,6 +140,37 @@ const playSwitchSound = (isDark: boolean) => {
     // audio context may require prior user interaction
   }
 };
+
+const defaultFans: FanDevice[] = [
+  {
+    id: 'fan-1',
+    name: 'Fan 1 (Master Loop)',
+    room: 'Living Room',
+    speed: 75,
+    targetSpeed: 75,
+    mode: 'manual',
+    status: 'running',
+    rpm: 1420,
+    powerWatts: 24.5,
+    temperature: 24.2,
+    espPinOrIp: 'ESP32 GPIO 18',
+    isDemo: true,
+  },
+  {
+    id: 'fan-2',
+    name: 'Fan 2 (Aero Pro)',
+    room: 'Master Bedroom',
+    speed: 45,
+    targetSpeed: 45,
+    mode: 'automatic',
+    status: 'running',
+    rpm: 890,
+    powerWatts: 14.8,
+    temperature: 23.5,
+    espPinOrIp: 'ESP32 GPIO 19',
+    isDemo: true,
+  },
+];
 
 const HardwareContext = createContext<HardwareContextType | null>(null);
 
@@ -268,6 +310,118 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [climateData, setClimateData] = useState<ClimateData>(initialClimateData);
   const [pendingSpeed, setPendingSpeed] = useState<number>(initialClimateData.fanSpeed);
   const [pendingMode, setPendingMode] = useState<FanMode>(initialClimateData.fanMode);
+
+  // Multi-Fan State (Fan 1, Fan 2, ... Fan N)
+  const [fans, setFans] = useState<FanDevice[]>(() => {
+    try {
+      const saved = localStorage.getItem('airloop_fans');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {}
+    return defaultFans;
+  });
+
+  const [activeFanId, setActiveFanIdState] = useState<string>(() => {
+    try {
+      const saved = localStorage.getItem('airloop_active_fan_id');
+      if (saved) return saved;
+    } catch {}
+    return defaultFans[0].id;
+  });
+
+  const activeFan = useMemo<FanDevice>(() => {
+    return fans.find((f) => f.id === activeFanId) || fans[0] || defaultFans[0];
+  }, [fans, activeFanId]);
+
+  const setActiveFanId = useCallback(
+    (id: string) => {
+      setActiveFanIdState(id);
+      try {
+        localStorage.setItem('airloop_active_fan_id', id);
+      } catch {}
+      const target = fans.find((f) => f.id === id);
+      if (target) {
+        setPendingSpeed(target.speed);
+        setPendingMode(target.mode);
+        setClimateData((prev) => ({
+          ...prev,
+          fanSpeed: target.speed,
+          fanTargetSpeed: target.targetSpeed,
+          fanMode: target.mode,
+          fanStatus: target.status,
+        }));
+      }
+    },
+    [fans]
+  );
+
+  const addFan = useCallback(
+    (fanData: Omit<FanDevice, 'id'>): FanDevice => {
+      const nextNum = fans.length + 1;
+      const newFan: FanDevice = {
+        ...fanData,
+        id: `fan-${Date.now()}-${nextNum}`,
+        rpm: fanData.rpm || Math.round((fanData.speed / 100) * 1800),
+        powerWatts: fanData.powerWatts || +(10 + (fanData.speed / 100) * 25).toFixed(1),
+        temperature: fanData.temperature || 24.0,
+        status: fanData.speed > 0 ? 'running' : 'stopped',
+      };
+      setFans((prev) => {
+        const next = [...prev, newFan];
+        try {
+          localStorage.setItem('airloop_fans', JSON.stringify(next));
+        } catch {}
+        return next;
+      });
+      return newFan;
+    },
+    [fans]
+  );
+
+  const updateFan = useCallback((id: string, partial: Partial<FanDevice>) => {
+    setFans((prev) => {
+      const next = prev.map((f) => {
+        if (f.id === id) {
+          const updated = { ...f, ...partial };
+          if (partial.speed !== undefined) {
+            updated.rpm = Math.round((partial.speed / 100) * 1800);
+            updated.powerWatts = +(10 + (partial.speed / 100) * 25).toFixed(1);
+            updated.status = partial.speed > 0 ? 'running' : 'stopped';
+          }
+          return updated;
+        }
+        return f;
+      });
+      try {
+        localStorage.setItem('airloop_fans', JSON.stringify(next));
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  const deleteFan = useCallback(
+    (id: string) => {
+      setFans((prev) => {
+        if (prev.length <= 1) {
+          return prev;
+        }
+        const next = prev.filter((f) => f.id !== id);
+        try {
+          localStorage.setItem('airloop_fans', JSON.stringify(next));
+        } catch {}
+        if (activeFanId === id) {
+          setActiveFanIdState(next[0].id);
+          try {
+            localStorage.setItem('airloop_active_fan_id', next[0].id);
+          } catch {}
+        }
+        return next;
+      });
+    },
+    [activeFanId]
+  );
 
   // History & Trends
   const [historyRange, setHistoryRange] = useState<'1h' | '24h' | '7d'>('24h');
@@ -554,6 +708,25 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           fanMode: pendingMode,
           fanStatus: pendingSpeed > 0 ? 'running' : 'stopped',
         }));
+        setFans((prev) => {
+          const next = prev.map((f) =>
+            f.id === activeFanId
+              ? {
+                  ...f,
+                  speed: pendingSpeed,
+                  targetSpeed: pendingSpeed,
+                  mode: pendingMode,
+                  status: pendingSpeed > 0 ? ('running' as FanStatus) : ('stopped' as FanStatus),
+                  rpm: Math.round((pendingSpeed / 100) * 1800),
+                  powerWatts: +(10 + (pendingSpeed / 100) * 25).toFixed(1),
+                }
+              : f
+          );
+          try {
+            localStorage.setItem('airloop_fans', JSON.stringify(next));
+          } catch {}
+          return next;
+        });
         showToast(
           `Fan speed set to ${pendingSpeed}% (${pendingMode === 'manual' ? 'Manual' : 'Automatic'}).`,
           'success',
@@ -577,7 +750,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setIsApplyingSpeed(false);
     }
-  }, [connectionStatus, adapter, pendingSpeed, pendingMode, showToast, addEvent]);
+  }, [connectionStatus, adapter, pendingSpeed, pendingMode, activeFanId, showToast, addEvent]);
 
   // Refresh Sensors
   const refreshSensors = useCallback(async () => {
@@ -848,6 +1021,13 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setPendingMode,
         isApplyingSpeed,
         applyFanSettings,
+        fans,
+        activeFanId,
+        activeFan,
+        setActiveFanId,
+        addFan,
+        updateFan,
+        deleteFan,
         historyRange,
         setHistoryRange,
         historyData,
