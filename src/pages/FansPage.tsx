@@ -57,27 +57,17 @@ export const FansPage: React.FC = () => {
       className="space-y-6 max-w-6xl pb-8"
     >
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-[var(--text-muted)]">
-            <Fan className="w-3.5 h-3.5 text-blue-500" />
-            <span>Multi-Fan Unit Network</span>
-          </div>
-          <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
-            Connected Fan <span className="text-gradient-airloop">Units</span>
-          </h1>
-          <p className="text-sm text-[var(--text-muted)]">
-            Switch between Fan 1, Fan 2, and any custom fan units. View live statistics in dedicated telemetry boxes.
-          </p>
+      <div className="space-y-1">
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-[var(--text-muted)]">
+          <Fan className="w-3.5 h-3.5 text-blue-500" />
+          <span>Multi-Fan Unit Network</span>
         </div>
-
-        <button
-          onClick={handleOpenAdd}
-          className="btn-primary-gradient px-4 py-2.5 rounded-2xl text-white text-xs font-bold flex items-center gap-2 cursor-pointer shadow-md shrink-0 hover:scale-[1.02] transition-transform"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Fan</span>
-        </button>
+        <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+          Connected Fan <span className="text-gradient-airloop">Units</span>
+        </h1>
+        <p className="text-sm text-[var(--text-muted)]">
+          Switch between Fan 1, Fan 2, and any custom fan units. View live statistics in dedicated telemetry boxes.
+        </p>
       </div>
 
       {/* Fans Grid */}
