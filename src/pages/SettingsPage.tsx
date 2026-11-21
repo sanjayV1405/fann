@@ -4,22 +4,28 @@ import {
   Settings,
   Wifi,
   Thermometer,
-  Sparkles,
   Sliders,
   Cpu,
   Save,
-  CheckCircle2,
-  RefreshCw,
   Power,
-  Volume2,
-  Eye,
-  Smartphone,
+  Sun,
+  Moon,
+  Laptop,
 } from 'lucide-react';
 import { useHardware } from '../context/HardwareContext';
 
 export const SettingsPage: React.FC = () => {
-  const { settings, updateSettings, connectionStatus, connectDevice, disconnectDevice, showToast } =
-    useHardware();
+  const {
+    settings,
+    updateSettings,
+    connectionStatus,
+    connectDevice,
+    disconnectDevice,
+    showToast,
+    theme,
+    themeMode,
+    setThemeMode,
+  } = useHardware();
 
   const [ipInput, setIpInput] = useState(settings.esp32Ip);
   const [portInput, setPortInput] = useState(settings.port.toString());
@@ -51,15 +57,15 @@ export const SettingsPage: React.FC = () => {
     >
       {/* Header */}
       <div className="space-y-1">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 backdrop-blur-md border border-white/90 shadow-sm text-xs font-semibold text-slate-600">
-          <Settings className="w-3.5 h-3.5 text-slate-500" />
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-[var(--text-muted)]">
+          <Settings className="w-3.5 h-3.5 text-[var(--text-subtle)]" />
           <span>System Configuration</span>
         </div>
-        <h1 className="text-3xl xl:text-4xl font-extrabold text-[#172033] tracking-tight">
+        <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
           Platform & Device <span className="text-gradient-airloop">Settings</span>
         </h1>
-        <p className="text-sm text-slate-500">
-          Configure ESP32 network endpoints, sensor calibration, temperature units, and UI preferences.
+        <p className="text-sm text-[var(--text-muted)]">
+          Configure ESP32 network endpoints, theme appearance, temperature units, and UI preferences.
         </p>
       </div>
 
@@ -68,28 +74,27 @@ export const SettingsPage: React.FC = () => {
         <div className="lg:col-span-7 space-y-6">
           {/* IP Configuration Card */}
           <div
-            className="rounded-[32px] p-6 select-none"
+            className="rounded-[32px] p-6 select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(24px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-200/50">
+              <div className="w-9 h-9 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40">
                 <Wifi className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#172033]">ESP32 Network Endpoint</h3>
-                <p className="text-xs text-slate-400">Direct HTTP REST and WebSocket configuration</p>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">ESP32 Network Endpoint</h3>
+                <p className="text-xs text-[var(--text-subtle)]">Direct HTTP REST and WebSocket configuration</p>
               </div>
             </div>
 
             <form onSubmit={handleSaveConnection} className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
                 <div className="col-span-2">
-                  <label className="text-xs font-semibold text-slate-500 block mb-1.5">
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1.5">
                     IP Address or Hostname
                   </label>
                   <input
@@ -97,27 +102,27 @@ export const SettingsPage: React.FC = () => {
                     value={ipInput}
                     onChange={(e) => setIpInput(e.target.value)}
                     placeholder="192.168.1.184 or airloop.local"
-                    className="w-full px-4 py-2.5 rounded-2xl bg-white/80 border border-slate-200/80 text-sm font-mono text-[#172033] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-sm font-mono text-[var(--text-main)] placeholder-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   />
                 </div>
 
                 <div>
-                  <label className="text-xs font-semibold text-slate-500 block mb-1.5">Port</label>
+                  <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1.5">Port</label>
                   <input
                     type="text"
                     value={portInput}
                     onChange={(e) => setPortInput(e.target.value)}
                     placeholder="80"
-                    className="w-full px-4 py-2.5 rounded-2xl bg-white/80 border border-slate-200/80 text-sm font-mono text-[#172033] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
+                    className="w-full px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-sm font-mono text-[var(--text-main)] placeholder-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
                   />
                 </div>
               </div>
 
               {/* Simulation Mode Switch */}
-              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/80 border border-slate-100">
+              <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
                 <div>
-                  <p className="text-xs font-bold text-[#172033]">Hardware Simulation Mode</p>
-                  <p className="text-[11px] text-slate-500">
+                  <p className="text-xs font-bold text-[var(--text-main)]">Hardware Simulation Mode</p>
+                  <p className="text-[11px] text-[var(--text-muted)]">
                     Emulates physical ESP32 responses and live sensor dynamics when running standalone
                   </p>
                 </div>
@@ -125,7 +130,7 @@ export const SettingsPage: React.FC = () => {
                   type="checkbox"
                   checked={settings.simulationMode}
                   onChange={(e) => updateSettings({ simulationMode: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                  className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
                 />
               </div>
 
@@ -134,7 +139,7 @@ export const SettingsPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={isConnected ? disconnectDevice : () => connectDevice(ipInput, parseInt(portInput, 10))}
-                  className="px-4 py-2.5 rounded-2xl bg-white/80 hover:bg-white text-slate-700 text-xs font-bold border border-white shadow-sm flex items-center gap-2 cursor-pointer"
+                  className="px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/80 dark:border-white/10 shadow-sm flex items-center gap-2 cursor-pointer transition-colors"
                 >
                   <Power className={`w-3.5 h-3.5 ${isConnected ? 'text-rose-500' : 'text-emerald-500'}`} />
                   <span>{isConnected ? 'Disconnect Device' : 'Connect Device'}</span>
@@ -154,32 +159,31 @@ export const SettingsPage: React.FC = () => {
 
           {/* Climate & Automation Rules */}
           <div
-            className="rounded-[32px] p-6 select-none"
+            className="rounded-[32px] p-6 select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(24px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-purple-50 flex items-center justify-center text-purple-600 border border-purple-200/50">
+              <div className="w-9 h-9 rounded-xl bg-purple-50 dark:bg-purple-950/60 flex items-center justify-center text-purple-600 dark:text-purple-400 border border-purple-200/50 dark:border-purple-800/40">
                 <Sliders className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#172033]">Automation & Climate Rules</h3>
-                <p className="text-xs text-slate-400">Automatic fan speed curves and temperature targets</p>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">Automation & Climate Rules</h3>
+                <p className="text-xs text-[var(--text-subtle)]">Automatic fan speed curves and temperature targets</p>
               </div>
             </div>
 
             <div className="space-y-4 text-xs">
               <div className="flex items-center justify-between">
                 <div>
-                  <span className="font-bold text-[#172033] block">Target Comfort Temperature</span>
-                  <span className="text-slate-400">Fan auto-regulates to maintain this baseline</span>
+                  <span className="font-bold text-[var(--text-main)] block">Target Comfort Temperature</span>
+                  <span className="text-[var(--text-subtle)]">Fan auto-regulates to maintain this baseline</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="font-bold text-[#172033] text-sm">{settings.autoTargetTemp}°C</span>
+                  <span className="font-bold text-[var(--text-main)] text-sm">{settings.autoTargetTemp}°C</span>
                   <input
                     type="range"
                     min="18"
@@ -192,16 +196,16 @@ export const SettingsPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--border-divider)]">
                 <div>
-                  <span className="font-bold text-[#172033] block">Eco Thermal Mode</span>
-                  <span className="text-slate-400">Reduces fan wattage when space reaches target</span>
+                  <span className="font-bold text-[var(--text-main)] block">Eco Thermal Mode</span>
+                  <span className="text-[var(--text-subtle)]">Reduces fan wattage when space reaches target</span>
                 </div>
                 <input
                   type="checkbox"
                   checked={settings.autoEcoMode}
                   onChange={(e) => updateSettings({ autoEcoMode: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                  className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
                 />
               </div>
             </div>
@@ -210,40 +214,86 @@ export const SettingsPage: React.FC = () => {
 
         {/* Right Column: Preferences & Device Information */}
         <div className="lg:col-span-5 space-y-6">
-          {/* Temperature Unit & Interface Preferences */}
+          {/* Appearance & Interface Preferences */}
           <div
-            className="rounded-[32px] p-6 select-none"
+            className="rounded-[32px] p-6 select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(24px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600 border border-sky-200/50">
+              <div className="w-9 h-9 rounded-xl bg-sky-50 dark:bg-sky-950/60 flex items-center justify-center text-sky-600 dark:text-sky-400 border border-sky-200/50 dark:border-sky-800/40">
                 <Thermometer className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#172033]">Interface Preferences</h3>
-                <p className="text-xs text-slate-400">Units, motion and accessibility</p>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">Interface Preferences</h3>
+                <p className="text-xs text-[var(--text-subtle)]">Theme, units, motion and accessibility</p>
               </div>
             </div>
 
             <div className="space-y-4">
+              {/* Color Theme Selector */}
+              <div>
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-2">
+                  Theme Appearance
+                </label>
+                <div className="grid grid-cols-3 gap-2 p-1 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10">
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('light')}
+                    className={`py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      themeMode === 'light'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                    }`}
+                  >
+                    <Sun className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Light</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('dark')}
+                    className={`py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      themeMode === 'dark'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                    }`}
+                  >
+                    <Moon className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Dark</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setThemeMode('system')}
+                    className={`py-2 px-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center justify-center gap-1.5 ${
+                      themeMode === 'system'
+                        ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
+                    }`}
+                  >
+                    <Laptop className="w-3.5 h-3.5" />
+                    <span>System</span>
+                  </button>
+                </div>
+              </div>
+
               {/* Temperature Unit Selector */}
               <div>
-                <label className="text-xs font-semibold text-slate-500 block mb-2">
+                <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-2">
                   Temperature Unit Display
                 </label>
-                <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-slate-100/70 border border-white/80">
+                <div className="grid grid-cols-2 gap-2 p-1 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10">
                   <button
                     type="button"
                     onClick={() => updateSettings({ tempUnit: 'C' })}
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       settings.tempUnit === 'C'
                         ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                        : 'text-slate-600 hover:text-slate-900'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                     }`}
                   >
                     Celsius (°C)
@@ -254,7 +304,7 @@ export const SettingsPage: React.FC = () => {
                     className={`py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                       settings.tempUnit === 'F'
                         ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                        : 'text-slate-600 hover:text-slate-900'
+                        : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                     }`}
                   >
                     Fahrenheit (°F)
@@ -265,32 +315,32 @@ export const SettingsPage: React.FC = () => {
               {/* Toggles */}
               <div className="pt-2 space-y-3 text-xs">
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-700">Reduced Motion (Accessibility)</span>
+                  <span className="font-semibold text-[var(--text-main)]">Reduced Motion (Accessibility)</span>
                   <input
                     type="checkbox"
                     checked={settings.reducedMotion}
                     onChange={(e) => updateSettings({ reducedMotion: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                    className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-700">High Blur Glass Surfaces</span>
+                  <span className="font-semibold text-[var(--text-main)]">High Blur Glass Surfaces</span>
                   <input
                     type="checkbox"
                     checked={settings.highGlassBlur}
                     onChange={(e) => updateSettings({ highGlassBlur: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                    className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
-                  <span className="font-semibold text-slate-700">Audio Feedback on Apply</span>
+                  <span className="font-semibold text-[var(--text-main)]">Audio Feedback on Toggle</span>
                   <input
                     type="checkbox"
                     checked={settings.soundEnabled}
                     onChange={(e) => updateSettings({ soundEnabled: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                    className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
                   />
                 </div>
               </div>
@@ -299,44 +349,43 @@ export const SettingsPage: React.FC = () => {
 
           {/* Physical Hardware Specifications */}
           <div
-            className="rounded-[32px] p-6 select-none"
+            className="rounded-[32px] p-6 select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(24px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-9 h-9 rounded-xl bg-amber-50 flex items-center justify-center text-amber-600 border border-amber-200/50">
+              <div className="w-9 h-9 rounded-xl bg-amber-50 dark:bg-amber-950/60 flex items-center justify-center text-amber-600 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/40">
                 <Cpu className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[#172033]">Hardware Specifications</h3>
-                <p className="text-xs text-slate-400">Microcontroller & firmware registry</p>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">Hardware Specifications</h3>
+                <p className="text-xs text-[var(--text-subtle)]">Microcontroller & firmware registry</p>
               </div>
             </div>
 
             <div className="space-y-2.5 text-xs">
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">Controller</span>
-                <span className="font-mono font-bold text-[#172033]">ESP32-WROOM-32D</span>
+              <div className="flex justify-between py-1 border-b border-[var(--border-divider)]">
+                <span className="text-[var(--text-subtle)]">Controller</span>
+                <span className="font-mono font-bold text-[var(--text-main)]">ESP32-WROOM-32D</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">Firmware</span>
-                <span className="font-mono font-bold text-blue-600">v2.4.1-airloop-prod</span>
+              <div className="flex justify-between py-1 border-b border-[var(--border-divider)]">
+                <span className="text-[var(--text-subtle)]">Firmware</span>
+                <span className="font-mono font-bold text-blue-500">v2.4.1-airloop-prod</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">MAC Address</span>
-                <span className="font-mono font-bold text-[#172033]">24:6F:28:B4:9C:12</span>
+              <div className="flex justify-between py-1 border-b border-[var(--border-divider)]">
+                <span className="text-[var(--text-subtle)]">MAC Address</span>
+                <span className="font-mono font-bold text-[var(--text-main)]">24:6F:28:B4:9C:12</span>
               </div>
-              <div className="flex justify-between py-1 border-b border-slate-100">
-                <span className="text-slate-400">PWM Output</span>
-                <span className="font-mono font-bold text-[#172033]">GPIO 23 (25kHz Silent)</span>
+              <div className="flex justify-between py-1 border-b border-[var(--border-divider)]">
+                <span className="text-[var(--text-subtle)]">PWM Output</span>
+                <span className="font-mono font-bold text-[var(--text-main)]">GPIO 23 (25kHz Silent)</span>
               </div>
               <div className="flex justify-between py-1">
-                <span className="text-slate-400">Tachometer Pulse</span>
-                <span className="font-mono font-bold text-[#172033]">GPIO 18 (PCNT)</span>
+                <span className="text-[var(--text-subtle)]">Tachometer Pulse</span>
+                <span className="font-mono font-bold text-[var(--text-main)]">GPIO 18 (PCNT)</span>
               </div>
             </div>
           </div>

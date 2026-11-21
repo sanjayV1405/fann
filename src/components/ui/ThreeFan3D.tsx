@@ -16,11 +16,10 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
   showBase = false,
   showVortex = true,
 }) => {
-  // Calculate spin duration: 100% -> 0.4s, 75% -> 0.55s, 50% -> 0.85s, 25% -> 1.5s
   const spinDuration = useMemo(() => {
     if (!isRunning || speed <= 0) return 0;
     const clamped = Math.max(10, Math.min(100, speed));
-    return (110 - clamped) * 0.015 + 0.3; // between ~0.45s and 1.8s
+    return (110 - clamped) * 0.015 + 0.3;
   }, [speed, isRunning]);
 
   const sizeDimensions = {
@@ -31,17 +30,12 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
 
   return (
     <div className="relative flex flex-col items-center justify-center select-none">
-      {/* 
-        FAN HEAD CONTAINER:
-        Everything that circles or belongs to the fan circle is strictly anchored
-        to this EXACT square/circle container so that all rotations and concentric
-        rings are 100% centered with mathematical precision.
-      */}
+      {/* FAN HEAD CONTAINER */}
       <div
         className="relative flex items-center justify-center shrink-0"
         style={{ width: sizeDimensions.w, height: sizeDimensions.h }}
       >
-        {/* Dynamic Air Vortex & Flow Rings (Centered precisely on fan head) */}
+        {/* Dynamic Air Vortex & Flow Rings */}
         {showVortex && isRunning && (
           <>
             {/* Pulsing Ethereal Radial Glow */}
@@ -65,7 +59,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
               }}
             />
 
-            {/* Sweeping Airflow Curved Vortex Orbit (concentric circle at 200, 200) */}
+            {/* Sweeping Airflow Curved Vortex Orbit */}
             <svg
               className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] pointer-events-none opacity-70"
               viewBox="0 0 400 400"
@@ -97,7 +91,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
               />
             </svg>
 
-            {/* Floating Botanical Leaves orbiting the fan vortex */}
+            {/* Floating Botanical Leaves */}
             <div
               className="absolute top-2 -left-5 pointer-events-none animate-float"
               style={{ animationDelay: '0s' }}
@@ -151,48 +145,35 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           </>
         )}
 
-        {/* 
-          MAIN CIRCULAR 3D ENCLOSURE / HOUSING:
-          Perfect square width and height, rounded-full, with concentric depth rings.
-        */}
+        {/* MAIN CIRCULAR 3D ENCLOSURE / HOUSING */}
         <div
-          className="relative w-full h-full rounded-full flex items-center justify-center p-3 select-none"
+          className="relative w-full h-full rounded-full flex items-center justify-center p-3 select-none transition-all duration-500"
           style={{
-            background:
-              'linear-gradient(145deg, rgba(255, 255, 255, 0.94) 0%, rgba(225, 235, 250, 0.8) 100%)',
-            boxShadow: `
-              0 24px 60px -12px rgba(70, 100, 170, 0.22),
-              0 10px 25px rgba(255, 255, 255, 0.95) inset,
-              0 -8px 20px rgba(160, 190, 240, 0.3) inset
-            `,
-            border: '4px solid rgba(255, 255, 255, 0.95)',
+            background: 'var(--fan-housing-bg)',
+            boxShadow: 'var(--fan-housing-shadow)',
+            border: '4px solid var(--fan-housing-border)',
           }}
         >
           {/* Inner Shroud Depth Ring */}
           <div
-            className="absolute inset-2 rounded-full pointer-events-none"
+            className="absolute inset-2 rounded-full pointer-events-none transition-all duration-500"
             style={{
-              background:
-                'radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.92) 0%, rgba(210, 225, 245, 0.6) 80%, rgba(180, 205, 240, 0.8) 100%)',
+              background: 'var(--fan-shroud-bg)',
               boxShadow:
-                'inset 0 6px 14px rgba(70, 100, 170, 0.25), inset 0 -4px 8px rgba(255, 255, 255, 0.8)',
+                'inset 0 6px 14px rgba(0, 0, 0, 0.35), inset 0 -4px 8px rgba(255, 255, 255, 0.15)',
             }}
           />
 
           {/* Outer Chrome Rim Reflection */}
           <div
-            className="absolute inset-0 rounded-full pointer-events-none border border-white/80"
+            className="absolute inset-0 rounded-full pointer-events-none border border-white/20 dark:border-white/10"
             style={{
               background:
-                'linear-gradient(135deg, rgba(255, 255, 255, 0.65) 0%, transparent 50%, rgba(140, 180, 240, 0.15) 100%)',
+                'linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, transparent 50%, rgba(140, 180, 240, 0.15) 100%)',
             }}
           />
 
-          {/* 
-            PRECISION ROTOR WITH 5 AERODYNAMIC BLADES (SVG ROTATION):
-            Centered with mathematical perfection at (100, 100).
-            The viewBox is 0 0 200 200, so center is strictly (100, 100).
-          */}
+          {/* ROTOR WITH 5 AERODYNAMIC BLADES */}
           <div className="absolute inset-3 flex items-center justify-center">
             <svg
               viewBox="0 0 200 200"
@@ -206,7 +187,6 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
               }}
             >
               <defs>
-                {/* Blade 3D Gradient */}
                 <linearGradient id="fanBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
                   <stop offset="0%" stopColor="#93C5FD" />
                   <stop offset="35%" stopColor="#60A5FA" />
@@ -221,22 +201,16 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
                 </linearGradient>
 
                 <filter id="bladeShadow" x="-20%" y="-20%" width="140%" height="140%">
-                  <feDropShadow dx="1" dy="3" stdDeviation="3.5" floodColor="#1E3A8A" floodOpacity="0.32" />
+                  <feDropShadow dx="1" dy="3" stdDeviation="3.5" floodColor="#1E3A8A" floodOpacity="0.35" />
                 </filter>
               </defs>
 
-              {/* 
-                5 BLADES: Each blade is an identical aerodynamic airfoil rotated around (100, 100)
-                by 0°, 72°, 144°, 216°, and 288°.
-              */}
               {[0, 72, 144, 216, 288].map((angle) => (
                 <g key={angle} transform={`rotate(${angle} 100 100)`} filter="url(#bladeShadow)">
-                  {/* Aerodynamic blade path: curves from hub (100, 100) out to tip */}
                   <path
                     d="M 100,100 L 92,76 C 84,54 74,30 92,16 C 112,12 128,24 118,50 C 111,68 107,86 100,100 Z"
                     fill="url(#fanBladeGrad)"
                   />
-                  {/* Subtle top edge glossy specular reflection */}
                   <path
                     d="M 94,72 C 88,52 82,34 94,20 C 104,17 114,24 114,34 C 106,48 100,64 94,72 Z"
                     fill="url(#fanBladeHighlight)"
@@ -246,18 +220,16 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
             </svg>
           </div>
 
-          {/* 
-            CENTER HUB:
-            Strictly centered at 50% 50% of the fan circular housing with z-index 10.
-          */}
+          {/* CENTER HUB */}
           <div
-            className="absolute rounded-full flex items-center justify-center z-10 pointer-events-none"
+            className="absolute rounded-full flex items-center justify-center z-10 pointer-events-none transition-all duration-500"
             style={{
               width: sizeDimensions.w * 0.28,
               height: sizeDimensions.h * 0.28,
-              background: 'linear-gradient(145deg, #FFFFFF 0%, #D4E3FB 60%, #ABC5F5 100%)',
+              background:
+                'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(212, 227, 251, 0.8) 60%, rgba(171, 197, 245, 0.8) 100%)',
               boxShadow:
-                '0 8px 18px rgba(37, 88, 202, 0.3), inset 0 2px 5px rgba(255, 255, 255, 0.95)',
+                '0 8px 18px rgba(37, 88, 202, 0.35), inset 0 2px 5px rgba(255, 255, 255, 0.95)',
               border: '2.5px solid rgba(255, 255, 255, 0.95)',
             }}
           >
@@ -272,45 +244,39 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
                   : 'radial-gradient(circle at 40% 40%, #E2E8F0 0%, #94A3B8 100%)',
               }}
             >
-              {/* Center glass reflection pinpoint */}
               <div className="w-2.5 h-2.5 rounded-full bg-white/95 shadow-sm" />
             </div>
           </div>
         </div>
       </div>
 
-      {/* 
-        PEDESTAL BASE & STAND (shown on Fan Control page):
-        Placed underneath the circular fan head, separated cleanly so it never
-        distorts the fan head's geometric center.
-      */}
+      {/* PEDESTAL BASE & STAND */}
       {showBase && (
-        <div className="flex flex-col items-center -mt-2 z-0 pointer-events-none">
+        <div className="flex flex-col items-center -mt-2 z-0 pointer-events-none transition-all duration-500">
           {/* Fan neck connector */}
           <div
             className="w-7 h-8"
             style={{
-              background: 'linear-gradient(180deg, #DCE6F5 0%, #BACEEA 100%)',
-              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.06)',
+              background: 'linear-gradient(180deg, #64748B 0%, #475569 100%)',
+              boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
             }}
           />
           {/* Circular stepped pedestal upper tier */}
           <div
             className="w-36 h-5 rounded-full"
             style={{
-              background: 'linear-gradient(180deg, #FFFFFF 0%, #E2EDFC 100%)',
-              boxShadow:
-                '0 8px 16px rgba(70, 100, 170, 0.15), inset 0 2px 4px rgba(255,255,255,0.9)',
-              border: '1.5px solid rgba(255, 255, 255, 0.85)',
+              background: 'var(--fan-base-tier1)',
+              boxShadow: '0 8px 16px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255,255,255,0.2)',
+              border: '1.5px solid var(--fan-base-border)',
             }}
           />
           {/* Circular stepped pedestal base tier */}
           <div
             className="w-44 h-4 rounded-full -mt-2"
             style={{
-              background: 'linear-gradient(180deg, #E6F0FD 0%, #CFDEF5 100%)',
-              boxShadow: '0 12px 24px rgba(70, 100, 170, 0.18)',
-              border: '1px solid rgba(255, 255, 255, 0.7)',
+              background: 'var(--fan-base-tier2)',
+              boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',
+              border: '1px solid var(--fan-base-border)',
             }}
           />
         </div>

@@ -11,11 +11,9 @@ import {
   XCircle,
   HelpCircle,
   Clock,
-  Layers,
-  Wrench,
 } from 'lucide-react';
 import { useHardware } from '../context/HardwareContext';
-import { SensorDetail, SensorHealthStatus } from '../types';
+import { SensorHealthStatus } from '../types';
 
 export const SensorStatusPage: React.FC = () => {
   const { sensors, refreshSensors, connectionStatus, climateData } = useHardware();
@@ -39,28 +37,28 @@ export const SensorStatusPage: React.FC = () => {
     switch (status) {
       case 'Healthy':
         return (
-          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/60 text-[11px] font-bold">
-            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40 text-[11px] font-bold">
+            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
             Healthy
           </span>
         );
       case 'Warning':
         return (
-          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200/60 text-[11px] font-bold">
-            <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
+          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200/60 dark:border-amber-800/40 text-[11px] font-bold">
+            <AlertTriangle className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
             Warning
           </span>
         );
       case 'Disconnected':
         return (
-          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-50 text-rose-700 border border-rose-200/60 text-[11px] font-bold">
-            <XCircle className="w-3.5 h-3.5 text-rose-600" />
+          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-rose-50 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-200/60 dark:border-rose-800/40 text-[11px] font-bold">
+            <XCircle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
             Disconnected
           </span>
         );
       default:
         return (
-          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 text-[11px] font-bold">
+          <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 text-[11px] font-bold">
             <HelpCircle className="w-3.5 h-3.5 text-slate-500" />
             Unavailable
           </span>
@@ -79,14 +77,14 @@ export const SensorStatusPage: React.FC = () => {
       {/* Page Header */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 backdrop-blur-md border border-white/90 shadow-sm text-xs font-semibold text-blue-600">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-blue-600 dark:text-blue-400">
             <Activity className="w-3.5 h-3.5 text-blue-500" />
             <span>Hardware Diagnostics</span>
           </div>
-          <h1 className="text-3xl xl:text-4xl font-extrabold text-[#172033] tracking-tight">
+          <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
             Sensor Health & <span className="text-gradient-airloop">Telemetry</span>
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[var(--text-muted)]">
             Real-time status of all digital environmental transducers and bus controllers.
           </p>
         </div>
@@ -104,60 +102,59 @@ export const SensorStatusPage: React.FC = () => {
 
       {/* System Health Summary Bar */}
       <div
-        className="rounded-[28px] p-5 select-none"
+        className="rounded-[28px] p-5 select-none glass-card"
         style={{
-          background: 'rgba(255, 255, 255, 0.72)',
-          backdropFilter: 'blur(20px)',
-          border: '1.5px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08)',
+          background: 'var(--glass-card-bg)',
+          borderColor: 'var(--glass-card-border)',
+          boxShadow: 'var(--glass-shadow-sm)',
         }}
       >
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-slate-100">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 divide-y sm:divide-y-0 sm:divide-x divide-[var(--border-divider)]">
           <div className="p-2 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600">
+            <div className="w-10 h-10 rounded-xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400">
               <Cpu className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-slate-400">MCU Core</p>
-              <p className="text-sm font-extrabold text-[#172033]">ESP32 240MHz</p>
-              <p className="text-[10px] text-emerald-600 font-semibold">Load: 12%</p>
+              <p className="text-[11px] font-semibold text-[var(--text-subtle)]">MCU Core</p>
+              <p className="text-sm font-extrabold text-[var(--text-main)]">ESP32 240MHz</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">Load: 12%</p>
             </div>
           </div>
 
           <div className="p-2 sm:pl-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center text-indigo-600">
+            <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 flex items-center justify-center text-indigo-600 dark:text-indigo-400">
               <Wifi className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-slate-400">Wi-Fi RSSI</p>
-              <p className="text-sm font-extrabold text-[#172033]">
+              <p className="text-[11px] font-semibold text-[var(--text-subtle)]">Wi-Fi RSSI</p>
+              <p className="text-sm font-extrabold text-[var(--text-main)]">
                 {isConnected ? `${climateData.wifiRssi} dBm` : 'Offline'}
               </p>
-              <p className="text-[10px] text-slate-500 font-semibold">AirLoop_Mesh_5G</p>
+              <p className="text-[10px] text-[var(--text-muted)] font-semibold">AirLoop_Mesh_5G</p>
             </div>
           </div>
 
           <div className="p-2 sm:pl-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-sky-50 flex items-center justify-center text-sky-600">
+            <div className="w-10 h-10 rounded-xl bg-sky-50 dark:bg-sky-950/60 flex items-center justify-center text-sky-600 dark:text-sky-400">
               <Clock className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-slate-400">System Uptime</p>
-              <p className="text-sm font-extrabold text-[#172033]">
+              <p className="text-[11px] font-semibold text-[var(--text-subtle)]">System Uptime</p>
+              <p className="text-sm font-extrabold text-[var(--text-main)]">
                 {isConnected ? '3h 58m' : '0m'}
               </p>
-              <p className="text-[10px] text-emerald-600 font-semibold">0 watchdog resets</p>
+              <p className="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold">0 watchdog resets</p>
             </div>
           </div>
 
           <div className="p-2 sm:pl-4 flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600">
+            <div className="w-10 h-10 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400">
               <ShieldCheck className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] font-semibold text-slate-400">Bus Health</p>
-              <p className="text-sm font-extrabold text-emerald-600">100% Operational</p>
-              <p className="text-[10px] text-slate-500 font-semibold">6/6 Nodes Active</p>
+              <p className="text-[11px] font-semibold text-[var(--text-subtle)]">Bus Health</p>
+              <p className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400">100% Operational</p>
+              <p className="text-[10px] text-[var(--text-muted)] font-semibold">6/6 Nodes Active</p>
             </div>
           </div>
         </div>
@@ -172,7 +169,7 @@ export const SensorStatusPage: React.FC = () => {
             className={`px-4 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 cursor-pointer ${
               filter === tab
                 ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
-                : 'bg-white/60 text-slate-600 hover:bg-white border border-white/80'
+                : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:text-[var(--text-main)] border border-black/5 dark:border-white/10'
             }`}
           >
             {tab}
@@ -180,44 +177,42 @@ export const SensorStatusPage: React.FC = () => {
         ))}
       </div>
 
-      {/* Grid of 6 Real Sensor Cards */}
+      {/* Grid of Sensor Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         {filteredSensors.map((sensor) => (
           <div
             key={sensor.id}
-            className="rounded-[28px] p-5 select-none relative transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between"
+            className="rounded-[28px] p-5 select-none relative transition-all duration-300 hover:-translate-y-1 hover:shadow-lg flex flex-col justify-between glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(20px)',
-              WebkitBackdropFilter: 'blur(20px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08), 0 2px 6px rgba(255, 255, 255, 0.9) inset',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
             <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-mono text-slate-400 font-semibold">
+                <span className="text-[11px] font-mono text-[var(--text-subtle)] font-semibold">
                   {sensor.model}
                 </span>
                 {getStatusBadge(isConnected ? sensor.status : 'Disconnected')}
               </div>
 
-              <h3 className="text-base font-bold text-[#172033] mb-1">{sensor.name}</h3>
-              <p className="text-xs text-slate-500 mb-4 line-clamp-2">{sensor.description}</p>
+              <h3 className="text-base font-bold text-[var(--text-main)] mb-1">{sensor.name}</h3>
+              <p className="text-xs text-[var(--text-muted)] mb-4 line-clamp-2">{sensor.description}</p>
             </div>
 
-            <div className="pt-3 border-t border-slate-100/80 space-y-2">
+            <div className="pt-3 border-t border-[var(--border-divider)] space-y-2">
               <div className="flex items-baseline justify-between">
-                <span className="text-xs font-semibold text-slate-400">Current Reading</span>
+                <span className="text-xs font-semibold text-[var(--text-subtle)]">Current Reading</span>
                 <div className="flex items-baseline gap-1">
-                  <span className="text-xl font-extrabold text-[#172033]">
+                  <span className="text-xl font-extrabold text-[var(--text-main)]">
                     {isConnected ? sensor.value : '--'}
                   </span>
-                  <span className="text-xs font-bold text-slate-500">{sensor.unit}</span>
+                  <span className="text-xs font-bold text-[var(--text-muted)]">{sensor.unit}</span>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
+              <div className="flex items-center justify-between text-[11px] text-[var(--text-subtle)] font-medium">
                 <span>Interface: {sensor.busInterface}</span>
                 <span>Accuracy: {sensor.accuracy}</span>
               </div>

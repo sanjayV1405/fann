@@ -32,6 +32,12 @@ interface HardwareContextType {
   activePage: string;
   setActivePage: (page: string) => void;
 
+  // Theme
+  theme: 'light' | 'dark';
+  themeMode: import('../types').ThemeMode;
+  setThemeMode: (mode: import('../types').ThemeMode) => void;
+  toggleTheme: () => void;
+
   // Connection
   connectionStatus: ConnectionStatus;
   isConnecting: boolean;
@@ -76,6 +82,8 @@ interface HardwareContextType {
 }
 
 const defaultSettings: UserSettings = {
+  theme: 'light',
+  themeMode: 'light',
   tempUnit: 'C',
   esp32Ip: '192.168.1.184',
   port: 80,
@@ -88,6 +96,33 @@ const defaultSettings: UserSettings = {
   simulationMode: true,
 };
 
+const playSwitchSound = (isDark: boolean) => {
+  try {
+    const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const now = ctx.currentTime;
+    osc.type = 'sine';
+    if (isDark) {
+      osc.frequency.setValueAtTime(540, now);
+      osc.frequency.exponentialRampToValueAtTime(320, now + 0.08);
+    } else {
+      osc.frequency.setValueAtTime(320, now);
+      osc.frequency.exponentialRampToValueAtTime(580, now + 0.08);
+    }
+    gain.gain.setValueAtTime(0.06, now);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.09);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.1);
+  } catch {
+    // audio context may require prior user interaction
+  }
+};
+
 const HardwareContext = createContext<HardwareContextType | null>(null);
 
 export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -95,6 +130,20 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connected');
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isApplyingSpeed, setIsApplyingSpeed] = useState<boolean>(false);
+
+  // Theme Mode ('light' | 'dark' | 'system')
+  const [themeMode, setThemeModeState] = useState<import('../types').ThemeMode>(() => {
+    try {
+      const saved = localStorage.getItem('airloop_theme_mode');
+      if (saved === 'light' || saved === 'dark' || saved === 'system') return saved;
+      return 'light';
+    } catch {
+      return 'light';
+    }
+  });
+
+  // Effective Theme ('light' | 'dark')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
   // Settings
   const [settings, setSettings] = useState<UserSettings>(() => {
@@ -105,6 +154,94 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       return defaultSettings;
     }
   });
+
+  // Apply and resolve theme
+  useEffect(() => {
+    const resolve = (): 'light' | 'dark' => {
+      if (themeMode === 'system') {
+        return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+          ? 'dark'
+          : 'light';
+      }
+      return themeMode;
+    };
+
+    const active = resolve();
+    setTheme(active);
+
+    // Apply smooth transition class
+    document.documentElement.classList.add('theme-transition');
+    const timer = setTimeout(() => {
+      document.documentElement.classList.remove('theme-transition');
+    }, 450);
+
+    // Apply class and data-theme
+    if (active === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.setAttribute('data-theme', 'light');
+    }
+
+    // Update meta theme-color
+    const meta = document.querySelector('meta[name="theme-color"]');
+    if (meta) {
+      meta.setAttribute('content', active === 'dark' ? '#0A0E1A' : '#F5F8FC');
+    }
+
+    return () => clearTimeout(timer);
+  }, [themeMode]);
+
+  // Listen for system theme changes if themeMode is 'system'
+  useEffect(() => {
+    if (themeMode !== 'system') return;
+    const mq = window.matchMedia('(prefers-color-scheme: dark)');
+    const handler = (e: MediaQueryListEvent) => {
+      const active = e.matches ? 'dark' : 'light';
+      setTheme(active);
+      document.documentElement.classList.toggle('dark', active === 'dark');
+      document.documentElement.setAttribute('data-theme', active);
+    };
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, [themeMode]);
+
+  const setThemeMode = useCallback(
+    (mode: import('../types').ThemeMode) => {
+      setThemeModeState(mode);
+      try {
+        localStorage.setItem('airloop_theme_mode', mode);
+      } catch {}
+      if (settings.soundEnabled) {
+        const nextIsDark =
+          mode === 'dark' ||
+          (mode === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        playSwitchSound(nextIsDark);
+      }
+    },
+    [settings.soundEnabled]
+  );
+
+  const toggleTheme = useCallback(() => {
+    const nextTheme = theme === 'dark' ? 'light' : 'dark';
+    setThemeMode(nextTheme);
+  }, [theme, setThemeMode]);
+
+  // Global keyboard shortcut Alt+T or Ctrl+Shift+T
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (
+        (e.altKey && (e.key === 't' || e.key === 'T')) ||
+        (e.ctrlKey && e.shiftKey && (e.key === 't' || e.key === 'T'))
+      ) {
+        e.preventDefault();
+        toggleTheme();
+      }
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [toggleTheme]);
 
   // Sensor & Fan States
   const [climateData, setClimateData] = useState<ClimateData>(initialClimateData);
@@ -398,6 +535,10 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       value={{
         activePage,
         setActivePage,
+        theme,
+        themeMode,
+        setThemeMode,
+        toggleTheme,
         connectionStatus,
         isConnecting,
         connectDevice,

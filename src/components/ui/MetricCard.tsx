@@ -22,7 +22,7 @@ interface MetricCardProps {
 
 export const MetricCard: React.FC<MetricCardProps> = ({
   icon: Icon,
-  iconBgColor = 'bg-blue-50/80 text-blue-500',
+  iconBgColor = 'bg-blue-50/80 dark:bg-blue-950/40 text-blue-500',
   iconColor = 'text-blue-500',
   label,
   value,
@@ -34,38 +34,36 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
   return (
     <div
-      className="relative overflow-hidden rounded-[26px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none"
+      className="relative overflow-hidden rounded-[26px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none glass-card"
       style={{
-        background: 'rgba(255, 255, 255, 0.72)',
-        backdropFilter: 'blur(20px)',
-        WebkitBackdropFilter: 'blur(20px)',
-        border: '1.5px solid rgba(255, 255, 255, 0.88)',
-        boxShadow: '0 14px 34px -10px rgba(70, 100, 170, 0.08), 0 2px 6px rgba(255, 255, 255, 0.8) inset',
+        background: 'var(--glass-card-bg)',
+        borderColor: 'var(--glass-card-border)',
+        boxShadow: 'var(--glass-card-shadow)',
       }}
     >
       {/* Top row: Icon + Label */}
       <div className="flex items-center gap-3 mb-3">
         <div
-          className={`w-9 h-9 rounded-xl flex items-center justify-center border border-white/90 shadow-sm ${iconBgColor}`}
+          className={`w-9 h-9 rounded-xl flex items-center justify-center border border-white/90 dark:border-white/10 shadow-sm ${iconBgColor}`}
         >
           <Icon className={`w-5 h-5 ${iconColor}`} />
         </div>
-        <span className="text-xs font-semibold text-slate-500 tracking-wide">{label}</span>
+        <span className="text-xs font-semibold text-[var(--text-muted)] tracking-wide">{label}</span>
       </div>
 
       {/* Middle row: Large Value & Badges */}
       <div className="flex items-baseline justify-between mb-2">
         <div className="flex items-baseline gap-1">
-          <span className="text-[28px] font-extrabold text-[#172033] tracking-tight">{value}</span>
-          {unit && <span className="text-sm font-semibold text-slate-500">{unit}</span>}
+          <span className="text-[28px] font-extrabold text-[var(--text-main)] tracking-tight">{value}</span>
+          {unit && <span className="text-sm font-semibold text-[var(--text-muted)]">{unit}</span>}
         </div>
 
         {badge && (
           <div
             className={`text-[11px] font-semibold px-2 py-0.5 rounded-full flex items-center gap-0.5 ${
               badge.type === 'purple'
-                ? 'bg-purple-50 text-purple-600 border border-purple-200/60'
-                : 'bg-emerald-50 text-emerald-600 border border-emerald-200/60'
+                ? 'bg-purple-50 dark:bg-purple-950/50 text-purple-600 dark:text-purple-300 border border-purple-200/60 dark:border-purple-800/40'
+                : 'bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40'
             }`}
           >
             <span>{badge.text}</span>
@@ -73,7 +71,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
         )}
 
         {statusDot && (
-          <div className="flex items-center gap-1.5 text-xs font-semibold text-[#172033]">
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-main)]">
             <span
               className="w-2 h-2 rounded-full"
               style={{
@@ -89,7 +87,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       {/* Bottom Visualization: Wave or Equalizer Bar Graph */}
       <div className="h-9 w-full flex items-end overflow-hidden pt-1">
         {waveType === 'bars' ? (
-          // 8-bar equalizer graphic for Fan Status (as shown in Image 2)
+          // 8-bar equalizer graphic for Fan Status
           <div className="w-full flex items-end justify-between gap-1.5 h-6 px-1">
             {[15, 25, 38, 50, 62, 75, 88, 100].map((threshold, idx) => {
               const isActive = fanSpeed >= threshold;
@@ -102,8 +100,8 @@ export const MetricCard: React.FC<MetricCardProps> = ({
                     height: `${barHeight}px`,
                     background: isActive
                       ? 'linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%)'
-                      : 'rgba(219, 234, 254, 0.45)',
-                    boxShadow: isActive ? '0 1px 4px rgba(59, 130, 246, 0.3)' : 'none',
+                      : 'var(--equalizer-inactive)',
+                    boxShadow: isActive ? '0 1px 4px rgba(59, 130, 246, 0.35)' : 'none',
                   }}
                 />
               );

@@ -19,8 +19,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  BarChart,
-  Bar,
 } from 'recharts';
 import { useHardware } from '../context/HardwareContext';
 
@@ -40,6 +38,33 @@ export const HistoryPage: React.FC = () => {
   const minTemp = Math.min(...temps, 100).toFixed(1);
   const avgHum = Math.round(hums.reduce((a, b) => a + b, 0) / (hums.length || 1));
 
+  // Custom Chart Tooltip
+  const CustomHistoryTooltip = ({ active, payload, label }: any) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          className="rounded-2xl p-2.5 shadow-xl border select-none glass-card"
+          style={{
+            background: 'var(--dropdown-bg)',
+            backdropFilter: 'blur(20px)',
+            borderColor: 'var(--dropdown-border)',
+            boxShadow: 'var(--glass-shadow)',
+          }}
+        >
+          <p className="text-[10px] font-bold text-[var(--text-subtle)] mb-1">{label}</p>
+          {payload.map((entry: any, index: number) => (
+            <div key={`item-${index}`} className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)]">
+              <span className="w-2 h-2 rounded-full" style={{ backgroundColor: entry.color }} />
+              <span className="capitalize">{entry.name}:</span>
+              <span>{entry.value}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 12 }}
@@ -51,25 +76,25 @@ export const HistoryPage: React.FC = () => {
       {/* Header and Export Actions */}
       <div className="flex flex-wrap items-center justify-between gap-4">
         <div className="space-y-1">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 backdrop-blur-md border border-white/90 shadow-sm text-xs font-semibold text-indigo-600">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-indigo-600 dark:text-indigo-400">
             <Clock className="w-3.5 h-3.5 text-indigo-500" />
             <span>Telemetry Archive</span>
           </div>
-          <h1 className="text-3xl xl:text-4xl font-extrabold text-[#172033] tracking-tight">
+          <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
             Climate & Event <span className="text-gradient-airloop">History</span>
           </h1>
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[var(--text-muted)]">
             Audit logs, micro-climate curves, and real IoT historical telemetry.
           </p>
         </div>
 
-        {/* Data Export Buttons (CSV & JSON) */}
+        {/* Data Export Buttons */}
         <div className="flex items-center gap-2.5">
           <button
             onClick={() => exportData('csv')}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/80 hover:bg-white text-slate-800 text-xs font-bold border border-white/90 shadow-sm hover:shadow transition-all cursor-pointer"
+            className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/90 dark:border-white/10 shadow-sm hover:shadow transition-all cursor-pointer"
           >
-            <FileSpreadsheet className="w-4 h-4 text-emerald-600" />
+            <FileSpreadsheet className="w-4 h-4 text-emerald-500" />
             <span>Export CSV</span>
           </button>
 
@@ -86,81 +111,76 @@ export const HistoryPage: React.FC = () => {
       {/* Quick Summary KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         <div
-          className="p-4 rounded-3xl"
+          className="p-4 rounded-3xl glass-card"
           style={{
-            background: 'rgba(255, 255, 255, 0.72)',
-            backdropFilter: 'blur(20px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 8px 24px -6px rgba(70, 100, 170, 0.06)',
+            background: 'var(--glass-card-bg)',
+            borderColor: 'var(--glass-card-border)',
+            boxShadow: 'var(--glass-shadow-sm)',
           }}
         >
-          <span className="text-[11px] font-semibold text-slate-400">Average Temp</span>
+          <span className="text-[11px] font-semibold text-[var(--text-subtle)]">Average Temp</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-[#172033]">{avgTemp}°C</span>
+            <span className="text-2xl font-extrabold text-[var(--text-main)]">{avgTemp}°C</span>
           </div>
-          <span className="text-[10px] text-slate-500 font-medium">Over selected range</span>
+          <span className="text-[10px] text-[var(--text-muted)] font-medium">Over selected range</span>
         </div>
 
         <div
-          className="p-4 rounded-3xl"
+          className="p-4 rounded-3xl glass-card"
           style={{
-            background: 'rgba(255, 255, 255, 0.72)',
-            backdropFilter: 'blur(20px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 8px 24px -6px rgba(70, 100, 170, 0.06)',
+            background: 'var(--glass-card-bg)',
+            borderColor: 'var(--glass-card-border)',
+            boxShadow: 'var(--glass-shadow-sm)',
           }}
         >
-          <span className="text-[11px] font-semibold text-slate-400">Peak / Low Temp</span>
+          <span className="text-[11px] font-semibold text-[var(--text-subtle)]">Peak / Low Temp</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-sky-600">{maxTemp}°</span>
-            <span className="text-slate-400 text-sm">/</span>
-            <span className="text-2xl font-extrabold text-indigo-600">{minTemp}°</span>
+            <span className="text-2xl font-extrabold text-sky-500">{maxTemp}°</span>
+            <span className="text-[var(--text-subtle)] text-sm">/</span>
+            <span className="text-2xl font-extrabold text-indigo-500">{minTemp}°</span>
           </div>
-          <span className="text-[10px] text-slate-500 font-medium">Thermal variance: ±1.8°</span>
+          <span className="text-[10px] text-[var(--text-muted)] font-medium">Thermal variance: ±1.8°</span>
         </div>
 
         <div
-          className="p-4 rounded-3xl"
+          className="p-4 rounded-3xl glass-card"
           style={{
-            background: 'rgba(255, 255, 255, 0.72)',
-            backdropFilter: 'blur(20px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 8px 24px -6px rgba(70, 100, 170, 0.06)',
+            background: 'var(--glass-card-bg)',
+            borderColor: 'var(--glass-card-border)',
+            boxShadow: 'var(--glass-shadow-sm)',
           }}
         >
-          <span className="text-[11px] font-semibold text-slate-400">Mean Relative Humidity</span>
+          <span className="text-[11px] font-semibold text-[var(--text-subtle)]">Mean Relative Humidity</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-purple-600">{avgHum}%</span>
+            <span className="text-2xl font-extrabold text-purple-500">{avgHum}%</span>
           </div>
-          <span className="text-[10px] text-emerald-600 font-medium">Ideal comfort zone</span>
+          <span className="text-[10px] text-emerald-500 font-medium">Ideal comfort zone</span>
         </div>
 
         <div
-          className="p-4 rounded-3xl"
+          className="p-4 rounded-3xl glass-card"
           style={{
-            background: 'rgba(255, 255, 255, 0.72)',
-            backdropFilter: 'blur(20px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 8px 24px -6px rgba(70, 100, 170, 0.06)',
+            background: 'var(--glass-card-bg)',
+            borderColor: 'var(--glass-card-border)',
+            boxShadow: 'var(--glass-shadow-sm)',
           }}
         >
-          <span className="text-[11px] font-semibold text-slate-400">Logged Events</span>
+          <span className="text-[11px] font-semibold text-[var(--text-subtle)]">Logged Events</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-[#172033]">{events.length}</span>
-            <span className="text-xs font-semibold text-slate-500">records</span>
+            <span className="text-2xl font-extrabold text-[var(--text-main)]">{events.length}</span>
+            <span className="text-xs font-semibold text-[var(--text-muted)]">records</span>
           </div>
-          <span className="text-[10px] text-emerald-600 font-medium">100% telemetry synced</span>
+          <span className="text-[10px] text-emerald-500 font-medium">100% telemetry synced</span>
         </div>
       </div>
 
       {/* Main Glass History Chart Panel */}
       <div
-        className="rounded-[32px] p-6 select-none"
+        className="rounded-[32px] p-6 select-none glass-card"
         style={{
-          background: 'rgba(255, 255, 255, 0.72)',
-          backdropFilter: 'blur(24px)',
-          border: '1.5px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12)',
+          background: 'var(--glass-card-bg)',
+          borderColor: 'var(--glass-card-border)',
+          boxShadow: 'var(--glass-card-shadow)',
         }}
       >
         {/* Controls: Metric filter + Time ranges */}
@@ -173,7 +193,7 @@ export const HistoryPage: React.FC = () => {
                 className={`px-3.5 py-1.5 rounded-full text-xs font-bold capitalize transition-all cursor-pointer ${
                   activeMetric === m
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/25'
-                    : 'bg-white/60 text-slate-600 hover:bg-white border border-white/80'
+                    : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:text-[var(--text-main)] border border-black/5 dark:border-white/10'
                 }`}
               >
                 {m}
@@ -181,7 +201,7 @@ export const HistoryPage: React.FC = () => {
             ))}
           </div>
 
-          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100/70 border border-white/80">
+          <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10">
             {(['1h', '24h', '7d'] as const).map((range) => (
               <button
                 key={range}
@@ -189,7 +209,7 @@ export const HistoryPage: React.FC = () => {
                 className={`px-3 py-1 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                   historyRange === range
                     ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                 }`}
               >
                 {range}
@@ -198,104 +218,80 @@ export const HistoryPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Chart */}
+        {/* History Chart */}
         <div className="h-[280px] w-full">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={historyData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
                 <linearGradient id="histTempGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.3} />
+                  <stop offset="5%" stopColor="#38BDF8" stopOpacity={0.25} />
                   <stop offset="95%" stopColor="#38BDF8" stopOpacity={0.0} />
                 </linearGradient>
                 <linearGradient id="histHumGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#C084FC" stopOpacity={0.3} />
+                  <stop offset="5%" stopColor="#C084FC" stopOpacity={0.22} />
                   <stop offset="95%" stopColor="#C084FC" stopOpacity={0.0} />
+                </linearGradient>
+                <linearGradient id="histAqiGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#4ADE80" stopOpacity={0.25} />
+                  <stop offset="95%" stopColor="#4ADE80" stopOpacity={0.0} />
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.6)" />
-              <XAxis dataKey="time" tickLine={false} axisLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} />
-              <YAxis domain={[10, 45]} tickLine={false} axisLine={false} tick={{ fill: '#94A3B8', fontSize: 11 }} />
-              <Tooltip />
+              <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
+
+              <XAxis
+                dataKey="time"
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontWeight: 600 }}
+              />
+
+              <YAxis
+                domain={[0, 'auto']}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontWeight: 600 }}
+              />
+
+              <Tooltip content={<CustomHistoryTooltip />} />
 
               {(activeMetric === 'all' || activeMetric === 'temperature') && (
                 <Area
-                  type="natural"
+                  type="monotone"
+                  name="Temperature (°C)"
                   dataKey="temperature"
                   stroke="#38BDF8"
-                  strokeWidth={2.8}
+                  strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#histTempGrad)"
-                  name="Temperature (°C)"
                 />
               )}
 
               {(activeMetric === 'all' || activeMetric === 'humidity') && (
                 <Area
-                  type="natural"
+                  type="monotone"
+                  name="Humidity (%)"
                   dataKey="humidity"
                   stroke="#C084FC"
-                  strokeWidth={2.8}
+                  strokeWidth={2.5}
                   fillOpacity={1}
                   fill="url(#histHumGrad)"
-                  name="Humidity (%)"
+                />
+              )}
+
+              {(activeMetric === 'all' || activeMetric === 'aqi') && (
+                <Area
+                  type="monotone"
+                  name="AQI"
+                  dataKey="aqi"
+                  stroke="#4ADE80"
+                  strokeWidth={2.5}
+                  fillOpacity={1}
+                  fill="url(#histAqiGrad)"
                 />
               )}
             </AreaChart>
           </ResponsiveContainer>
-        </div>
-      </div>
-
-      {/* System Event Logs Table */}
-      <div
-        className="rounded-[32px] p-6 select-none"
-        style={{
-          background: 'rgba(255, 255, 255, 0.72)',
-          backdropFilter: 'blur(24px)',
-          border: '1.5px solid rgba(255, 255, 255, 0.9)',
-          boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12)',
-        }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-[#172033]">Hardware & System Event Log</h3>
-          <span className="text-xs text-slate-400 font-medium">Real-time chronologic audit</span>
-        </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
-            <thead>
-              <tr className="border-b border-slate-100 text-slate-400 font-bold">
-                <th className="pb-3 px-3">Time</th>
-                <th className="pb-3 px-3">Type</th>
-                <th className="pb-3 px-3">Severity</th>
-                <th className="pb-3 px-3">Event</th>
-                <th className="pb-3 px-3">Details</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {events.map((ev) => (
-                <tr key={ev.id} className="hover:bg-white/40 transition-colors">
-                  <td className="py-3 px-3 font-mono font-semibold text-slate-500">{ev.timestamp}</td>
-                  <td className="py-3 px-3 font-semibold text-slate-700 capitalize">{ev.type}</td>
-                  <td className="py-3 px-3">
-                    <span
-                      className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                        ev.severity === 'success'
-                          ? 'bg-emerald-50 text-emerald-700'
-                          : ev.severity === 'warning'
-                          ? 'bg-amber-50 text-amber-700'
-                          : 'bg-blue-50 text-blue-700'
-                      }`}
-                    >
-                      {ev.severity.toUpperCase()}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3 font-bold text-[#172033]">{ev.title}</td>
-                  <td className="py-3 px-3 text-slate-500">{ev.description}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
     </motion.div>

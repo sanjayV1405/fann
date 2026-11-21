@@ -8,6 +8,8 @@ export type AirQualityLevel = 'Good' | 'Moderate' | 'Poor';
 
 export type SensorHealthStatus = 'Healthy' | 'Warning' | 'Disconnected' | 'Unavailable';
 
+export type ThemeMode = 'light' | 'dark' | 'system';
+
 export interface ClimateData {
   temperature: number; // in Celsius
   humidity: number; // in percentage (0 - 100)
@@ -58,6 +60,8 @@ export interface SystemEvent {
 }
 
 export interface UserSettings {
+  theme: 'light' | 'dark';
+  themeMode: ThemeMode;
   tempUnit: 'C' | 'F';
   esp32Ip: string;
   port: number;

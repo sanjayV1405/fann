@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import {
-  Compass,
   BarChart2,
   Thermometer,
   Droplets,
@@ -33,24 +32,25 @@ export const EnvironmentPage: React.FC = () => {
 
   const isConnected = connectionStatus === 'connected';
 
-  // Custom Glass Tooltip matching Reference Image 3
+  // Custom Glass Tooltip
   const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
       return (
         <div
-          className="rounded-2xl p-2.5 shadow-xl border border-white/95 select-none"
+          className="rounded-2xl p-2.5 shadow-xl border select-none glass-card"
           style={{
-            background: 'rgba(255, 255, 255, 0.92)',
+            background: 'var(--dropdown-bg)',
             backdropFilter: 'blur(20px)',
-            boxShadow: '0 12px 28px -6px rgba(70, 100, 170, 0.16)',
+            borderColor: 'var(--dropdown-border)',
+            boxShadow: 'var(--glass-shadow)',
           }}
         >
-          <p className="text-[10px] font-bold text-slate-400 mb-1">{label}</p>
-          <div className="flex items-center gap-1.5 text-xs font-bold text-[#172033]">
+          <p className="text-[10px] font-bold text-[var(--text-subtle)] mb-1">{label}</p>
+          <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)]">
             <span className="w-2 h-2 rounded-full bg-blue-500" />
             <span>{payload[0]?.value}°C</span>
           </div>
-          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-600 mt-0.5">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-purple-600 dark:text-purple-400 mt-0.5">
             <span className="w-2 h-2 rounded-full bg-purple-500" />
             <span>{payload[1]?.value}%</span>
           </div>
@@ -72,120 +72,115 @@ export const EnvironmentPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         {/* Left Column: Heading */}
         <div className="lg:col-span-6 space-y-3">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/70 backdrop-blur-md border border-white/90 shadow-sm text-xs font-semibold text-emerald-600">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <Leaf className="w-3.5 h-3.5 text-emerald-500" />
             <span>Environment Monitor</span>
           </div>
 
-          <h1 className="text-4xl xl:text-5xl font-extrabold text-[#172033] tracking-tight leading-[1.15]">
+          <h1 className="text-4xl xl:text-5xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.15]">
             Know Your
             <br />
             <span className="text-gradient-airloop">Environment</span>
           </h1>
 
-          <p className="text-sm text-slate-500 font-medium max-w-md">
+          <p className="text-sm text-[var(--text-muted)] font-medium max-w-md">
             Real-time insights for a healthier and more comfortable space.
           </p>
         </div>
 
-        {/* Right Column: 3 Top Mini Cards (Exact match to Reference 3) */}
+        {/* Right Column: 3 Top Mini Cards */}
         <div className="lg:col-span-6 grid grid-cols-3 gap-4">
           {/* Card 1: Temperature */}
           <div
-            className="p-4 rounded-3xl relative select-none"
+            className="p-4 rounded-3xl relative select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(20px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
-            <div className="w-8 h-8 rounded-xl bg-sky-50 flex items-center justify-center text-sky-500 mb-2 border border-white shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-sky-50 dark:bg-sky-950/50 flex items-center justify-center text-sky-500 mb-2 border border-white/80 dark:border-white/10 shadow-sm">
               <Thermometer className="w-4 h-4" />
             </div>
             <div className="flex items-baseline justify-between">
-              <span className="text-xl font-extrabold text-[#172033]">
+              <span className="text-xl font-extrabold text-[var(--text-main)]">
                 {isConnected ? `${climateData.temperature}°C` : '--'}
               </span>
-              <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded-full">
                 ↑ 0.2°
               </span>
             </div>
-            <span className="text-[11px] font-semibold text-slate-400 mt-1 block">Temperature</span>
+            <span className="text-[11px] font-semibold text-[var(--text-subtle)] mt-1 block">Temperature</span>
           </div>
 
           {/* Card 2: Humidity */}
           <div
-            className="p-4 rounded-3xl relative select-none"
+            className="p-4 rounded-3xl relative select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(20px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
-            <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 mb-2 border border-white shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-blue-50 dark:bg-blue-950/50 flex items-center justify-center text-blue-500 mb-2 border border-white/80 dark:border-white/10 shadow-sm">
               <Droplets className="w-4 h-4" />
             </div>
             <div className="flex items-baseline justify-between">
-              <span className="text-xl font-extrabold text-[#172033]">
+              <span className="text-xl font-extrabold text-[var(--text-main)]">
                 {isConnected ? `${climateData.humidity}%` : '--'}
               </span>
-              <span className="text-[10px] font-bold text-purple-600 bg-purple-50 px-1.5 py-0.5 rounded-full">
+              <span className="text-[10px] font-bold text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-1.5 py-0.5 rounded-full">
                 ↑ 1%
               </span>
             </div>
-            <span className="text-[11px] font-semibold text-slate-400 mt-1 block">Humidity</span>
+            <span className="text-[11px] font-semibold text-[var(--text-subtle)] mt-1 block">Humidity</span>
           </div>
 
           {/* Card 3: Air Quality */}
           <div
-            className="p-4 rounded-3xl relative select-none"
+            className="p-4 rounded-3xl relative select-none glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(20px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
-            <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-500 mb-2 border border-white shadow-sm">
+            <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 flex items-center justify-center text-emerald-500 mb-2 border border-white/80 dark:border-white/10 shadow-sm">
               <Wind className="w-4 h-4" />
             </div>
             <div className="flex items-baseline justify-between">
-              <span className="text-xl font-extrabold text-[#172033]">
+              <span className="text-xl font-extrabold text-[var(--text-main)]">
                 {isConnected ? climateData.airQualityStatus : '--'}
               </span>
               <span className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_6px_#10B981]" />
             </div>
-            <span className="text-[11px] font-semibold text-slate-400 mt-1 block">Air Quality</span>
+            <span className="text-[11px] font-semibold text-[var(--text-subtle)] mt-1 block">Air Quality</span>
           </div>
         </div>
       </div>
 
-      {/* Middle Section: Climate Trends Chart (Left) & Dedicated Air Quality Card (Right) */}
+      {/* Middle Section: Climate Trends Chart & Air Quality Card */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: Climate Trends Recharts Panel (Exact match to Reference 3) */}
+        {/* Left Column: Climate Trends Recharts Panel */}
         <div className="lg:col-span-8">
           <div
-            className="rounded-[32px] p-6 select-none relative"
+            className="rounded-[32px] p-6 select-none relative glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12), 0 2px 6px rgba(255, 255, 255, 0.9) inset',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
-            {/* Chart Header: Title, Legend, Time Filters */}
+            {/* Chart Header */}
             <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 rounded-xl bg-blue-50 flex items-center justify-center text-blue-600 border border-blue-200/50">
+                <div className="w-8 h-8 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40">
                   <BarChart2 className="w-4 h-4" />
                 </div>
-                <h3 className="text-sm font-bold text-[#172033]">Climate Trends</h3>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">Climate Trends</h3>
 
                 {/* Legend */}
-                <div className="flex items-center gap-4 ml-3 text-xs font-semibold text-slate-500">
+                <div className="flex items-center gap-4 ml-3 text-xs font-semibold text-[var(--text-muted)]">
                   <div className="flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-sky-500" />
                     <span>Temperature (°C)</span>
@@ -197,8 +192,8 @@ export const EnvironmentPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Time Filters: 1h, 24h, 7d */}
-              <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100/70 border border-white/80">
+              {/* Time Filters */}
+              <div className="flex items-center gap-1.5 p-1 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10">
                 {(['1h', '24h', '7d'] as const).map((range) => {
                   const isActive = historyRange === range;
                   return (
@@ -208,7 +203,7 @@ export const EnvironmentPage: React.FC = () => {
                       className={`px-3 py-1 rounded-xl text-xs font-bold transition-all duration-200 cursor-pointer ${
                         isActive
                           ? 'bg-blue-600 text-white shadow-md shadow-blue-500/20'
-                          : 'text-slate-600 hover:text-slate-900'
+                          : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                       }`}
                     >
                       {range}
@@ -233,13 +228,13 @@ export const EnvironmentPage: React.FC = () => {
                     </linearGradient>
                   </defs>
 
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(226, 232, 240, 0.6)" />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--chart-grid)" />
 
                   <XAxis
                     dataKey="time"
                     tickLine={false}
                     axisLine={false}
-                    tick={{ fill: '#94A3B8', fontSize: 11, fontWeight: 600 }}
+                    tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontWeight: 600 }}
                   />
 
                   <YAxis
@@ -248,7 +243,7 @@ export const EnvironmentPage: React.FC = () => {
                     tickLine={false}
                     axisLine={false}
                     unit="°C"
-                    tick={{ fill: '#94A3B8', fontSize: 11, fontWeight: 600 }}
+                    tick={{ fill: 'var(--chart-axis)', fontSize: 11, fontWeight: 600 }}
                   />
 
                   <Tooltip content={<CustomTooltip />} />
@@ -278,37 +273,34 @@ export const EnvironmentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Air Quality Gauge Card (Exact match to Reference 3) */}
+        {/* Right Column: Air Quality Gauge Card */}
         <div className="lg:col-span-4">
           <div
-            className="h-full rounded-[32px] p-6 select-none flex flex-col justify-between"
+            className="h-full rounded-[32px] p-6 select-none flex flex-col justify-between glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(24px)',
-              WebkitBackdropFilter: 'blur(24px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 20px 45px -12px rgba(70, 100, 170, 0.12), 0 2px 6px rgba(255, 255, 255, 0.9) inset',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
             }}
           >
-            {/* Header: Leaf + Air Quality */}
+            {/* Header */}
             <div className="flex items-center gap-2.5 mb-2">
-              <div className="w-8 h-8 rounded-xl bg-emerald-50 flex items-center justify-center text-emerald-600 border border-emerald-200/50">
+              <div className="w-8 h-8 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 flex items-center justify-center text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/40">
                 <Leaf className="w-4 h-4" />
               </div>
-              <h3 className="text-sm font-bold text-[#172033]">Air Quality</h3>
+              <h3 className="text-sm font-bold text-[var(--text-main)]">Air Quality</h3>
             </div>
 
             {/* Circular Gauge Arc */}
             <div className="relative flex flex-col items-center justify-center my-3">
               <div className="relative w-44 h-44 flex items-center justify-center">
-                {/* Circular Track & Emerald Arc */}
                 <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
                   <circle
                     cx="80"
                     cy="80"
                     r="62"
                     fill="none"
-                    stroke="rgba(220, 252, 231, 0.7)"
+                    stroke="var(--dial-track)"
                     strokeWidth="11"
                   />
                   <circle
@@ -330,19 +322,19 @@ export const EnvironmentPage: React.FC = () => {
                   </defs>
                 </svg>
 
-                {/* Inner Disc with Leaf, "Good", and "AQI: 32" */}
+                {/* Inner Disc */}
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <Leaf className="w-6 h-6 text-emerald-600 mb-0.5" />
-                  <span className="text-2xl font-extrabold text-[#172033] tracking-tight">Good</span>
-                  <span className="text-xs font-semibold text-slate-500">
+                  <Leaf className="w-6 h-6 text-emerald-500 mb-0.5" />
+                  <span className="text-2xl font-extrabold text-[var(--text-main)] tracking-tight">Good</span>
+                  <span className="text-xs font-semibold text-[var(--text-muted)]">
                     AQI: {isConnected ? climateData.aqi : '--'}
                   </span>
                 </div>
               </div>
             </div>
 
-            {/* Pill: Air quality is excellent! */}
-            <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-emerald-50/80 border border-emerald-200/70 text-emerald-700 text-xs font-semibold">
+            {/* Pill */}
+            <div className="flex items-center justify-center gap-2 py-2.5 px-4 rounded-2xl bg-emerald-50/80 dark:bg-emerald-950/50 border border-emerald-200/70 dark:border-emerald-800/50 text-emerald-700 dark:text-emerald-300 text-xs font-semibold">
               <div className="w-4 h-4 rounded-full bg-emerald-500 text-white flex items-center justify-center">
                 <Check className="w-3 h-3 stroke-[3]" />
               </div>
@@ -352,25 +344,23 @@ export const EnvironmentPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Section: Left Insights Card & Right Decorative Living Card (Exact match to Reference 3) */}
+      {/* Bottom Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: Insights Card */}
         <div className="lg:col-span-7">
           <div
-            className="rounded-[30px] p-5 select-none flex items-center justify-between gap-4"
+            className="rounded-[30px] p-5 select-none flex items-center justify-between gap-4 glass-card"
             style={{
-              background: 'rgba(255, 255, 255, 0.72)',
-              backdropFilter: 'blur(20px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
             <div className="flex items-center gap-4">
-              {/* Glowing Lightbulb in glass circle */}
               <div
-                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-white"
+                className="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 border border-white/80 dark:border-white/10"
                 style={{
-                  background: 'linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%)',
+                  background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(99, 102, 241, 0.2) 100%)',
                   boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)',
                 }}
               >
@@ -378,18 +368,17 @@ export const EnvironmentPage: React.FC = () => {
               </div>
 
               <div>
-                <div className="flex items-center gap-1.5 text-xs font-bold text-[#172033] mb-0.5">
+                <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)] mb-0.5">
                   <span>💡 Insights</span>
                 </div>
-                <p className="text-xs text-slate-500 font-medium leading-relaxed">
+                <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed">
                   The temperature is 0.5°C higher than yesterday. Humidity remains in a healthy range.
                 </p>
               </div>
             </div>
 
-            {/* Right arrow button */}
             <button
-              className="w-9 h-9 rounded-full bg-white/80 hover:bg-white border border-white shadow-sm flex items-center justify-center text-slate-600 transition-all cursor-pointer shrink-0"
+              className="w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 border border-white/80 dark:border-white/10 shadow-sm flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer shrink-0"
               aria-label="View more insights"
             >
               <ChevronRight className="w-4 h-4" />
@@ -397,15 +386,14 @@ export const EnvironmentPage: React.FC = () => {
           </div>
         </div>
 
-        {/* Right Column: Decorative Living Atmosphere Card ("A healthier space, a happier you.") */}
+        {/* Right Column: Decorative Living Atmosphere Card */}
         <div className="lg:col-span-5">
           <div
-            className="rounded-[30px] p-4 select-none flex items-center justify-between relative overflow-hidden"
+            className="rounded-[30px] p-4 select-none flex items-center justify-between relative overflow-hidden glass-card"
             style={{
-              background: 'linear-gradient(135deg, rgba(238, 246, 255, 0.8) 0%, rgba(224, 242, 254, 0.6) 100%)',
-              backdropFilter: 'blur(20px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 12px 30px -8px rgba(70, 100, 170, 0.08)',
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
             {/* Potted Plant Visual */}
@@ -415,12 +403,12 @@ export const EnvironmentPage: React.FC = () => {
               </div>
 
               <div>
-                <p className="text-xs font-bold text-[#172033]">A healthier space,</p>
-                <p className="text-xs text-slate-600">a happier you.</p>
+                <p className="text-xs font-bold text-[var(--text-main)]">A healthier space,</p>
+                <p className="text-xs text-[var(--text-muted)]">a happier you.</p>
               </div>
             </div>
 
-            {/* Translucent Glass Bubbles / Spheres (as seen in Image 3) */}
+            {/* Translucent Glass Bubbles */}
             <div className="relative w-24 h-12 flex items-center justify-end z-0">
               <div
                 className="w-10 h-10 rounded-full absolute right-2"

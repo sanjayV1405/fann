@@ -1,49 +1,212 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  color-scheme: light;
+  --bg-app: #F5F8FC;
+  --text-main: #172033;
+  --text-muted: #64748B;
+  --text-subtle: #94A3B8;
+
+  /* Glassmorphism surfaces */
+  --glass-bg: rgba(255, 255, 255, 0.68);
+  --glass-bg-hover: rgba(255, 255, 255, 0.85);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.55);
+  --glass-border: rgba(255, 255, 255, 0.88);
+  --glass-border-subtle: rgba(226, 232, 240, 0.8);
+  --glass-shadow: 0 20px 45px -10px rgba(70, 100, 170, 0.08), 0 2px 6px rgba(255, 255, 255, 0.9) inset;
+  --glass-shadow-sm: 0 8px 24px -6px rgba(70, 100, 170, 0.06);
+
+  --glass-inset-bg: rgba(243, 247, 253, 0.65);
+  --glass-inset-border: rgba(255, 255, 255, 0.9);
+
+  --glass-card-bg: rgba(255, 255, 255, 0.72);
+  --glass-card-border: rgba(255, 255, 255, 0.88);
+  --glass-card-shadow: 0 14px 34px -10px rgba(70, 100, 170, 0.08), 0 2px 6px rgba(255, 255, 255, 0.8) inset;
+
+  --input-bg: rgba(255, 255, 255, 0.65);
+  --input-border: rgba(255, 255, 255, 0.85);
+
+  --dropdown-bg: rgba(255, 255, 255, 0.94);
+  --dropdown-border: rgba(255, 255, 255, 0.92);
+
+  --border-divider: rgba(226, 232, 240, 0.8);
+  --item-hover-bg: rgba(241, 245, 249, 0.8);
+
+  --badge-bg: rgba(255, 255, 255, 0.7);
+  --badge-border: rgba(255, 255, 255, 0.9);
+
+  --slider-bg: #E2E8F0;
+  --equalizer-inactive: rgba(219, 234, 254, 0.45);
+
+  /* Background atmosphere glows */
+  --glow-sun: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(220, 235, 255, 0.45) 50%, transparent 75%);
+  --glow-airwave: radial-gradient(ellipse at center, rgba(165, 180, 252, 0.22) 0%, rgba(192, 132, 252, 0.12) 40%, transparent 70%);
+  --glow-ambient: radial-gradient(circle, rgba(224, 242, 254, 0.4) 0%, rgba(243, 232, 255, 0.3) 50%, transparent 75%);
+  --foliage-opacity: 0.35;
+
+  /* Climate Ring 3D */
+  --dial-outer-bg: radial-gradient(135deg, rgba(255, 255, 255, 0.75) 0%, rgba(240, 246, 255, 0.45) 100%);
+  --dial-inner-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.88) 0%, rgba(245, 250, 255, 0.7) 100%);
+  --dial-border: rgba(255, 255, 255, 0.95);
+  --dial-track: rgba(224, 235, 250, 0.55);
+  --dial-glow: radial-gradient(circle, rgba(147, 197, 253, 0.28) 0%, rgba(196, 181, 253, 0.18) 45%, transparent 70%);
+
+  /* 3D Fan Visual */
+  --fan-housing-bg: linear-gradient(145deg, rgba(255, 255, 255, 0.94) 0%, rgba(225, 235, 250, 0.8) 100%);
+  --fan-housing-border: rgba(255, 255, 255, 0.95);
+  --fan-housing-shadow: 0 24px 60px -12px rgba(70, 100, 170, 0.22), 0 10px 25px rgba(255, 255, 255, 0.95) inset, 0 -8px 20px rgba(160, 190, 240, 0.3) inset;
+  --fan-shroud-bg: radial-gradient(circle at 40% 30%, rgba(255, 255, 255, 0.92) 0%, rgba(210, 225, 245, 0.6) 80%, rgba(180, 205, 240, 0.8) 100%);
+  --fan-base-tier1: linear-gradient(180deg, #FFFFFF 0%, #E2EDFC 100%);
+  --fan-base-tier2: linear-gradient(180deg, #E6F0FD 0%, #CFDEF5 100%);
+  --fan-base-border: rgba(255, 255, 255, 0.85);
+
+  /* Charts */
+  --chart-grid: rgba(226, 232, 240, 0.6);
+  --chart-axis: #94A3B8;
+}
+
+.dark {
+  color-scheme: dark;
+  --bg-app: #0A0E1A;
+  --text-main: #F8FAFC;
+  --text-muted: #94A3B8;
+  --text-subtle: #64748B;
+
+  /* Glassmorphism surfaces for Dark Mode */
+  --glass-bg: rgba(18, 25, 41, 0.72);
+  --glass-bg-hover: rgba(26, 36, 58, 0.85);
+  --glass-bg-subtle: rgba(13, 19, 32, 0.6);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --glass-border-subtle: rgba(255, 255, 255, 0.08);
+  --glass-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.6), 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+  --glass-shadow-sm: 0 8px 24px -6px rgba(0, 0, 0, 0.45);
+
+  --glass-inset-bg: rgba(13, 19, 33, 0.75);
+  --glass-inset-border: rgba(255, 255, 255, 0.08);
+
+  --glass-card-bg: rgba(18, 26, 43, 0.74);
+  --glass-card-border: rgba(255, 255, 255, 0.11);
+  --glass-card-shadow: 0 16px 36px -10px rgba(0, 0, 0, 0.55), 0 1px 1px rgba(255, 255, 255, 0.1) inset;
+
+  --input-bg: rgba(14, 20, 34, 0.75);
+  --input-border: rgba(255, 255, 255, 0.14);
+
+  --dropdown-bg: rgba(15, 22, 38, 0.96);
+  --dropdown-border: rgba(255, 255, 255, 0.15);
+
+  --border-divider: rgba(255, 255, 255, 0.08);
+  --item-hover-bg: rgba(255, 255, 255, 0.07);
+
+  --badge-bg: rgba(22, 31, 52, 0.7);
+  --badge-border: rgba(255, 255, 255, 0.12);
+
+  --slider-bg: #1E293B;
+  --equalizer-inactive: rgba(30, 41, 59, 0.6);
+
+  /* Background atmosphere glows for Dark Mode */
+  --glow-sun: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(30, 58, 138, 0.15) 50%, transparent 75%);
+  --glow-airwave: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.22) 0%, rgba(168, 85, 247, 0.14) 40%, transparent 70%);
+  --glow-ambient: radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, rgba(124, 58, 237, 0.12) 50%, transparent 75%);
+  --foliage-opacity: 0.18;
+
+  /* Climate Ring 3D Dark */
+  --dial-outer-bg: radial-gradient(135deg, rgba(26, 36, 58, 0.85) 0%, rgba(15, 22, 38, 0.72) 100%);
+  --dial-inner-bg: linear-gradient(145deg, rgba(22, 31, 52, 0.95) 0%, rgba(13, 19, 33, 0.9) 100%);
+  --dial-border: rgba(255, 255, 255, 0.14);
+  --dial-track: rgba(51, 65, 85, 0.5);
+  --dial-glow: radial-gradient(circle, rgba(59, 130, 246, 0.35) 0%, rgba(147, 51, 234, 0.25) 45%, transparent 70%);
+
+  /* 3D Fan Visual Dark */
+  --fan-housing-bg: linear-gradient(145deg, rgba(30, 41, 65, 0.95) 0%, rgba(15, 23, 42, 0.92) 100%);
+  --fan-housing-border: rgba(255, 255, 255, 0.15);
+  --fan-housing-shadow: 0 24px 60px -12px rgba(0, 0, 0, 0.65), 0 10px 25px rgba(255, 255, 255, 0.08) inset, 0 -8px 20px rgba(15, 23, 42, 0.6) inset;
+  --fan-shroud-bg: radial-gradient(circle at 40% 30%, rgba(30, 41, 65, 0.9) 0%, rgba(15, 23, 42, 0.8) 80%, rgba(10, 15, 30, 0.9) 100%);
+  --fan-base-tier1: linear-gradient(180deg, #1E293B 0%, #0F172A 100%);
+  --fan-base-tier2: linear-gradient(180deg, #1E293B 0%, #0B1120 100%);
+  --fan-base-border: rgba(255, 255, 255, 0.12);
+
+  /* Charts */
+  --chart-grid: rgba(255, 255, 255, 0.08);
+  --chart-axis: #64748B;
+}
+
 @layer base {
   * {
-    border-color: rgba(229, 234, 242, 0.8);
+    border-color: var(--border-divider);
   }
   body {
     font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-app);
+    color: var(--text-main);
   }
+}
+
+/* Smooth Theme Switching Transitions */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition: background-color 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              color 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 380ms cubic-bezier(0.16, 1, 0.3, 1),
+              fill 380ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition-delay: 0s !important;
 }
 
 /* Glassmorphism Design System */
 .glass-surface {
-  background: rgba(255, 255, 255, 0.68);
+  background: var(--glass-bg);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1.5px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+}
+
+.glass-card {
+  background: var(--glass-card-bg);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border: 1px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 16px 40px -10px rgba(70, 100, 170, 0.08), 
-              0 2px 6px rgba(255, 255, 255, 0.9) inset;
+  border: 1.5px solid var(--glass-card-border);
+  box-shadow: var(--glass-card-shadow);
 }
 
 .glass-surface-sm {
-  background: rgba(255, 255, 255, 0.6);
+  background: var(--glass-bg-subtle);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: 0 8px 24px -6px rgba(70, 100, 170, 0.06);
+  border: 1.5px solid var(--glass-border);
+  box-shadow: var(--glass-shadow-sm);
 }
 
 .glass-inset {
-  background: rgba(243, 247, 253, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: inset 0 2px 5px rgba(100, 120, 160, 0.05);
+  background: var(--glass-inset-bg);
+  border: 1.5px solid var(--glass-inset-border);
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.08);
 }
 
 .glass-pill {
-  background: rgba(255, 255, 255, 0.7);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.9);
-  box-shadow: 0 4px 12px rgba(70, 100, 170, 0.05);
+  background: var(--badge-bg);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid var(--badge-border);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
 }
 
 .glass-pill-active {
-  background: linear-gradient(135deg, rgba(66, 165, 255, 0.16) 0%, rgba(183, 164, 255, 0.20) 100%);
-  border: 1px solid rgba(99, 102, 241, 0.3);
-  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.12);
+  background: linear-gradient(135deg, rgba(66, 165, 255, 0.22) 0%, rgba(183, 164, 255, 0.25) 100%);
+  border: 1.5px solid rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 16px rgba(99, 102, 241, 0.18);
+}
+
+.glass-dropdown {
+  background: var(--dropdown-bg);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1.5px solid var(--dropdown-border);
+  box-shadow: 0 24px 55px -12px rgba(0, 0, 0, 0.35);
 }
 
 /* Gradient Text */
@@ -53,8 +216,20 @@
   -webkit-text-fill-color: transparent;
 }
 
+.dark .text-gradient-airloop {
+  background: linear-gradient(135deg, #60A5FA 0%, #818CF8 50%, #C084FC 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .text-gradient-sky {
   background: linear-gradient(135deg, #0284C7 0%, #3B82F6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.dark .text-gradient-sky {
+  background: linear-gradient(135deg, #38BDF8 0%, #60A5FA 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -66,8 +241,13 @@
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.dark .btn-primary-gradient {
+  background: linear-gradient(135deg, #2563EB 0%, #4F46E5 60%, #7C3AED 100%);
+  box-shadow: 0 10px 25px -4px rgba(99, 102, 241, 0.4), 0 1px 2px rgba(255, 255, 255, 0.15) inset;
+}
+
 .btn-primary-gradient:hover {
-  box-shadow: 0 14px 30px -4px rgba(79, 70, 229, 0.45), 0 2px 4px rgba(255, 255, 255, 0.3) inset;
+  box-shadow: 0 14px 30px -4px rgba(79, 70, 229, 0.5), 0 2px 4px rgba(255, 255, 255, 0.3) inset;
   transform: translateY(-1px);
 }
 
@@ -90,6 +270,13 @@
 }
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.5);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.16);
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.28);
 }
 
 /* Fan Keyframe Rotation */

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Search, Wifi, WifiOff, Bell, ChevronDown, Check, X, ShieldAlert, Cpu } from 'lucide-react';
+import { Search, Wifi, WifiOff, Bell, ChevronDown, Check, X, Moon, Sun } from 'lucide-react';
 import { useHardware } from '../../context/HardwareContext';
+import { ThemeToggle } from '../ui/ThemeToggle';
 
 export const Header: React.FC = () => {
   const {
@@ -11,6 +12,8 @@ export const Header: React.FC = () => {
     setActivePage,
     events,
     climateData,
+    theme,
+    toggleTheme,
   } = useHardware();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -20,29 +23,28 @@ export const Header: React.FC = () => {
 
   return (
     <header className="relative flex items-center justify-between h-16 px-6 z-20 select-none">
-      {/* Search Input Bar (Matches exact frosted pill in Reference Images) */}
+      {/* Search Input Bar */}
       <div className="relative w-80 max-w-full">
         <div
-          className="flex items-center gap-2.5 px-4 py-2 rounded-full transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-400/40"
+          className="flex items-center gap-2.5 px-4 py-2 rounded-full transition-all duration-200 focus-within:ring-2 focus-within:ring-blue-400/40 glass-inset"
           style={{
-            background: 'rgba(255, 255, 255, 0.65)',
-            backdropFilter: 'blur(16px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.85)',
-            boxShadow: '0 4px 14px rgba(70, 100, 170, 0.05)',
+            background: 'var(--input-bg)',
+            border: '1.5px solid var(--input-border)',
+            boxShadow: 'var(--glass-shadow-sm)',
           }}
         >
-          <Search className="w-4 h-4 text-slate-400 shrink-0" />
+          <Search className="w-4 h-4 text-[var(--text-subtle)] shrink-0" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Search anything..."
-            className="w-full bg-transparent text-sm text-[#172033] placeholder-slate-400 outline-none"
+            className="w-full bg-transparent text-sm text-[var(--text-main)] placeholder-[var(--text-subtle)] outline-none"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="text-slate-400 hover:text-slate-600 p-0.5"
+              className="text-[var(--text-subtle)] hover:text-[var(--text-main)] p-0.5 transition-colors"
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -50,18 +52,18 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Controls: Status Pill + Notification Bell + Profile Avatar */}
-      <div className="flex items-center gap-3.5">
+      {/* Right Controls: Status Pill + Theme Toggle + Notification Bell + Profile Avatar */}
+      <div className="flex items-center gap-3">
         {/* Connected Status Pill */}
         <button
           onClick={toggleConnection}
           className="flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-semibold transition-all duration-200 hover:scale-[1.02] cursor-pointer"
           style={{
-            background: 'rgba(255, 255, 255, 0.72)',
+            background: 'var(--glass-bg)',
             backdropFilter: 'blur(16px)',
-            border: '1.5px solid rgba(255, 255, 255, 0.9)',
-            boxShadow: '0 4px 14px rgba(70, 100, 170, 0.06)',
-            color: '#172033',
+            border: '1.5px solid var(--glass-border)',
+            boxShadow: 'var(--glass-shadow-sm)',
+            color: 'var(--text-main)',
           }}
           title={isConnected ? 'Click to disconnect ESP32' : 'Click to connect ESP32'}
         >
@@ -74,27 +76,29 @@ export const Header: React.FC = () => {
           />
           <span>{isConnected ? 'Connected' : 'Offline'}</span>
           {isConnected ? (
-            <Wifi className="w-3.5 h-3.5 text-slate-500 ml-0.5" />
+            <Wifi className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
           ) : (
             <WifiOff className="w-3.5 h-3.5 text-rose-500 ml-0.5" />
           )}
         </button>
 
+        {/* Theme Switcher Toggle */}
+        <ThemeToggle />
+
         {/* Notification Bell Button */}
         <div className="relative">
           <button
             onClick={() => setShowNotifications(!showNotifications)}
-            className="relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:bg-white/80"
+            className="relative w-9 h-9 rounded-full flex items-center justify-center transition-all duration-200 hover:scale-[1.04]"
             style={{
-              background: 'rgba(255, 255, 255, 0.7)',
+              background: 'var(--glass-bg)',
               backdropFilter: 'blur(16px)',
-              border: '1.5px solid rgba(255, 255, 255, 0.9)',
-              boxShadow: '0 4px 12px rgba(70, 100, 170, 0.05)',
+              border: '1.5px solid var(--glass-border)',
+              boxShadow: 'var(--glass-shadow-sm)',
             }}
             aria-label="View notifications"
           >
-            <Bell className="w-4 h-4 text-slate-600" />
-            {/* Red Badge Counter "1" as seen in all 3 reference images */}
+            <Bell className="w-4 h-4 text-[var(--text-muted)]" />
             <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
               1
             </span>
@@ -103,16 +107,17 @@ export const Header: React.FC = () => {
           {/* Notifications Dropdown Drawer */}
           {showNotifications && (
             <div
-              className="absolute right-0 mt-3 w-80 rounded-2xl p-4 shadow-xl border border-white/90 z-50 animate-in fade-in zoom-in-95 duration-200"
+              className="absolute right-0 mt-3 w-80 rounded-2xl p-4 shadow-xl border z-50 animate-in fade-in zoom-in-95 duration-200"
               style={{
-                background: 'rgba(255, 255, 255, 0.92)',
-                backdropFilter: 'blur(24px)',
-                boxShadow: '0 20px 45px -10px rgba(70, 100, 170, 0.18)',
+                background: 'var(--dropdown-bg)',
+                backdropFilter: 'blur(28px)',
+                borderColor: 'var(--dropdown-border)',
+                boxShadow: 'var(--glass-shadow)',
               }}
             >
-              <div className="flex items-center justify-between pb-2 border-b border-slate-100 mb-2">
-                <span className="text-xs font-bold text-slate-800">Notifications & Alerts</span>
-                <span className="text-[10px] text-blue-600 font-semibold cursor-pointer">
+              <div className="flex items-center justify-between pb-2 border-b border-[var(--border-divider)] mb-2">
+                <span className="text-xs font-bold text-[var(--text-main)]">Notifications & Alerts</span>
+                <span className="text-[10px] text-blue-500 font-semibold cursor-pointer hover:underline">
                   Clear all
                 </span>
               </div>
@@ -121,23 +126,23 @@ export const Header: React.FC = () => {
                 {events.slice(0, 4).map((ev) => (
                   <div
                     key={ev.id}
-                    className="p-2.5 rounded-xl bg-slate-50/80 border border-slate-100 flex items-start gap-2.5 text-left"
+                    className="p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-start gap-2.5 text-left transition-colors"
                   >
                     <div
                       className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
                         ev.severity === 'success'
-                          ? 'bg-emerald-100 text-emerald-600'
+                          ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400'
                           : ev.severity === 'warning'
-                          ? 'bg-amber-100 text-amber-600'
-                          : 'bg-blue-100 text-blue-600'
+                          ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400'
+                          : 'bg-blue-100 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400'
                       }`}
                     >
                       <Check className="w-3.5 h-3.5" />
                     </div>
                     <div>
-                      <p className="text-xs font-semibold text-slate-800">{ev.title}</p>
-                      <p className="text-[11px] text-slate-500 line-clamp-2">{ev.description}</p>
-                      <span className="text-[9px] text-slate-400">{ev.timestamp}</span>
+                      <p className="text-xs font-semibold text-[var(--text-main)]">{ev.title}</p>
+                      <p className="text-[11px] text-[var(--text-muted)] line-clamp-2">{ev.description}</p>
+                      <span className="text-[9px] text-[var(--text-subtle)]">{ev.timestamp}</span>
                     </div>
                   </div>
                 ))}
@@ -146,40 +151,39 @@ export const Header: React.FC = () => {
           )}
         </div>
 
-        {/* User Profile Sanjay (matches avatar & chevron in Reference Images) */}
+        {/* User Profile Sanjay */}
         <div className="relative">
           <div
             onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="flex items-center gap-1.5 p-1 pr-2 rounded-full cursor-pointer hover:bg-white/60 transition-colors"
+            className="flex items-center gap-1.5 p-1 pr-2 rounded-full cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
           >
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white shadow-sm bg-gradient-to-tr from-blue-400 to-indigo-500">
-              {/* Photo matching handsome Sanjay from reference images */}
+            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/80 dark:border-white/20 shadow-sm bg-gradient-to-tr from-blue-400 to-indigo-500">
               <img
                 src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
                 alt="Sanjay"
                 className="w-full h-full object-cover"
                 onError={(e) => {
-                  // Fallback avatar
                   (e.target as HTMLImageElement).src =
                     'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80';
                 }}
               />
             </div>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-600" />
+            <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />
           </div>
 
           {/* User Menu Popover */}
           {showProfileMenu && (
             <div
-              className="absolute right-0 mt-3 w-64 rounded-2xl p-4 shadow-xl border border-white/90 z-50 animate-in fade-in zoom-in-95 duration-200"
+              className="absolute right-0 mt-3 w-64 rounded-2xl p-4 shadow-xl border z-50 animate-in fade-in zoom-in-95 duration-200"
               style={{
-                background: 'rgba(255, 255, 255, 0.94)',
-                backdropFilter: 'blur(24px)',
-                boxShadow: '0 20px 45px -10px rgba(70, 100, 170, 0.18)',
+                background: 'var(--dropdown-bg)',
+                backdropFilter: 'blur(28px)',
+                borderColor: 'var(--dropdown-border)',
+                boxShadow: 'var(--glass-shadow)',
               }}
             >
-              <div className="flex items-center gap-3 pb-3 border-b border-slate-100">
-                <div className="w-10 h-10 rounded-full overflow-hidden border border-white shadow">
+              <div className="flex items-center gap-3 pb-3 border-b border-[var(--border-divider)]">
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-white/80 dark:border-white/20 shadow">
                   <img
                     src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
                     alt="Sanjay"
@@ -187,18 +191,31 @@ export const Header: React.FC = () => {
                   />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-slate-800">Sanjay</h4>
-                  <p className="text-xs text-slate-500">Living Room Hub</p>
+                  <h4 className="text-sm font-bold text-[var(--text-main)]">Sanjay</h4>
+                  <p className="text-xs text-[var(--text-muted)]">Living Room Hub</p>
                 </div>
               </div>
 
               <div className="mt-2 space-y-1 text-xs">
                 <button
                   onClick={() => {
+                    toggleTheme();
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 font-medium text-[var(--text-main)] flex items-center justify-between"
+                >
+                  <span className="flex items-center gap-2">
+                    {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-sky-500" />}
+                    <span>{theme === 'dark' ? 'Light Theme' : 'Dark Theme'}</span>
+                  </span>
+                  <span className="text-[10px] text-[var(--text-subtle)] font-mono">Alt+T</span>
+                </button>
+                <button
+                  onClick={() => {
                     setActivePage('settings');
                     setShowProfileMenu(false);
                   }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 font-medium text-slate-700"
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 font-medium text-[var(--text-main)]"
                 >
                   Device Settings ({climateData.esp32Ip})
                 </button>
@@ -207,7 +224,7 @@ export const Header: React.FC = () => {
                     toggleConnection();
                     setShowProfileMenu(false);
                   }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-slate-100 font-medium text-slate-700"
+                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 font-medium text-[var(--text-main)]"
                 >
                   {isConnected ? 'Disconnect Hardware' : 'Connect Hardware'}
                 </button>

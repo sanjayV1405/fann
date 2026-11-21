@@ -9,38 +9,41 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const { toasts, dismissToast } = useHardware();
 
   return (
-    <div className="relative min-h-screen w-full bg-[#F5F8FC] text-[#172033] flex overflow-hidden">
-      {/* Dynamic Background Atmosphere (Soft Blue-Lavender Gradients, Airwave Swoosh & Daylight) */}
+    <div className="relative min-h-screen w-full bg-[var(--bg-app)] text-[var(--text-main)] flex overflow-hidden transition-colors duration-300">
+      {/* Dynamic Background Atmosphere */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        {/* Soft daylight radial glow from upper left */}
+        {/* Upper left radial daylight / cyber blue glow */}
         <div
-          className="absolute -top-32 -left-20 w-[650px] h-[650px] rounded-full"
+          className="absolute -top-32 -left-20 w-[650px] h-[650px] rounded-full transition-all duration-700"
           style={{
-            background: 'radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(220, 235, 255, 0.45) 50%, transparent 75%)',
+            background: 'var(--glow-sun)',
             filter: 'blur(45px)',
           }}
         />
 
-        {/* Soft Lavender / Blue Airflow Curve across center (as seen in all 3 reference images) */}
+        {/* Center Airflow Curve */}
         <div
-          className="absolute top-1/3 left-1/4 w-[900px] h-[450px] -rotate-12 rounded-full"
+          className="absolute top-1/3 left-1/4 w-[900px] h-[450px] -rotate-12 rounded-full transition-all duration-700"
           style={{
-            background: 'radial-gradient(ellipse at center, rgba(165, 180, 252, 0.22) 0%, rgba(192, 132, 252, 0.12) 40%, transparent 70%)',
+            background: 'var(--glow-airwave)',
             filter: 'blur(60px)',
           }}
         />
 
-        {/* Ambient Warm Pearl / Daylight corner glow */}
+        {/* Ambient bottom corner glow */}
         <div
-          className="absolute -bottom-20 right-0 w-[550px] h-[550px] rounded-full"
+          className="absolute -bottom-20 right-0 w-[550px] h-[550px] rounded-full transition-all duration-700"
           style={{
-            background: 'radial-gradient(circle, rgba(224, 242, 254, 0.4) 0%, rgba(243, 232, 255, 0.3) 50%, transparent 75%)',
+            background: 'var(--glow-ambient)',
             filter: 'blur(55px)',
           }}
         />
 
-        {/* Atmospheric Floating Foliage Accent (bottom-left green leaf motif matching reference images) */}
-        <div className="absolute -bottom-6 -left-6 w-36 h-36 opacity-35 pointer-events-none">
+        {/* Atmospheric Floating Foliage Accent */}
+        <div
+          className="absolute -bottom-6 -left-6 w-36 h-36 pointer-events-none transition-opacity duration-500"
+          style={{ opacity: 'var(--foliage-opacity)' }}
+        >
           <svg viewBox="0 0 100 100" fill="none" className="w-full h-full rotate-45">
             <path
               d="M10 90 C 20 50 60 20 90 10 C 90 50 60 80 10 90 Z"
@@ -68,7 +71,7 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
         </main>
       </div>
 
-      {/* Floating System Notification Toast (Bottom Right as seen in Reference Image 1) */}
+      {/* Floating System Notification Toast */}
       <div className="fixed bottom-6 right-8 z-50 flex flex-col gap-2.5 pointer-events-none select-none">
         <AnimatePresence>
           {toasts.map((toast) => (
@@ -78,15 +81,15 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 15, scale: 0.95 }}
               transition={{ duration: 0.25 }}
-              className="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border border-white/95"
+              className="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border"
               style={{
-                background: 'rgba(255, 255, 255, 0.85)',
+                background: 'var(--dropdown-bg)',
                 backdropFilter: 'blur(20px)',
                 WebkitBackdropFilter: 'blur(20px)',
-                boxShadow: '0 16px 36px -8px rgba(70, 100, 170, 0.16)',
+                borderColor: 'var(--dropdown-border)',
+                boxShadow: 'var(--glass-shadow)',
               }}
             >
-              {/* Green checkmark circle (exact match to Image 1) */}
               <div
                 className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
                   toast.type === 'error'
@@ -103,14 +106,14 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
               <div className="text-left pr-2">
                 {toast.title && (
-                  <p className="text-xs font-bold text-[#172033] leading-tight">{toast.title}</p>
+                  <p className="text-xs font-bold text-[var(--text-main)] leading-tight">{toast.title}</p>
                 )}
-                <p className="text-xs text-slate-500 leading-tight">{toast.message}</p>
+                <p className="text-xs text-[var(--text-muted)] leading-tight">{toast.message}</p>
               </div>
 
               <button
                 onClick={() => dismissToast(toast.id)}
-                className="text-slate-400 hover:text-slate-600 p-1 -mr-1 rounded-lg transition-colors cursor-pointer"
+                className="text-[var(--text-subtle)] hover:text-[var(--text-main)] p-1 -mr-1 rounded-lg transition-colors cursor-pointer"
                 aria-label="Dismiss toast"
               >
                 <X className="w-4 h-4" />
