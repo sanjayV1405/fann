@@ -38,6 +38,11 @@ interface HardwareContextType {
   setThemeMode: (mode: import('../types').ThemeMode) => void;
   toggleTheme: () => void;
 
+  // Demo Mode
+  demoMode: boolean;
+  setDemoMode: (enabled: boolean) => Promise<void>;
+  toggleDemoMode: () => Promise<void>;
+
   // Connection
   connectionStatus: ConnectionStatus;
   isConnecting: boolean;
@@ -94,6 +99,7 @@ const defaultSettings: UserSettings = {
   soundEnabled: true,
   highGlassBlur: true,
   simulationMode: false,
+  demoMode: false,
 };
 
 const playSwitchSound = (isDark: boolean) => {
@@ -145,15 +151,25 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Effective Theme ('light' | 'dark')
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // Settings (simulationMode is false by default so it never fakes connection)
+  // Demo Mode state
+  const [demoMode, setDemoModeState] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('airloop_demo_mode') === 'true';
+    } catch {
+      return false;
+    }
+  });
+
+  // Settings
   const [settings, setSettings] = useState<UserSettings>(() => {
     try {
       const saved = localStorage.getItem('airloop_settings');
+      const isDemo = localStorage.getItem('airloop_demo_mode') === 'true';
       if (saved) {
         const parsed = JSON.parse(saved);
-        return { ...defaultSettings, ...parsed, simulationMode: false };
+        return { ...defaultSettings, ...parsed, simulationMode: isDemo, demoMode: isDemo };
       }
-      return defaultSettings;
+      return { ...defaultSettings, simulationMode: isDemo, demoMode: isDemo };
     } catch {
       return defaultSettings;
     }
@@ -266,11 +282,11 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Hardware Adapter instance
   const adapter = useMemo<IHardwareAdapter>(() => {
-    if (settings.simulationMode) {
+    if (demoMode || settings.simulationMode) {
       return new SimulatedESP32Adapter();
     }
     return new RealESP32Adapter(settings.esp32Ip, settings.port);
-  }, [settings.simulationMode, settings.esp32Ip, settings.port]);
+  }, [demoMode, settings.simulationMode, settings.esp32Ip, settings.port]);
 
   const showToast = useCallback((message: string, type: ToastState['type'] = 'info', title?: string) => {
     const id = 'toast-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
@@ -307,6 +323,71 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     });
   }, []);
 
+  // Set Demo Mode (simulates ESP32 connection & telemetry)
+  const setDemoMode = useCallback(
+    async (enabled: boolean) => {
+      setDemoModeState(enabled);
+      updateSettings({ demoMode: enabled, simulationMode: enabled });
+      try {
+        localStorage.setItem('airloop_demo_mode', enabled ? 'true' : 'false');
+      } catch {}
+
+      if (enabled) {
+        const sim = new SimulatedESP32Adapter();
+        await sim.connect(settings.esp32Ip, settings.port);
+        setConnectionStatus('connected');
+        const data = await sim.getStatus();
+        setClimateData(data);
+        setPendingSpeed(data.fanSpeed);
+        setPendingMode(data.fanMode);
+        const simSensors = await sim.getSensors();
+        setSensors(simSensors);
+        showToast(
+          'Demo Mode Enabled: Simulating active ESP32 connection & live telemetry.',
+          'success',
+          'Demo Connected'
+        );
+        addEvent({
+          type: 'hardware',
+          severity: 'success',
+          title: 'Demo Mode Enabled',
+          description: 'Simulating connected ESP32 with active sensors.',
+        });
+      } else {
+        const real = new RealESP32Adapter(settings.esp32Ip, settings.port);
+        const isRealConnected = await real.connect(settings.esp32Ip, settings.port);
+        if (isRealConnected) {
+          setConnectionStatus('connected');
+          const data = await real.getStatus();
+          setClimateData(data);
+          setPendingSpeed(data.fanSpeed);
+          setPendingMode(data.fanMode);
+          showToast('Real ESP32 connected.', 'success', 'ESP32 Online');
+        } else {
+          setConnectionStatus('disconnected');
+          setClimateData(initialClimateData);
+          setSensors(initialSensors);
+          showToast(
+            'Demo Mode Disabled: Device is offline (no physical ESP32 detected).',
+            'info',
+            'Real Hardware Mode'
+          );
+        }
+        addEvent({
+          type: 'hardware',
+          severity: 'info',
+          title: 'Demo Mode Disabled',
+          description: 'Reverted to physical hardware connection check.',
+        });
+      }
+    },
+    [settings.esp32Ip, settings.port, updateSettings, showToast, addEvent]
+  );
+
+  const toggleDemoMode = useCallback(async () => {
+    await setDemoMode(!demoMode);
+  }, [demoMode, setDemoMode]);
+
   // Update history data when range changes
   useEffect(() => {
     if (historyRange === '1h') setHistoryData(initial1hTrends);
@@ -314,11 +395,25 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     else setHistoryData(initial24hTrends);
   }, [historyRange]);
 
-  // Real ESP32 Connection probe on startup
+  // Real ESP32 Connection probe on startup (or simulated if demoMode)
   useEffect(() => {
     let isMounted = true;
     const probe = async () => {
       try {
+        if (demoMode || settings.simulationMode) {
+          const ok = await adapter.connect(settings.esp32Ip, settings.port);
+          if (isMounted && ok) {
+            setConnectionStatus('connected');
+            const data = await adapter.getStatus();
+            setClimateData(data);
+            setPendingSpeed(data.fanSpeed);
+            setPendingMode(data.fanMode);
+            const simSensors = await adapter.getSensors();
+            setSensors(simSensors);
+          }
+          return;
+        }
+
         const ok = await adapter.connect(settings.esp32Ip, settings.port);
         if (isMounted) {
           if (ok) {
@@ -344,9 +439,9 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return () => {
       isMounted = false;
     };
-  }, [adapter, settings.esp32Ip, settings.port, showToast]);
+  }, [adapter, demoMode, settings.simulationMode, settings.esp32Ip, settings.port, showToast]);
 
-  // Polling loop - strictly enforces real connectivity
+  // Polling loop - strictly enforces real connectivity unless demoMode
   useEffect(() => {
     if (connectionStatus !== 'connected') return;
 
@@ -358,15 +453,16 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           fanTargetSpeed: prev.fanTargetSpeed,
         }));
       } catch {
-        // Real ESP32 dropped or is unreachable
-        setConnectionStatus('disconnected');
-        setClimateData(initialClimateData);
-        showToast('Lost connection to ESP32. Status is offline.', 'warning', 'ESP32 Offline');
+        if (!demoMode && !settings.simulationMode) {
+          setConnectionStatus('disconnected');
+          setClimateData(initialClimateData);
+          showToast('Lost connection to ESP32. Status is offline.', 'warning', 'ESP32 Offline');
+        }
       }
     }, settings.pollingIntervalMs);
 
     return () => clearInterval(interval);
-  }, [connectionStatus, adapter, settings.pollingIntervalMs, showToast]);
+  }, [connectionStatus, adapter, demoMode, settings.simulationMode, settings.pollingIntervalMs, showToast]);
 
   // Connect
   const connectDevice = useCallback(
@@ -567,6 +663,9 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         themeMode,
         setThemeMode,
         toggleTheme,
+        demoMode,
+        setDemoMode,
+        toggleDemoMode,
         connectionStatus,
         isConnecting,
         connectDevice,

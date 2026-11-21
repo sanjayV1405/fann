@@ -11,6 +11,7 @@ import {
   Sun,
   Moon,
   Laptop,
+  Sparkles,
 } from 'lucide-react';
 import { useHardware } from '../context/HardwareContext';
 
@@ -18,6 +19,8 @@ export const SettingsPage: React.FC = () => {
   const {
     settings,
     updateSettings,
+    demoMode,
+    setDemoMode,
     connectionStatus,
     connectDevice,
     disconnectDevice,
@@ -72,6 +75,101 @@ export const SettingsPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Left Column: ESP32 Connection & IP Configuration */}
         <div className="lg:col-span-7 space-y-6">
+          {/* Hardware Demo Mode Card */}
+          <div
+            className={`rounded-[32px] p-6 select-none glass-card transition-all duration-300 relative overflow-hidden ${
+              demoMode
+                ? 'ring-2 ring-emerald-500/40 border-emerald-500/30'
+                : ''
+            }`}
+            style={{
+              background: 'var(--glass-card-bg)',
+              borderColor: 'var(--glass-card-border)',
+              boxShadow: 'var(--glass-card-shadow)',
+            }}
+          >
+            <div className="flex items-start justify-between gap-4">
+              <div className="flex items-center gap-3.5">
+                <div
+                  className={`w-11 h-11 rounded-2xl flex items-center justify-center border transition-all duration-300 ${
+                    demoMode
+                      ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30 shadow-sm shadow-emerald-500/20'
+                      : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border-indigo-200/50 dark:border-indigo-800/40'
+                  }`}
+                >
+                  <Sparkles className="w-5 h-5" />
+                </div>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-bold text-[var(--text-main)]">Hardware Demo Mode</h3>
+                    <span
+                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider transition-colors ${
+                        demoMode
+                          ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
+                          : 'bg-slate-200/70 dark:bg-slate-800 text-[var(--text-muted)] border border-slate-300/40 dark:border-slate-700'
+                      }`}
+                    >
+                      {demoMode ? 'Simulated Connected' : 'Physical Hardware Only'}
+                    </span>
+                  </div>
+                  <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-md leading-relaxed">
+                    {demoMode
+                      ? 'Simulating an active ESP32 connection with real-time sensor telemetry, speed controls, and 3D fan dynamics.'
+                      : 'Real hardware mode: strictly verifies physical ESP32. Shows Offline if unreachable on local network.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Smooth Pill Switch Button */}
+              <button
+                type="button"
+                role="switch"
+                aria-checked={demoMode}
+                onClick={() => setDemoMode(!demoMode)}
+                className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-300 ease-in-out focus:outline-none ${
+                  demoMode ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
+                }`}
+                title={demoMode ? 'Disable Demo Mode' : 'Enable Demo Mode'}
+              >
+                <span className="sr-only">Toggle Demo Mode</span>
+                <span
+                  className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-300 ease-in-out ${
+                    demoMode ? 'translate-x-5' : 'translate-x-0'
+                  }`}
+                />
+              </button>
+            </div>
+
+            {/* Quick status bar */}
+            <div
+              className={`mt-4 p-3.5 rounded-2xl flex items-center justify-between text-xs transition-colors duration-300 ${
+                demoMode
+                  ? 'bg-emerald-50/70 dark:bg-emerald-950/30 border border-emerald-200/50 dark:border-emerald-800/30 text-emerald-700 dark:text-emerald-300'
+                  : 'bg-slate-50/70 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-700/50 text-[var(--text-muted)]'
+              }`}
+            >
+              <div className="flex items-center gap-2">
+                <span
+                  className={`w-2 h-2 rounded-full ${
+                    demoMode ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
+                  }`}
+                />
+                <span className="font-medium text-[11px]">
+                  {demoMode
+                    ? 'ESP32 simulated connection active. All pages and widgets respond in real-time.'
+                    : 'Demo mode is off. Switch on to test without physical ESP32 hardware.'}
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => setDemoMode(!demoMode)}
+                className="text-[11px] font-bold underline cursor-pointer hover:opacity-80 transition-opacity ml-2 shrink-0"
+              >
+                {demoMode ? 'Turn Off' : 'Turn On Demo'}
+              </button>
+            </div>
+          </div>
+
           {/* IP Configuration Card */}
           <div
             className="rounded-[32px] p-6 select-none glass-card"
@@ -121,16 +219,16 @@ export const SettingsPage: React.FC = () => {
               {/* Simulation Mode Switch */}
               <div className="flex items-center justify-between p-3.5 rounded-2xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60">
                 <div>
-                  <p className="text-xs font-bold text-[var(--text-main)]">Hardware Simulation Mode</p>
+                  <p className="text-xs font-bold text-[var(--text-main)]">Hardware Demo Mode</p>
                   <p className="text-[11px] text-[var(--text-muted)]">
-                    Emulates physical ESP32 responses and live sensor dynamics when running standalone
+                    Simulates ESP32 connection & live sensor dynamics when running without hardware
                   </p>
                 </div>
                 <input
                   type="checkbox"
-                  checked={settings.simulationMode}
-                  onChange={(e) => updateSettings({ simulationMode: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
+                  checked={demoMode}
+                  onChange={(e) => setDemoMode(e.target.checked)}
+                  className="w-4 h-4 text-emerald-600 rounded cursor-pointer accent-emerald-600"
                 />
               </div>
 

@@ -72,4 +72,5 @@ export interface UserSettings {
   soundEnabled: boolean;
   highGlassBlur: boolean;
   simulationMode: boolean;
+  demoMode: boolean;
 }
