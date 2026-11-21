@@ -15,6 +15,34 @@ import {
 } from 'lucide-react';
 import { useHardware } from '../context/HardwareContext';
 
+const ToggleSwitch: React.FC<{
+  checked: boolean;
+  onChange: (val: boolean) => void;
+  title?: string;
+  size?: 'md' | 'lg';
+  color?: string;
+}> = ({ checked, onChange, title, size = 'md', color = 'bg-emerald-500' }) => {
+  const isLg = size === 'lg';
+  return (
+    <button
+      type="button"
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={`relative inline-flex shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-300 ease-in-out focus:outline-none ${
+        isLg ? 'h-7 w-12' : 'h-6 w-11'
+      } ${checked ? color : 'bg-slate-300 dark:bg-slate-700'}`}
+      title={title}
+    >
+      <span
+        className={`pointer-events-none inline-block transform rounded-full bg-white shadow-md ring-0 transition duration-300 ease-in-out ${
+          isLg ? 'h-6 w-6' : 'h-5 w-5'
+        } ${checked ? 'translate-x-5' : 'translate-x-0'}`}
+      />
+    </button>
+  );
+};
+
 export const SettingsPage: React.FC = () => {
   const {
     settings,
@@ -121,23 +149,12 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               {/* Smooth Pill Switch Button */}
-              <button
-                type="button"
-                role="switch"
-                aria-checked={demoMode}
-                onClick={() => setDemoMode(!demoMode)}
-                className={`relative inline-flex h-7 w-12 shrink-0 cursor-pointer rounded-full p-0.5 transition-colors duration-300 ease-in-out focus:outline-none ${
-                  demoMode ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-700'
-                }`}
+              <ToggleSwitch
+                checked={demoMode}
+                onChange={setDemoMode}
+                size="lg"
                 title={demoMode ? 'Disable Demo Mode' : 'Enable Demo Mode'}
-              >
-                <span className="sr-only">Toggle Demo Mode</span>
-                <span
-                  className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow-md ring-0 transition duration-300 ease-in-out ${
-                    demoMode ? 'translate-x-5' : 'translate-x-0'
-                  }`}
-                />
-              </button>
+              />
             </div>
 
             {/* Quick status bar */}
@@ -224,11 +241,10 @@ export const SettingsPage: React.FC = () => {
                     Simulates ESP32 connection & live sensor dynamics when running without hardware
                   </p>
                 </div>
-                <input
-                  type="checkbox"
+                <ToggleSwitch
                   checked={demoMode}
-                  onChange={(e) => setDemoMode(e.target.checked)}
-                  className="w-4 h-4 text-emerald-600 rounded cursor-pointer accent-emerald-600"
+                  onChange={setDemoMode}
+                  title="Toggle Hardware Demo Mode"
                 />
               </div>
 
@@ -299,11 +315,10 @@ export const SettingsPage: React.FC = () => {
                   <span className="font-bold text-[var(--text-main)] block">Eco Thermal Mode</span>
                   <span className="text-[var(--text-subtle)]">Reduces fan wattage when space reaches target</span>
                 </div>
-                <input
-                  type="checkbox"
+                <ToggleSwitch
                   checked={settings.autoEcoMode}
-                  onChange={(e) => updateSettings({ autoEcoMode: e.target.checked })}
-                  className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
+                  onChange={(val) => updateSettings({ autoEcoMode: val })}
+                  title="Toggle Eco Thermal Mode"
                 />
               </div>
             </div>
@@ -414,31 +429,28 @@ export const SettingsPage: React.FC = () => {
               <div className="pt-2 space-y-3 text-xs">
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-[var(--text-main)]">Reduced Motion (Accessibility)</span>
-                  <input
-                    type="checkbox"
+                  <ToggleSwitch
                     checked={settings.reducedMotion}
-                    onChange={(e) => updateSettings({ reducedMotion: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
+                    onChange={(val) => updateSettings({ reducedMotion: val })}
+                    title="Toggle Reduced Motion"
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-[var(--text-main)]">High Blur Glass Surfaces</span>
-                  <input
-                    type="checkbox"
+                  <ToggleSwitch
                     checked={settings.highGlassBlur}
-                    onChange={(e) => updateSettings({ highGlassBlur: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
+                    onChange={(val) => updateSettings({ highGlassBlur: val })}
+                    title="Toggle High Blur"
                   />
                 </div>
 
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-[var(--text-main)]">Audio Feedback on Toggle</span>
-                  <input
-                    type="checkbox"
+                  <ToggleSwitch
                     checked={settings.soundEnabled}
-                    onChange={(e) => updateSettings({ soundEnabled: e.target.checked })}
-                    className="w-4 h-4 text-blue-600 rounded cursor-pointer accent-blue-600"
+                    onChange={(val) => updateSettings({ soundEnabled: val })}
+                    title="Toggle Audio Feedback"
                   />
                 </div>
               </div>
