@@ -51,48 +51,74 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
                 repeat: Infinity,
                 ease: 'linear',
               }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[114%] h-[114%] rounded-full pointer-events-none"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[134%] h-[134%] rounded-full pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(circle at center, rgba(66, 165, 255, 0.22) 0%, rgba(183, 164, 255, 0.12) 45%, transparent 70%)',
-                filter: 'blur(16px)',
+                  'radial-gradient(circle at center, rgba(66, 165, 255, 0.24) 0%, rgba(183, 164, 255, 0.14) 45%, transparent 70%)',
+                filter: 'blur(20px)',
               }}
             />
 
-            {/* Sweeping Airflow Curved Vortex Orbit (Perfect Fit, Zero Overlap) */}
+            {/* Sweeping Airflow Curved Vortex Orbit (Spacious, Zero Overlap) */}
             <svg
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[116%] h-[116%] pointer-events-none"
-              viewBox="0 0 300 300"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[136%] h-[136%] pointer-events-none overflow-visible"
+              viewBox="0 0 320 320"
               fill="none"
             >
               <defs>
                 <linearGradient id="vortexOrbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.9" />
-                  <stop offset="45%" stopColor="#818CF8" stopOpacity="0.55" />
-                  <stop offset="85%" stopColor="#C084FC" stopOpacity="0.2" />
-                  <stop offset="100%" stopColor="#C084FC" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.95" />
+                  <stop offset="40%" stopColor="#818CF8" stopOpacity="0.6" />
+                  <stop offset="75%" stopColor="#C084FC" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#38BDF8" stopOpacity="0" />
+                </linearGradient>
+
+                <linearGradient id="vortexOrbitGrad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#60A5FA" stopOpacity="0.6" />
+                  <stop offset="50%" stopColor="#A78BFA" stopOpacity="0.25" />
+                  <stop offset="100%" stopColor="#60A5FA" stopOpacity="0" />
                 </linearGradient>
               </defs>
+
+              {/* Main curved orbit ring */}
               <circle
-                cx="150"
-                cy="150"
-                r="138"
+                cx="160"
+                cy="160"
+                r="146"
                 stroke="url(#vortexOrbitGrad)"
                 strokeWidth="3.5"
                 strokeLinecap="round"
-                strokeDasharray="540 330"
+                strokeDasharray="560 360"
                 className="animate-spin"
                 style={{
                   animationDuration: `${Math.max(4, 16 - (speed / 100) * 11)}s`,
                   animationTimingFunction: 'linear',
-                  transformOrigin: '150px 150px',
+                  transformOrigin: '160px 160px',
+                }}
+              />
+
+              {/* Secondary subtle particle trail */}
+              <circle
+                cx="160"
+                cy="160"
+                r="138"
+                stroke="url(#vortexOrbitGrad2)"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeDasharray="120 200 80 240"
+                className="animate-spin"
+                style={{
+                  animationDuration: `${Math.max(5, 20 - (speed / 100) * 12)}s`,
+                  animationTimingFunction: 'linear',
+                  animationDirection: 'reverse',
+                  transformOrigin: '160px 160px',
                 }}
               />
             </svg>
 
-            {/* Floating Botanical Leaves (Anchored within orbit zone) */}
+            {/* Floating Botanical Leaves (Spaced along spacious orbit, zero fan overlap) */}
             <div
-              className="absolute top-1 left-2 pointer-events-none animate-float"
+              className="absolute -top-2 -left-2 pointer-events-none animate-float"
               style={{ animationDelay: '0s' }}
             >
               <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
@@ -111,7 +137,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
             </div>
 
             <div
-              className="absolute top-6 right-2 pointer-events-none animate-float"
+              className="absolute -top-1 -right-2 pointer-events-none animate-float"
               style={{ animationDelay: '1.5s' }}
             >
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="rotate-45">
@@ -130,7 +156,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
             </div>
 
             <div
-              className="absolute bottom-5 left-4 pointer-events-none animate-float"
+              className="absolute bottom-6 -left-4 pointer-events-none animate-float"
               style={{ animationDelay: '2.8s' }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="-rotate-12">

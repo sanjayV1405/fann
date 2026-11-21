@@ -54,7 +54,7 @@ export const FanControlPage: React.FC = () => {
       {/* Top Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
         {/* Left Column */}
-        <div className="lg:col-span-4 space-y-3.5">
+        <div className="lg:col-span-3 xl:col-span-3 space-y-3.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-blue-600 dark:text-blue-400">
             <Fan className="w-3.5 h-3.5 text-blue-500 animate-spin" style={{ animationDuration: '6s' }} />
             <span>Fan Control</span>
@@ -72,7 +72,7 @@ export const FanControlPage: React.FC = () => {
         </div>
 
         {/* Center Column: 3D Fan Visual with Pedestal Base */}
-        <div className="lg:col-span-4 flex items-center justify-center py-4">
+        <div className="lg:col-span-5 xl:col-span-5 flex items-center justify-center py-4 px-2 overflow-visible">
           <ThreeFan3D
             size="lg"
             speed={climateData.fanSpeed}
@@ -83,7 +83,7 @@ export const FanControlPage: React.FC = () => {
         </div>
 
         {/* Right Column: Fan Operation Mode & Speed Control Panel */}
-        <div className="lg:col-span-4">
+        <div className="lg:col-span-4 xl:col-span-4">
           <div
             className="rounded-[30px] p-6 select-none relative glass-card"
             style={{

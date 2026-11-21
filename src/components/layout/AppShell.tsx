@@ -72,11 +72,10 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               }}
             >
               <div
-                className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${
-                  toast.type === 'error'
-                    ? 'bg-rose-500 text-white shadow-[0_0_10px_#EF4444]'
-                    : 'bg-emerald-500 text-white shadow-[0_0_10px_#10B981]'
-                }`}
+                className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${toast.type === 'error'
+                  ? 'bg-rose-500 text-white shadow-[0_0_10px_#EF4444]'
+                  : 'bg-emerald-500 text-white shadow-[0_0_10px_#10B981]'
+                  }`}
               >
                 {toast.type === 'error' ? (
                   <AlertCircle className="w-4 h-4" />
@@ -105,9 +104,8 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
                 transition={{ duration: 3, ease: 'linear' }}
-                className={`absolute bottom-0 left-0 h-[2.5px] ${
-                  toast.type === 'error' ? 'bg-rose-500/70' : 'bg-emerald-500/70'
-                }`}
+                className={`absolute bottom-0 left-0 h-[2.5px] ${toast.type === 'error' ? 'bg-rose-500/70' : 'bg-emerald-500/70'
+                  }`}
               />
             </motion.div>
           ))}
