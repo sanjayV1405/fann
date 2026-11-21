@@ -9,6 +9,8 @@ import {
   Lightbulb,
   ChevronRight,
   Check,
+  Sprout,
+  Sparkles,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -369,7 +371,8 @@ export const EnvironmentPage: React.FC = () => {
 
               <div>
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[var(--text-main)] mb-0.5">
-                  <span>💡 Insights</span>
+                  <Lightbulb className="w-3.5 h-3.5 text-amber-500 fill-amber-400/40" />
+                  <span>Climate Insights</span>
                 </div>
                 <p className="text-xs text-[var(--text-muted)] font-medium leading-relaxed">
                   The temperature is 0.5°C higher than yesterday. Humidity remains in a healthy range.
@@ -396,10 +399,10 @@ export const EnvironmentPage: React.FC = () => {
               boxShadow: 'var(--glass-shadow-sm)',
             }}
           >
-            {/* Potted Plant Visual */}
+            {/* Plant Atmosphere Visual */}
             <div className="flex items-center gap-4 z-10">
-              <div className="w-12 h-12 flex items-center justify-center text-2xl filter drop-shadow">
-                🪴
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-500/20 via-teal-400/20 to-emerald-400/10 border border-emerald-500/30 dark:border-emerald-500/20 flex items-center justify-center text-emerald-600 dark:text-emerald-400 shadow-sm shadow-emerald-500/10">
+                <Sprout className="w-6 h-6 stroke-[2.2]" />
               </div>
 
               <div>
