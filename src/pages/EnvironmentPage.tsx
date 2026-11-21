@@ -7,7 +7,6 @@ import {
   Wind,
   Leaf,
   Lightbulb,
-  ChevronRight,
   Check,
   Sprout,
   Sparkles,
@@ -379,13 +378,6 @@ export const EnvironmentPage: React.FC = () => {
                 </p>
               </div>
             </div>
-
-            <button
-              className="w-9 h-9 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 border border-white/80 dark:border-white/10 shadow-sm flex items-center justify-center text-[var(--text-muted)] hover:text-[var(--text-main)] transition-all cursor-pointer shrink-0"
-              aria-label="View more insights"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
           </div>
         </div>
 
@@ -409,25 +401,6 @@ export const EnvironmentPage: React.FC = () => {
                 <p className="text-xs font-bold text-[var(--text-main)]">A healthier space,</p>
                 <p className="text-xs text-[var(--text-muted)]">a happier you.</p>
               </div>
-            </div>
-
-            {/* Translucent Glass Bubbles */}
-            <div className="relative w-24 h-12 flex items-center justify-end z-0">
-              <div
-                className="w-10 h-10 rounded-full absolute right-2"
-                style={{
-                  background: 'linear-gradient(135deg, rgba(147, 197, 253, 0.7) 0%, rgba(99, 102, 241, 0.6) 100%)',
-                  boxShadow: '0 6px 16px rgba(59, 130, 246, 0.3), inset 0 2px 4px rgba(255,255,255,0.7)',
-                }}
-              />
-              <div
-                className="w-14 h-14 rounded-full absolute -right-2 -top-2 opacity-80"
-                style={{
-                  background: 'radial-gradient(circle at 35% 35%, rgba(255,255,255,0.8) 0%, rgba(191, 219, 254, 0.4) 60%, rgba(165, 180, 252, 0.6) 100%)',
-                  backdropFilter: 'blur(4px)',
-                  border: '1px solid rgba(255,255,255,0.8)',
-                }}
-              />
             </div>
           </div>
         </div>
