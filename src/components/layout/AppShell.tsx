@@ -100,11 +100,11 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
                 <X className="w-4 h-4" />
               </button>
 
-              {/* 5-second animated progress line */}
+              {/* 3-second animated progress line */}
               <motion.div
                 initial={{ width: '100%' }}
                 animate={{ width: '0%' }}
-                transition={{ duration: 5, ease: 'linear' }}
+                transition={{ duration: 3, ease: 'linear' }}
                 className={`absolute bottom-0 left-0 h-[2.5px] ${
                   toast.type === 'error' ? 'bg-rose-500/70' : 'bg-emerald-500/70'
                 }`}

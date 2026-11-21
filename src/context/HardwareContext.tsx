@@ -448,7 +448,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     setToasts((prev) => [...prev, { id, message, type, title }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 5000);
+    }, 3000);
   }, []);
 
   const dismissToast = useCallback((id: string) => {
