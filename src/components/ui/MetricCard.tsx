@@ -33,7 +33,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
   return (
     <div
-      className="relative overflow-hidden rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none glass-card flex flex-col justify-between"
+      className="relative overflow-hidden rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg select-none glass-card flex flex-col justify-between min-h-[156px]"
       style={{
         background: 'var(--glass-card-bg, rgba(255, 255, 255, 0.72))',
         backdropFilter: 'blur(24px)',
@@ -101,22 +101,33 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       {/* Bottom Visualization: Exact Waves & Ascending Bars matching the design */}
       <div className="h-10 w-full flex items-end overflow-hidden pt-1">
         {waveType === 'bars' ? (
-          // 10 Ascending Equalizer Bars for Fan Status
-          <div className="w-full flex items-end justify-end gap-1.5 h-9 px-1">
-            {[10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map((threshold, idx) => {
-              const isActive = fanSpeed >= threshold;
-              const barHeights = [4, 7, 10, 13, 16, 20, 24, 28, 32, 36];
-              const barHeight = barHeights[idx];
+          // Symmetric Centered Equalizer Bars for Fan Status
+          <div className="w-full flex items-end justify-center gap-1.5 h-9 px-2">
+            {[
+              { height: 8, threshold: 85 },
+              { height: 14, threshold: 70 },
+              { height: 20, threshold: 50 },
+              { height: 27, threshold: 35 },
+              { height: 33, threshold: 20 },
+              { height: 36, threshold: 5 },
+              { height: 36, threshold: 5 },
+              { height: 33, threshold: 20 },
+              { height: 27, threshold: 35 },
+              { height: 20, threshold: 50 },
+              { height: 14, threshold: 70 },
+              { height: 8, threshold: 85 },
+            ].map((bar, idx) => {
+              const isActive = fanSpeed > 0 && fanSpeed >= bar.threshold;
               return (
                 <div
                   key={idx}
                   className="w-2 rounded-t-sm transition-all duration-300"
                   style={{
-                    height: `${barHeight}px`,
+                    height: `${bar.height}px`,
                     background: isActive
                       ? 'linear-gradient(180deg, #60A5FA 0%, #3B82F6 100%)'
-                      : 'rgba(219, 234, 254, 0.45)',
-                    boxShadow: isActive ? '0 2px 6px rgba(59, 130, 246, 0.35)' : 'none',
+                      : 'rgba(219, 234, 254, 0.35)',
+                    boxShadow: isActive ? '0 2px 8px rgba(59, 130, 246, 0.45)' : 'none',
                   }}
                 />
               );
@@ -165,7 +176,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
             />
           </svg>
         ) : (
-          // Smooth Green Hill Wave with Translucent Emerald Gradient Fill
+          // Symmetric Smooth Green Hill Wave with Translucent Emerald Gradient Fill
           <svg className="w-full h-8 overflow-visible" viewBox="0 0 200 32" preserveAspectRatio="none">
             <defs>
               <linearGradient id="greenWaveFill" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -174,11 +185,11 @@ export const MetricCard: React.FC<MetricCardProps> = ({
               </linearGradient>
             </defs>
             <path
-              d="M 0,26 C 30,26 50,22 80,24 C 110,26 130,6 160,6 C 180,6 190,16 200,18 L 200,32 L 0,32 Z"
+              d="M 0,24 C 40,24 60,8 100,8 C 140,8 160,24 200,24 L 200,32 L 0,32 Z"
               fill="url(#greenWaveFill)"
             />
             <path
-              d="M 0,26 C 30,26 50,22 80,24 C 110,26 130,6 160,6 C 180,6 190,16 200,18"
+              d="M 0,24 C 40,24 60,8 100,8 C 140,8 160,24 200,24"
               stroke="#22C55E"
               strokeWidth="2.5"
               strokeLinecap="round"

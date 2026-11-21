@@ -46,7 +46,7 @@ export const OverviewPage: React.FC = () => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.3 }}
-      className="space-y-6"
+      className="min-h-[calc(100vh-6.5rem)] flex flex-col justify-center gap-7 py-3 max-w-[1440px] mx-auto w-full"
     >
       {/* Top Main Hero Section */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
@@ -191,8 +191,8 @@ export const OverviewPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom 4 Metric Cards (Exact match to reference box graphs) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 pt-2">
+      {/* Bottom 4 Metric Cards (Centered and Evenly Spaced) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-1">
         {/* 1. Current Temperature */}
         <MetricCard
           icon={Thermometer}
@@ -223,6 +223,7 @@ export const OverviewPage: React.FC = () => {
           label="Fan Status"
           statusText={isConnected ? (climateData.fanStatus === 'running' ? 'Running' : 'Stopped') : 'Offline'}
           statusDotColor={isFanRunning ? '#10B981' : '#94A3B8'}
+          badge={{ text: isConnected && isFanRunning ? `${climateData.fanSpeed}% Speed` : 'Off', type: 'green' }}
           waveType="bars"
           fanSpeed={climateData.fanSpeed}
         />
@@ -235,6 +236,7 @@ export const OverviewPage: React.FC = () => {
           label="Air Quality"
           statusText={isConnected ? climateData.airQualityStatus : 'Offline'}
           statusDotColor="#10B981"
+          badge={{ text: 'Optimal', type: 'green' }}
           waveType="green"
         />
       </div>
