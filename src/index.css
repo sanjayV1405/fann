@@ -345,3 +345,48 @@ html.theme-transition *::after {
 .animate-breathing-dot {
   animation: breathing-dot 2.2s ease-in-out infinite;
 }
+
+/* Breathing Aura for Climate Ring 3D */
+@keyframes dial-halo-breathe {
+  0%, 100% {
+    transform: scale(0.95);
+    opacity: 0.5;
+    filter: blur(28px);
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.88;
+    filter: blur(40px);
+  }
+}
+
+.animate-dial-halo {
+  animation: dial-halo-breathe 4s ease-in-out infinite;
+}
+
+/* Slow orbital rotations for atmospheric micro-particles */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 24s linear infinite;
+}
+
+@keyframes spin-reverse-slow {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+.animate-spin-reverse-slow {
+  animation: spin-reverse-slow 32s linear infinite;
+}
