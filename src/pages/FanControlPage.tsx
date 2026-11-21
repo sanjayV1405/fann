@@ -34,9 +34,9 @@ export const FanControlPage: React.FC = () => {
 
   const presets = [
     { label: 'Low', val: 25, icon: Leaf },
-    { label: 'Medium', val: 75, icon: Fan },
-    { label: 'High', val: 90, icon: Zap },
-    { label: 'Maximum', val: 100, icon: Rocket },
+    { label: 'Medium', val: 50, icon: Fan },
+    { label: 'High', val: 80, icon: Zap },
+    { label: 'Max', val: 100, icon: Rocket },
   ];
 
   return (

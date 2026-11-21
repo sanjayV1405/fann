@@ -34,8 +34,8 @@ export const OverviewPage: React.FC = () => {
 
   const presets = [
     { label: 'Low', val: 25 },
-    { label: 'Medium', val: 75 },
-    { label: 'High', val: 90 },
+    { label: 'Medium', val: 50 },
+    { label: 'High', val: 80 },
     { label: 'Max', val: 100 },
   ];
 
