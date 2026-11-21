@@ -93,7 +93,7 @@ const defaultSettings: UserSettings = {
   reducedMotion: false,
   soundEnabled: true,
   highGlassBlur: true,
-  simulationMode: true,
+  simulationMode: false,
 };
 
 const playSwitchSound = (isDark: boolean) => {
@@ -127,7 +127,7 @@ const HardwareContext = createContext<HardwareContextType | null>(null);
 
 export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activePage, setActivePage] = useState<string>('overview');
-  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('connected');
+  const [connectionStatus, setConnectionStatus] = useState<ConnectionStatus>('disconnected');
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isApplyingSpeed, setIsApplyingSpeed] = useState<boolean>(false);
 
@@ -145,11 +145,15 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   // Effective Theme ('light' | 'dark')
   const [theme, setTheme] = useState<'light' | 'dark'>('light');
 
-  // Settings
+  // Settings (simulationMode is false by default so it never fakes connection)
   const [settings, setSettings] = useState<UserSettings>(() => {
     try {
       const saved = localStorage.getItem('airloop_settings');
-      return saved ? { ...defaultSettings, ...JSON.parse(saved) } : defaultSettings;
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        return { ...defaultSettings, ...parsed, simulationMode: false };
+      }
+      return defaultSettings;
     } catch {
       return defaultSettings;
     }
@@ -258,14 +262,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
   // Search & Toasts
   const [searchQuery, setSearchQuery] = useState<string>('');
-  const [toasts, setToasts] = useState<ToastState[]>([
-    {
-      id: 'welcome-toast',
-      title: 'System Connected!',
-      message: 'AIRLOOP is now ready to use.',
-      type: 'success',
-    },
-  ]);
+  const [toasts, setToasts] = useState<ToastState[]>([]);
 
   // Hardware Adapter instance
   const adapter = useMemo<IHardwareAdapter>(() => {
@@ -317,7 +314,39 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     else setHistoryData(initial24hTrends);
   }, [historyRange]);
 
-  // Polling loop
+  // Real ESP32 Connection probe on startup
+  useEffect(() => {
+    let isMounted = true;
+    const probe = async () => {
+      try {
+        const ok = await adapter.connect(settings.esp32Ip, settings.port);
+        if (isMounted) {
+          if (ok) {
+            setConnectionStatus('connected');
+            const data = await adapter.getStatus();
+            setClimateData(data);
+            setPendingSpeed(data.fanSpeed);
+            setPendingMode(data.fanMode);
+            showToast(`Connected to physical ESP32 at ${settings.esp32Ip}:${settings.port}`, 'success', 'ESP32 Online');
+          } else {
+            setConnectionStatus('disconnected');
+            setClimateData(initialClimateData);
+          }
+        }
+      } catch {
+        if (isMounted) {
+          setConnectionStatus('disconnected');
+          setClimateData(initialClimateData);
+        }
+      }
+    };
+    probe();
+    return () => {
+      isMounted = false;
+    };
+  }, [adapter, settings.esp32Ip, settings.port, showToast]);
+
+  // Polling loop - strictly enforces real connectivity
   useEffect(() => {
     if (connectionStatus !== 'connected') return;
 
@@ -326,16 +355,18 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         const nextData = await adapter.getStatus();
         setClimateData((prev) => ({
           ...nextData,
-          // keep target pending if user hasn't applied
           fanTargetSpeed: prev.fanTargetSpeed,
         }));
       } catch {
-        // if adapter fails repeatedly
+        // Real ESP32 dropped or is unreachable
+        setConnectionStatus('disconnected');
+        setClimateData(initialClimateData);
+        showToast('Lost connection to ESP32. Status is offline.', 'warning', 'ESP32 Offline');
       }
     }, settings.pollingIntervalMs);
 
     return () => clearInterval(interval);
-  }, [connectionStatus, adapter, settings.pollingIntervalMs]);
+  }, [connectionStatus, adapter, settings.pollingIntervalMs, showToast]);
 
   // Connect
   const connectDevice = useCallback(
@@ -353,7 +384,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           setClimateData(data);
           setPendingSpeed(data.fanSpeed);
           setPendingMode(data.fanMode);
-          showToast('AIRLOOP is now ready to use.', 'success', 'System Connected!');
+          showToast(`Connected to ESP32 at ${targetIp}:${targetPort}`, 'success', 'ESP32 Online');
           addEvent({
             type: 'hardware',
             severity: 'success',
@@ -362,20 +393,22 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           });
           return true;
         } else {
-          setConnectionStatus('error');
-          showToast('Unable to connect to ESP32 at ' + targetIp, 'error', 'Connection Failed');
+          setConnectionStatus('disconnected');
+          setClimateData(initialClimateData);
+          showToast(`ESP32 unreachable at ${targetIp}:${targetPort}`, 'error', 'Device Offline');
           addEvent({
             type: 'hardware',
             severity: 'error',
             title: 'Connection Failed',
-            description: `Host ${targetIp}:${targetPort} unreachable. Check network or IP.`,
+            description: `Host ${targetIp}:${targetPort} unreachable. Device is offline.`,
           });
           return false;
         }
       } catch (err: unknown) {
-        setConnectionStatus('error');
+        setConnectionStatus('disconnected');
+        setClimateData(initialClimateData);
         const msg = err instanceof Error ? err.message : 'Connection failed';
-        showToast(msg, 'error', 'ESP32 Error');
+        showToast(msg, 'error', 'ESP32 Offline');
         return false;
       } finally {
         setIsConnecting(false);
@@ -388,12 +421,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const disconnectDevice = useCallback(async () => {
     await adapter.disconnect();
     setConnectionStatus('disconnected');
-    setClimateData((prev) => ({
-      ...prev,
-      fanStatus: 'stopped',
-      fanSpeed: 0,
-      sensorHealth: 'Disconnected',
-    }));
+    setClimateData(initialClimateData);
     showToast('ESP32 device disconnected.', 'info', 'Offline Mode');
     addEvent({
       type: 'hardware',

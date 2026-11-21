@@ -60,16 +60,30 @@ export const Header: React.FC = () => {
             boxShadow: 'var(--glass-shadow-sm)',
             color: 'var(--text-main)',
           }}
-          title={isConnected ? 'Click to disconnect ESP32' : 'Click to connect ESP32'}
+          title={
+            connectionStatus === 'connecting'
+              ? 'Checking ESP32 endpoint...'
+              : isConnected
+              ? 'ESP32 Connected. Click to disconnect'
+              : 'ESP32 Offline. Click to reconnect'
+          }
         >
           <span
             className={`w-2 h-2 rounded-full ${
-              isConnected
+              connectionStatus === 'connecting'
+                ? 'bg-amber-400 shadow-[0_0_8px_#F59E0B] animate-pulse'
+                : isConnected
                 ? 'bg-emerald-500 shadow-[0_0_8px_#10B981]'
                 : 'bg-rose-500 shadow-[0_0_8px_#EF4444]'
             }`}
           />
-          <span>{isConnected ? 'Connected' : 'Offline'}</span>
+          <span>
+            {connectionStatus === 'connecting'
+              ? 'Connecting...'
+              : isConnected
+              ? 'Connected'
+              : 'Offline'}
+          </span>
           {isConnected ? (
             <Wifi className="w-3.5 h-3.5 text-slate-400 ml-0.5" />
           ) : (
