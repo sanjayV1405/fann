@@ -59,37 +59,14 @@ export const OverviewPage: React.FC = () => {
 
           {/* Heading */}
           <div>
-            <h1 className="text-4xl xl:text-5xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.15]">
-              Welcome Back,
+            <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.2]">
+              Your smart environment,
               <br />
-              <span className="relative inline-block text-gradient-airloop">
-                Sanjay!
-                <svg
-                  className="absolute -bottom-2 left-0 w-full h-3 overflow-visible"
-                  viewBox="0 0 160 12"
-                  fill="none"
-                >
-                  <path
-                    d="M 2,8 C 45,2 105,12 158,4"
-                    stroke="url(#heroSwoopGrad)"
-                    strokeWidth="3.5"
-                    strokeLinecap="round"
-                  />
-                  <defs>
-                    <linearGradient id="heroSwoopGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                      <stop offset="0%" stopColor="#3B82F6" />
-                      <stop offset="60%" stopColor="#818CF8" />
-                      <stop offset="100%" stopColor="#C084FC" stopOpacity="0.4" />
-                    </linearGradient>
-                  </defs>
-                </svg>
+              <span className="text-gradient-airloop">
+                always in your control.
               </span>
             </h1>
           </div>
-
-          <p className="text-sm text-[var(--text-muted)] font-medium max-w-sm pt-1">
-            Your smart environment, always in your control.
-          </p>
 
           {/* Explore Features Button */}
           <div className="pt-2">
