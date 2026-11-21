@@ -38,7 +38,7 @@ The platform accurately reproduces the composition, typography, gradients, glass
 
 5. **History & Analytics** (`HistoryPage.tsx`)
    - Comprehensive telemetry archive with metric selectors (`Temperature`, `Humidity`, `AQI`).
-   - Real Data Export to **CSV** and **JSON** formats with single-click download.
+   - Real Data Export to **CSV** and **PDF** formats with single-click download.
    - Chronological hardware and system event audit log table.
 
 6. **Settings & Hardware Configuration** (`SettingsPage.tsx`)

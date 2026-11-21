@@ -9,7 +9,7 @@ import {
   Wind,
   Shield,
   FileSpreadsheet,
-  FileCode,
+  FileText,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -99,11 +99,11 @@ export const HistoryPage: React.FC = () => {
           </button>
 
           <button
-            onClick={() => exportData('json')}
+            onClick={() => exportData('pdf')}
             className="btn-primary-gradient px-4 py-2.5 rounded-2xl text-white text-xs font-bold flex items-center gap-2 cursor-pointer shadow-md"
           >
-            <FileCode className="w-4 h-4 text-white" />
-            <span>Export JSON</span>
+            <FileText className="w-4 h-4 text-white" />
+            <span>Export PDF</span>
           </button>
         </div>
       </div>

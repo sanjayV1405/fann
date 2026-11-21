@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
+import { jsPDF } from 'jspdf';
 import {
   ClimateData,
   ClimateTrendPoint,
@@ -83,7 +84,7 @@ interface HardwareContextType {
   toasts: ToastState[];
   dismissToast: (id: string) => void;
   showToast: (message: string, type?: ToastState['type'], title?: string) => void;
-  exportData: (format: 'csv' | 'json') => void;
+  exportData: (format: 'csv' | 'pdf' | 'json') => void;
 }
 
 const defaultSettings: UserSettings = {
@@ -604,9 +605,178 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     [connectionStatus, settings.tempUnit]
   );
 
-  // Data Export (CSV and JSON)
+  // Data Export (CSV, PDF, JSON)
   const exportData = useCallback(
-    (format: 'csv' | 'json') => {
+    (format: 'csv' | 'pdf' | 'json') => {
+      if (format === 'pdf') {
+        try {
+          const doc = new jsPDF();
+          const pageW = doc.internal.pageSize.getWidth();
+
+          // Header Brand Banner
+          doc.setFillColor(59, 130, 246);
+          doc.rect(0, 0, pageW, 18, 'F');
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(14);
+          doc.setTextColor(255, 255, 255);
+          doc.text('AIRLOOP', 14, 12);
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9);
+          doc.setTextColor(224, 242, 254);
+          doc.text('Smart Climate Control • Official IoT Telemetry Report', 55, 12);
+
+          // Meta Info Bar
+          doc.setTextColor(71, 85, 105);
+          doc.setFontSize(9);
+          doc.text(`Generated: ${new Date().toLocaleString()}`, 14, 26);
+          doc.text(`Device Endpoint: ${climateData.esp32Ip}:${climateData.port}`, 14, 32);
+          doc.text(
+            `Connection Status: ${connectionStatus === 'connected' ? 'ONLINE (Synchronized)' : 'OFFLINE'}`,
+            14,
+            38
+          );
+
+          // Section 1: Real-time Telemetry Card
+          doc.setFillColor(248, 250, 252);
+          doc.roundedRect(14, 44, pageW - 28, 48, 3, 3, 'F');
+          doc.setDrawColor(226, 232, 240);
+          doc.roundedRect(14, 44, pageW - 28, 48, 3, 3, 'S');
+
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(15, 23, 42);
+          doc.text('1. Real-Time Micro-Climate Telemetry', 18, 52);
+
+          doc.setFont('helvetica', 'normal');
+          doc.setFontSize(9.5);
+          doc.setTextColor(51, 65, 85);
+
+          const fahrenheit = ((climateData.temperature * 9) / 5 + 32).toFixed(1);
+          doc.text(
+            `• Ambient Temperature:  ${climateData.temperature}°C  /  ${fahrenheit}°F`,
+            20,
+            60
+          );
+          doc.text(`• Relative Humidity:    ${climateData.humidity}% RH`, 20, 67);
+          doc.text(
+            `• Indoor Air Quality:   ${climateData.airQualityStatus} (Index: ${climateData.aqi} AQI)`,
+            20,
+            74
+          );
+          doc.text(
+            `• Fan Actuator:         ${climateData.fanStatus.toUpperCase()} at ${climateData.fanSpeed}% (${climateData.fanMode.toUpperCase()} mode)`,
+            20,
+            81
+          );
+          doc.text(
+            `• System Uptime:        ${Math.floor(climateData.uptimeSeconds / 3600)}h ${Math.floor((climateData.uptimeSeconds % 3600) / 60)}m`,
+            20,
+            88
+          );
+
+          // Section 2: Historical Telemetry Table
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(15, 23, 42);
+          doc.text('2. Historical Trend Log', 14, 102);
+
+          // Table Header
+          doc.setFillColor(241, 245, 249);
+          doc.rect(14, 106, pageW - 28, 7.5, 'F');
+          doc.setFontSize(8.5);
+          doc.setFont('helvetica', 'bold');
+          doc.setTextColor(71, 85, 105);
+          doc.text('Time Slot', 18, 111.5);
+          doc.text('Temperature (°C)', 65, 111.5);
+          doc.text('Humidity (%)', 115, 111.5);
+          doc.text('Air Quality (AQI)', 155, 111.5);
+
+          // Table Rows
+          doc.setFont('helvetica', 'normal');
+          let y = 119;
+          historyData.slice(0, 12).forEach((pt, idx) => {
+            if (idx % 2 === 1) {
+              doc.setFillColor(248, 250, 252);
+              doc.rect(14, y - 4.5, pageW - 28, 6.5, 'F');
+            }
+            doc.setTextColor(51, 65, 85);
+            doc.text(pt.time, 18, y);
+            doc.text(`${pt.temperature.toFixed(1)}°C`, 65, y);
+            doc.text(`${pt.humidity}%`, 115, y);
+            doc.text(`${pt.aqi}`, 155, y);
+            y += 6.5;
+          });
+
+          // Section 3: Hardware Sensor Registry
+          y += 5;
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(15, 23, 42);
+          doc.text('3. Sensor Transducer Registry', 14, y);
+
+          y += 6;
+          sensors.slice(0, 5).forEach((s) => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8.5);
+            doc.setTextColor(30, 41, 59);
+            doc.text(`[${s.status.toUpperCase()}] ${s.name} (${s.model})`, 18, y);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8);
+            doc.setTextColor(100, 116, 139);
+            doc.text(
+              `Reading: ${s.value} ${s.unit}  |  Interface: ${s.busInterface}  |  Accuracy: ${s.accuracy}`,
+              18,
+              y + 4.2
+            );
+            y += 9.5;
+          });
+
+          // Section 4: System Audit Events
+          y += 4;
+          doc.setFont('helvetica', 'bold');
+          doc.setFontSize(11);
+          doc.setTextColor(15, 23, 42);
+          doc.text('4. Recent System Events', 14, y);
+
+          y += 6;
+          events.slice(0, 4).forEach((ev) => {
+            doc.setFont('helvetica', 'bold');
+            doc.setFontSize(8);
+            doc.setTextColor(51, 65, 85);
+            doc.text(`${ev.timestamp} [${ev.severity.toUpperCase()}] ${ev.title}: `, 18, y);
+
+            doc.setFont('helvetica', 'normal');
+            doc.setTextColor(100, 116, 139);
+            const titleWidth = doc.getTextWidth(`${ev.timestamp} [${ev.severity.toUpperCase()}] ${ev.title}: `);
+            doc.text(ev.description.substring(0, 60), 18 + titleWidth, y);
+            y += 5.5;
+          });
+
+          // Footer
+          doc.setDrawColor(226, 232, 240);
+          doc.line(14, 282, pageW - 14, 282);
+          doc.setFontSize(7.5);
+          doc.setTextColor(148, 163, 184);
+          doc.text(
+            'AIRLOOP IoT Telemetry Engine • Generated automatically from live hardware telemetry',
+            14,
+            287
+          );
+          doc.text('Confidential', pageW - 32, 287);
+
+          doc.save(`airloop-climate-report-${Date.now()}.pdf`);
+          showToast('Generated and downloaded PDF report.', 'success', 'PDF Export');
+          return;
+        } catch (err) {
+          console.error('PDF generation error:', err);
+          showToast('Failed to generate PDF document.', 'error', 'Export Error');
+          return;
+        }
+      }
+
+      // JSON or CSV fallback
       const payload = {
         exportedAt: new Date().toISOString(),
         system: {
