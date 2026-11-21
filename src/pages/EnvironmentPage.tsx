@@ -10,7 +10,6 @@ import {
   Check,
   Sprout,
   Sparkles,
-  ChevronRight,
 } from 'lucide-react';
 import {
   AreaChart,
@@ -378,11 +377,6 @@ export const EnvironmentPage: React.FC = () => {
                   The temperature is 0.5°C higher than yesterday. Humidity remains in a healthy range.
                 </p>
               </div>
-            </div>
-
-            {/* Right arrow button matching reference image */}
-            <div className="w-8 h-8 rounded-full bg-black/5 dark:bg-white/10 flex items-center justify-center text-[var(--text-muted)] shrink-0">
-              <ChevronRight className="w-4 h-4" />
             </div>
           </div>
         </div>
