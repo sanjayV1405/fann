@@ -11,8 +11,15 @@ export const Header: React.FC = () => {
   } = useHardware();
 
   const [showNotifications, setShowNotifications] = useState(false);
+  const [hasUnread, setHasUnread] = useState(true);
 
   const isConnected = connectionStatus === 'connected';
+
+  const handleClearAll = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setHasUnread(false);
+    setShowNotifications(false);
+  };
 
   return (
     <header className="relative flex items-center justify-end h-16 px-6 z-20 select-none">
@@ -77,9 +84,11 @@ export const Header: React.FC = () => {
             aria-label="View notifications"
           >
             <Bell className="w-4 h-4 text-[var(--text-muted)]" />
-            <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
-              1
-            </span>
+            {hasUnread && (
+              <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
+                1
+              </span>
+            )}
           </button>
 
           {/* Notifications Dropdown Drawer */}
@@ -95,9 +104,13 @@ export const Header: React.FC = () => {
             >
               <div className="flex items-center justify-between pb-2 border-b border-[var(--border-divider)] mb-2">
                 <span className="text-xs font-bold text-[var(--text-main)]">Notifications & Alerts</span>
-                <span className="text-[10px] text-blue-500 font-semibold cursor-pointer hover:underline">
+                <button
+                  type="button"
+                  onClick={handleClearAll}
+                  className="text-[10px] text-blue-500 font-semibold cursor-pointer hover:underline"
+                >
                   Clear all
-                </span>
+                </button>
               </div>
 
               <div className="space-y-2 max-h-60 overflow-y-auto">
