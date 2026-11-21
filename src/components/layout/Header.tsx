@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Search, Wifi, WifiOff, Bell, ChevronDown, Check, X, Moon, Sun } from 'lucide-react';
+import { Search, Wifi, WifiOff, Bell, Check, X } from 'lucide-react';
 import { useHardware } from '../../context/HardwareContext';
 import { ThemeToggle } from '../ui/ThemeToggle';
 
@@ -9,15 +9,10 @@ export const Header: React.FC = () => {
     toggleConnection,
     searchQuery,
     setSearchQuery,
-    setActivePage,
     events,
-    climateData,
-    theme,
-    toggleTheme,
   } = useHardware();
 
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
 
   const isConnected = connectionStatus === 'connected';
 
@@ -52,7 +47,7 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      {/* Right Controls: Status Pill + Theme Toggle + Notification Bell + Profile Avatar */}
+      {/* Right Controls: Status Pill + Theme Toggle + Notification Bell */}
       <div className="flex items-center gap-3">
         {/* Connected Status Pill */}
         <button
@@ -146,88 +141,6 @@ export const Header: React.FC = () => {
                     </div>
                   </div>
                 ))}
-              </div>
-            </div>
-          )}
-        </div>
-
-        {/* User Profile Sanjay */}
-        <div className="relative">
-          <div
-            onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="flex items-center gap-1.5 p-1 pr-2 rounded-full cursor-pointer hover:bg-black/5 dark:hover:bg-white/10 transition-colors"
-          >
-            <div className="w-9 h-9 rounded-full overflow-hidden border-2 border-white/80 dark:border-white/20 shadow-sm bg-gradient-to-tr from-blue-400 to-indigo-500">
-              <img
-                src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
-                alt="Sanjay"
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  (e.target as HTMLImageElement).src =
-                    'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&h=120&q=80';
-                }}
-              />
-            </div>
-            <ChevronDown className="w-3.5 h-3.5 text-[var(--text-muted)]" />
-          </div>
-
-          {/* User Menu Popover */}
-          {showProfileMenu && (
-            <div
-              className="absolute right-0 mt-3 w-64 rounded-2xl p-4 shadow-xl border z-50 animate-in fade-in zoom-in-95 duration-200"
-              style={{
-                background: 'var(--dropdown-bg)',
-                backdropFilter: 'blur(28px)',
-                borderColor: 'var(--dropdown-border)',
-                boxShadow: 'var(--glass-shadow)',
-              }}
-            >
-              <div className="flex items-center gap-3 pb-3 border-b border-[var(--border-divider)]">
-                <div className="w-10 h-10 rounded-full overflow-hidden border border-white/80 dark:border-white/20 shadow">
-                  <img
-                    src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&h=120&q=80"
-                    alt="Sanjay"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                <div>
-                  <h4 className="text-sm font-bold text-[var(--text-main)]">Sanjay</h4>
-                  <p className="text-xs text-[var(--text-muted)]">Living Room Hub</p>
-                </div>
-              </div>
-
-              <div className="mt-2 space-y-1 text-xs">
-                <button
-                  onClick={() => {
-                    toggleTheme();
-                    setShowProfileMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 font-medium text-[var(--text-main)] flex items-center justify-between"
-                >
-                  <span className="flex items-center gap-2">
-                    {theme === 'dark' ? <Sun className="w-3.5 h-3.5 text-amber-500" /> : <Moon className="w-3.5 h-3.5 text-sky-500" />}
-                    <span>{theme === 'dark' ? 'Light Theme' : 'Dark Theme'}</span>
-                  </span>
-                  <span className="text-[10px] text-[var(--text-subtle)] font-mono">Alt+T</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setActivePage('settings');
-                    setShowProfileMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 font-medium text-[var(--text-main)]"
-                >
-                  Device Settings ({climateData.esp32Ip})
-                </button>
-                <button
-                  onClick={() => {
-                    toggleConnection();
-                    setShowProfileMenu(false);
-                  }}
-                  className="w-full text-left px-3 py-2 rounded-xl hover:bg-black/5 dark:hover:bg-white/10 font-medium text-[var(--text-main)]"
-                >
-                  {isConnected ? 'Disconnect Hardware' : 'Connect Hardware'}
-                </button>
               </div>
             </div>
           )}
