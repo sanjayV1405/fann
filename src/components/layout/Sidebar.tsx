@@ -23,7 +23,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className="w-64 h-[calc(100vh-2.5rem)] my-5 ml-5 mr-3 flex flex-col p-6 rounded-[32px] select-none shrink-0 z-30 transition-all duration-300 glass-surface"
+      className="w-56 h-fit self-center my-auto ml-5 mr-3 flex flex-col items-center p-4 rounded-[28px] select-none shrink-0 z-30 transition-all duration-300 glass-surface"
       style={{
         background: 'var(--glass-bg)',
         borderColor: 'var(--glass-border)',
@@ -31,13 +31,13 @@ export const Sidebar: React.FC = () => {
       }}
     >
       {/* Top Logo Section */}
-      <div>
+      <div className="w-full">
         <div
           onClick={() => setActivePage('overview')}
-          className="flex flex-col items-center justify-center cursor-pointer mb-8 group"
+          className="flex flex-col items-center justify-center cursor-pointer mb-3.5 group"
         >
           {/* Infinity Loop Logo Icon */}
-          <div className="relative w-12 h-8 flex items-center justify-center mb-1 group-hover:scale-105 transition-transform duration-300">
+          <div className="relative w-10 h-6 flex items-center justify-center mb-0.5 group-hover:scale-105 transition-transform duration-300">
             <svg viewBox="0 0 100 60" className="w-full h-full drop-shadow-sm" fill="none">
               <defs>
                 <linearGradient id="sidebarLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -56,12 +56,12 @@ export const Sidebar: React.FC = () => {
             </svg>
           </div>
 
-          <h1 className="text-xl font-extrabold tracking-[0.18em] text-[var(--text-main)] mt-0.5">AIRLOOP</h1>
-          <p className="text-[11px] font-medium text-[var(--text-subtle)] tracking-wider">Smart Climate Control</p>
+          <h1 className="text-base font-extrabold tracking-[0.16em] text-[var(--text-main)]">AIRLOOP</h1>
+          <p className="text-[10px] font-medium text-[var(--text-subtle)] tracking-wider">Smart Climate Control</p>
         </div>
 
         {/* Navigation Links */}
-        <nav className="space-y-1.5" aria-label="Main Navigation">
+        <nav className="space-y-1 w-full" aria-label="Main Navigation">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const isActive = activePage === item.id;
@@ -70,7 +70,7 @@ export const Sidebar: React.FC = () => {
               <button
                 key={item.id}
                 onClick={() => setActivePage(item.id)}
-                className={`w-full flex items-center justify-between px-4 py-3 rounded-2xl text-sm font-semibold transition-all duration-200 group text-left cursor-pointer ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-semibold transition-all duration-200 group text-left cursor-pointer ${
                   isActive
                     ? 'text-blue-600 dark:text-blue-400 shadow-sm border border-blue-400/30'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)] hover:bg-black/5 dark:hover:bg-white/5'
@@ -84,9 +84,9 @@ export const Sidebar: React.FC = () => {
                     : {}
                 }
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2.5">
                   <Icon
-                    className={`w-4 h-4 transition-colors ${
+                    className={`w-3.5 h-3.5 transition-colors ${
                       isActive ? 'text-blue-600 dark:text-blue-400' : 'text-[var(--text-subtle)] group-hover:text-[var(--text-main)]'
                     }`}
                   />
@@ -95,7 +95,7 @@ export const Sidebar: React.FC = () => {
 
                 {/* Active right indicator dot */}
                 {isActive && (
-                  <span className="w-2 h-2 rounded-full bg-blue-500 shadow-[0_0_8px_#3B82F6]" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_#3B82F6]" />
                 )}
               </button>
             );
