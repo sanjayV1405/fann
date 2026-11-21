@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="airloopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#3B82F6" />
+      <stop offset="50%" stop-color="#6366F1" />
+      <stop offset="100%" stop-color="#A855F7" />
+    </linearGradient>
+  </defs>
+  <path d="M30 35 C 18 35 12 45 12 50 C 12 55 18 65 30 65 C 45 65 55 35 70 35 C 82 35 88 45 88 50 C 88 55 82 65 70 65 C 55 65 45 35 30 35 Z" 
+        stroke="url(#airloopGrad)" 
+        stroke-width="12" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+</svg>
