@@ -8,6 +8,8 @@ export const Header: React.FC = () => {
     connectionStatus,
     toggleConnection,
     events,
+    clearEvents,
+    clearToasts,
   } = useHardware();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -17,6 +19,8 @@ export const Header: React.FC = () => {
 
   const handleClearAll = (e: React.MouseEvent) => {
     e.stopPropagation();
+    clearEvents();
+    clearToasts();
     setHasUnread(false);
     setShowNotifications(false);
   };
@@ -84,9 +88,9 @@ export const Header: React.FC = () => {
             aria-label="View notifications"
           >
             <Bell className="w-4 h-4 text-[var(--text-muted)]" />
-            {hasUnread && (
+            {hasUnread && events.length > 0 && (
               <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-rose-500 text-white text-[9px] font-bold flex items-center justify-center shadow-sm">
-                1
+                {events.length > 9 ? '9+' : events.length}
               </span>
             )}
           </button>
@@ -104,39 +108,49 @@ export const Header: React.FC = () => {
             >
               <div className="flex items-center justify-between pb-2 border-b border-[var(--border-divider)] mb-2">
                 <span className="text-xs font-bold text-[var(--text-main)]">Notifications & Alerts</span>
-                <button
-                  type="button"
-                  onClick={handleClearAll}
-                  className="text-[10px] text-blue-500 font-semibold cursor-pointer hover:underline"
-                >
-                  Clear all
-                </button>
+                {events.length > 0 && (
+                  <button
+                    type="button"
+                    onClick={handleClearAll}
+                    className="text-[10px] text-blue-500 font-semibold cursor-pointer hover:underline"
+                  >
+                    Clear all
+                  </button>
+                )}
               </div>
 
               <div className="space-y-2 max-h-60 overflow-y-auto">
-                {events.slice(0, 4).map((ev) => (
-                  <div
-                    key={ev.id}
-                    className="p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-start gap-2.5 text-left transition-colors"
-                  >
-                    <div
-                      className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
-                        ev.severity === 'success'
-                          ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400'
-                          : ev.severity === 'warning'
-                          ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400'
-                          : 'bg-blue-100 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400'
-                      }`}
-                    >
-                      <Check className="w-3.5 h-3.5" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-semibold text-[var(--text-main)]">{ev.title}</p>
-                      <p className="text-[11px] text-[var(--text-muted)] line-clamp-2">{ev.description}</p>
-                      <span className="text-[9px] text-[var(--text-subtle)]">{ev.timestamp}</span>
-                    </div>
+                {events.length === 0 ? (
+                  <div className="py-7 px-4 text-center select-none">
+                    <Check className="w-6 h-6 text-emerald-500 mx-auto mb-2 opacity-80 stroke-[2.5]" />
+                    <p className="text-xs font-semibold text-[var(--text-main)]">All caught up!</p>
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">No notifications or alerts</p>
                   </div>
-                ))}
+                ) : (
+                  events.slice(0, 4).map((ev) => (
+                    <div
+                      key={ev.id}
+                      className="p-2.5 rounded-xl bg-slate-50/70 dark:bg-slate-800/60 border border-slate-100 dark:border-slate-700/60 flex items-start gap-2.5 text-left transition-colors"
+                    >
+                      <div
+                        className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 mt-0.5 ${
+                          ev.severity === 'success'
+                            ? 'bg-emerald-100 dark:bg-emerald-950/70 text-emerald-600 dark:text-emerald-400'
+                            : ev.severity === 'warning'
+                            ? 'bg-amber-100 dark:bg-amber-950/70 text-amber-600 dark:text-amber-400'
+                            : 'bg-blue-100 dark:bg-blue-950/70 text-blue-600 dark:text-blue-400'
+                        }`}
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-semibold text-[var(--text-main)]">{ev.title}</p>
+                        <p className="text-[11px] text-[var(--text-muted)] line-clamp-2">{ev.description}</p>
+                        <span className="text-[9px] text-[var(--text-subtle)]">{ev.timestamp}</span>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

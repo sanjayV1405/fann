@@ -86,6 +86,8 @@ interface HardwareContextType {
   // System Events
   events: SystemEvent[];
   addEvent: (event: Omit<SystemEvent, 'id' | 'timestamp'>) => void;
+  clearEvents: () => void;
+  clearToasts: () => void;
 
   // Settings
   settings: UserSettings;
@@ -499,6 +501,14 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       timestamp: timeStr,
     };
     setEvents((prev) => [newEv, ...prev]);
+  }, []);
+
+  const clearEvents = useCallback(() => {
+    setEvents([]);
+  }, []);
+
+  const clearToasts = useCallback(() => {
+    setToasts([]);
   }, []);
 
   const updateSettings = useCallback((partial: Partial<UserSettings>) => {
@@ -1177,6 +1187,8 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         refreshSensors,
         events,
         addEvent,
+        clearEvents,
+        clearToasts,
         settings,
         updateSettings,
         formatTemp,
