@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Home, Leaf } from 'lucide-react';
+import { Leaf } from 'lucide-react';
 
 interface ClimateRing3DProps {
   temperature: number;
@@ -91,19 +91,6 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
           )}
         </svg>
 
-        {/* Glossy Handle Pill on Dial Arc */}
-        {isConnected && (
-          <div
-            className="absolute w-5 h-5 rounded-full z-10 transition-all duration-700 pointer-events-none"
-            style={{
-              top: '42px',
-              right: '98px',
-              background: '#FFFFFF',
-              boxShadow: '0 4px 10px rgba(59, 130, 246, 0.45), 0 0 0 3px rgba(255, 255, 255, 0.95)',
-            }}
-          />
-        )}
-
         {/* Inner Glass Sphere Content Disc */}
         <div
           className="relative w-[215px] h-[215px] rounded-full flex flex-col items-center justify-center p-4 transition-all duration-500"
@@ -113,14 +100,9 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
             boxShadow: 'var(--glass-card-shadow)',
           }}
         >
-          {/* Top Home Icon inside soft circle */}
-          <div className="w-8 h-8 rounded-full bg-slate-100/70 dark:bg-slate-800/80 border border-white/80 dark:border-white/10 flex items-center justify-center mb-1 text-[var(--text-muted)] shadow-sm">
-            <Home className="w-4 h-4 text-[var(--text-muted)]" />
-          </div>
-
           {/* Large Hero Temperature Value (24°C) */}
           <div className="flex items-baseline font-bold tracking-tight text-[var(--text-main)] leading-none my-1">
-            <span className="text-[54px] font-extrabold tracking-tight">
+            <span className="text-[58px] font-extrabold tracking-tight">
               {isConnected ? Math.round(temperature) : '--'}
             </span>
             <span className="text-2xl font-bold ml-0.5 text-[var(--text-muted)]">{unit}</span>
@@ -130,7 +112,7 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
           <motion.div
             initial={{ scale: 0.95 }}
             animate={{ scale: 1 }}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mt-1"
+            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mt-2"
             style={{
               background: 'rgba(34, 197, 94, 0.16)',
               border: '1px solid rgba(34, 197, 94, 0.3)',
