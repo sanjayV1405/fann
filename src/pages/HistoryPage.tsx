@@ -21,14 +21,25 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { useHardware } from '../context/HardwareContext';
+import { formatFanRuntime } from '../types';
 
 export const HistoryPage: React.FC = () => {
-  const { historyData, historyRange, setHistoryRange, events, exportData, connectionStatus } =
-    useHardware();
+  const {
+    historyData,
+    historyRange,
+    setHistoryRange,
+    events,
+    exportData,
+    connectionStatus,
+    climateData,
+    fanRuntimeSeconds,
+  } = useHardware();
 
   const [activeMetric, setActiveMetric] = useState<'all' | 'temperature' | 'humidity' | 'aqi'>('all');
 
   const isConnected = connectionStatus === 'connected';
+  const isFanRunning = isConnected && climateData.fanStatus === 'running';
+  const formattedRuntime = formatFanRuntime(fanRuntimeSeconds);
 
   // Stats calculation
   const temps = historyData.map((d) => d.temperature);
@@ -165,12 +176,24 @@ export const HistoryPage: React.FC = () => {
             boxShadow: 'var(--glass-shadow-sm)',
           }}
         >
-          <span className="text-[11px] font-semibold text-[var(--text-subtle)]">Logged Events</span>
+          <span className="text-[11px] font-semibold text-[var(--text-subtle)]">Fan Active Runtime</span>
           <div className="flex items-baseline gap-1 mt-1">
-            <span className="text-2xl font-extrabold text-[var(--text-main)]">{events.length}</span>
-            <span className="text-xs font-semibold text-[var(--text-muted)]">records</span>
+            <span className="text-2xl font-extrabold text-blue-500 font-mono tracking-tight">
+              {formattedRuntime}
+            </span>
           </div>
-          <span className="text-[10px] text-emerald-500 font-medium">100% telemetry synced</span>
+          <span
+            className={`text-[10px] font-medium flex items-center gap-1.5 mt-0.5 ${
+              isFanRunning ? 'text-emerald-500' : 'text-[var(--text-muted)]'
+            }`}
+          >
+            <span
+              className={`w-1.5 h-1.5 rounded-full ${
+                isFanRunning ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'
+              }`}
+            />
+            <span>{isFanRunning ? 'Actively running' : 'Fan in standby'}</span>
+          </span>
         </div>
       </div>
 

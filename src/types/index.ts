@@ -16,6 +16,26 @@ export const calculateAutoSpeed = (temp: number): number => {
   return 100;
 };
 
+/**
+ * Formats fan active runtime:
+ * - Under 1 hour: shows seconds, e.g. "45sec" or "59m 59sec" (increments each second)
+ * - 1 hour or more: shows hours and minutes, e.g. "1hr 15m"
+ */
+export const formatFanRuntime = (totalSec: number): string => {
+  const safeSec = Math.max(0, Math.floor(totalSec));
+  if (safeSec >= 3600) {
+    const hours = Math.floor(safeSec / 3600);
+    const mins = Math.floor((safeSec % 3600) / 60);
+    return `${hours}hr ${mins}m`;
+  }
+  const mins = Math.floor(safeSec / 60);
+  const secs = safeSec % 60;
+  if (mins > 0) {
+    return `${mins}m ${secs}sec`;
+  }
+  return `${secs}sec`;
+};
+
 export type FanStatus = 'running' | 'idle' | 'stopped';
 
 export type AirQualityLevel = 'Good' | 'Moderate' | 'Poor';

@@ -63,6 +63,7 @@ interface HardwareContextType {
   setFanMode: (mode: FanMode) => Promise<boolean>;
   isApplyingSpeed: boolean;
   applyFanSettings: () => Promise<boolean>;
+  fanRuntimeSeconds: number;
 
   // Multi-Fan Management
   fans: FanDevice[];
@@ -312,6 +313,38 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const [climateData, setClimateData] = useState<ClimateData>(initialClimateData);
   const [pendingSpeed, setPendingSpeed] = useState<number>(initialClimateData.fanSpeed);
   const [pendingMode, setPendingMode] = useState<FanMode>(initialClimateData.fanMode);
+
+  // Fan Active Runtime (in seconds, tracks live run time)
+  const [fanRuntimeSeconds, setFanRuntimeSeconds] = useState<number>(() => {
+    try {
+      const saved = localStorage.getItem('airloop_fan_runtime');
+      if (saved) {
+        const val = parseInt(saved, 10);
+        if (!isNaN(val)) return val;
+      }
+    } catch {}
+    return 185; // Initial demo runtime ~3m 05sec
+  });
+
+  // Increment fan runtime every second while fan is actively running
+  useEffect(() => {
+    const isRunning = connectionStatus === 'connected' && climateData.fanStatus === 'running';
+    if (!isRunning) return;
+
+    const timer = setInterval(() => {
+      setFanRuntimeSeconds((prev) => {
+        const next = prev + 1;
+        if (next % 15 === 0) {
+          try {
+            localStorage.setItem('airloop_fan_runtime', String(next));
+          } catch {}
+        }
+        return next;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, [connectionStatus, climateData.fanStatus]);
 
   // Multi-Fan State (Fan 1, Fan 2, ... Fan N)
   const [fans, setFans] = useState<FanDevice[]>(() => {
@@ -1129,6 +1162,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setFanMode,
         isApplyingSpeed,
         applyFanSettings,
+        fanRuntimeSeconds,
         fans,
         activeFanId,
         activeFan,
