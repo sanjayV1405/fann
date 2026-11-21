@@ -18,14 +18,14 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
 }) => {
   const spinDuration = useMemo(() => {
     if (!isRunning || speed <= 0) return 0;
-    const clamped = Math.max(10, Math.min(100, speed));
-    return (110 - clamped) * 0.015 + 0.3;
+    const clamped = Math.max(5, Math.min(100, speed));
+    return +((105 - clamped) * 0.018 + 0.28).toFixed(3);
   }, [speed, isRunning]);
 
   const sizeDimensions = {
     sm: { w: 140, h: 140 },
-    md: { w: 220, h: 220 },
-    lg: { w: 320, h: 320 },
+    md: { w: 200, h: 200 },
+    lg: { w: 260, h: 260 },
   }[size];
 
   return (
@@ -40,10 +40,10 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           <>
             {/* Pulsing Ethereal Radial Glow */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.85 }}
+              initial={{ opacity: 0, scale: 0.9 }}
               animate={{
-                opacity: [0.35, 0.65, 0.35],
-                scale: [0.98, 1.14, 0.98],
+                opacity: [0.35, 0.6, 0.35],
+                scale: [0.98, 1.06, 0.98],
                 rotate: [0, 180, 360],
               }}
               transition={{
@@ -51,52 +51,51 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
                 repeat: Infinity,
                 ease: 'linear',
               }}
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[138%] h-[138%] rounded-full pointer-events-none"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[114%] h-[114%] rounded-full pointer-events-none"
               style={{
                 background:
-                  'radial-gradient(circle at center, rgba(66, 165, 255, 0.22) 0%, rgba(183, 164, 255, 0.14) 45%, transparent 70%)',
-                filter: 'blur(20px)',
+                  'radial-gradient(circle at center, rgba(66, 165, 255, 0.22) 0%, rgba(183, 164, 255, 0.12) 45%, transparent 70%)',
+                filter: 'blur(16px)',
               }}
             />
 
-            {/* Sweeping Airflow Curved Vortex Orbit */}
+            {/* Sweeping Airflow Curved Vortex Orbit (Perfect Fit, Zero Overlap) */}
             <svg
-              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] pointer-events-none opacity-70"
-              viewBox="0 0 400 400"
+              className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[116%] h-[116%] pointer-events-none"
+              viewBox="0 0 300 300"
               fill="none"
             >
               <defs>
                 <linearGradient id="vortexOrbitGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.85" />
-                  <stop offset="45%" stopColor="#818CF8" stopOpacity="0.5" />
-                  <stop offset="85%" stopColor="#C084FC" stopOpacity="0.15" />
+                  <stop offset="0%" stopColor="#38BDF8" stopOpacity="0.9" />
+                  <stop offset="45%" stopColor="#818CF8" stopOpacity="0.55" />
+                  <stop offset="85%" stopColor="#C084FC" stopOpacity="0.2" />
                   <stop offset="100%" stopColor="#C084FC" stopOpacity="0" />
                 </linearGradient>
               </defs>
-              <ellipse
-                cx="200"
-                cy="200"
-                rx="175"
-                ry="175"
+              <circle
+                cx="150"
+                cy="150"
+                r="138"
                 stroke="url(#vortexOrbitGrad)"
-                strokeWidth="4"
+                strokeWidth="3.5"
                 strokeLinecap="round"
-                strokeDasharray="650 350"
+                strokeDasharray="540 330"
                 className="animate-spin"
                 style={{
-                  animationDuration: '14s',
+                  animationDuration: `${Math.max(4, 16 - (speed / 100) * 11)}s`,
                   animationTimingFunction: 'linear',
-                  transformOrigin: '200px 200px',
+                  transformOrigin: '150px 150px',
                 }}
               />
             </svg>
 
-            {/* Floating Botanical Leaves */}
+            {/* Floating Botanical Leaves (Anchored within orbit zone) */}
             <div
-              className="absolute top-2 -left-5 pointer-events-none animate-float"
+              className="absolute top-1 left-2 pointer-events-none animate-float"
               style={{ animationDelay: '0s' }}
             >
-              <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
                 <path
                   d="M19.5 4.5C14 4.5 8 9 7.5 15C7.5 15 13 14.5 17 10C17.5 9.5 19.5 4.5 19.5 4.5Z"
                   fill="#4ADE80"
@@ -112,10 +111,10 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
             </div>
 
             <div
-              className="absolute top-10 -right-7 pointer-events-none animate-float"
+              className="absolute top-6 right-2 pointer-events-none animate-float"
               style={{ animationDelay: '1.5s' }}
             >
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="rotate-45">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="rotate-45">
                 <path
                   d="M20 4C14 4 8 9 7.5 15.5C7.5 15.5 13.5 15 17.5 10C18 9.5 20 4 20 4Z"
                   fill="#22C55E"
@@ -131,10 +130,10 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
             </div>
 
             <div
-              className="absolute bottom-4 -left-4 pointer-events-none animate-float"
+              className="absolute bottom-5 left-4 pointer-events-none animate-float"
               style={{ animationDelay: '2.8s' }}
             >
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" className="-rotate-12">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" className="-rotate-12">
                 <path
                   d="M19 5C14 5 9 9.5 8.5 15C8.5 15 14 14.5 17.5 10.5C18 10 19 5 19 5Z"
                   fill="#86EFAC"
@@ -174,17 +173,10 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           />
 
           {/* ROTOR WITH 5 AERODYNAMIC BLADES */}
-          <div className="absolute inset-3 flex items-center justify-center">
+          <div className="absolute inset-3 flex items-center justify-center pointer-events-none">
             <svg
               viewBox="0 0 200 200"
               className="w-full h-full overflow-visible"
-              style={{
-                animation:
-                  isRunning && spinDuration > 0
-                    ? `spin-smooth ${spinDuration}s linear infinite`
-                    : 'none',
-                transformOrigin: '50% 50%',
-              }}
             >
               <defs>
                 <linearGradient id="fanBladeGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -205,18 +197,28 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
                 </filter>
               </defs>
 
-              {[0, 72, 144, 216, 288].map((angle) => (
-                <g key={angle} transform={`rotate(${angle} 100 100)`} filter="url(#bladeShadow)">
-                  <path
-                    d="M 100,100 L 92,76 C 84,54 74,30 92,16 C 112,12 128,24 118,50 C 111,68 107,86 100,100 Z"
-                    fill="url(#fanBladeGrad)"
-                  />
-                  <path
-                    d="M 94,72 C 88,52 82,34 94,20 C 104,17 114,24 114,34 C 106,48 100,64 94,72 Z"
-                    fill="url(#fanBladeHighlight)"
-                  />
-                </g>
-              ))}
+              <g
+                style={{
+                  animation:
+                    isRunning && spinDuration > 0
+                      ? `spin-smooth ${spinDuration}s linear infinite`
+                      : 'none',
+                  transformOrigin: '100px 100px',
+                }}
+              >
+                {[0, 72, 144, 216, 288].map((angle) => (
+                  <g key={angle} transform={`rotate(${angle} 100 100)`} filter="url(#bladeShadow)">
+                    <path
+                      d="M 100,100 L 92,76 C 84,54 74,30 92,16 C 112,12 128,24 118,50 C 111,68 107,86 100,100 Z"
+                      fill="url(#fanBladeGrad)"
+                    />
+                    <path
+                      d="M 94,72 C 88,52 82,34 94,20 C 104,17 114,24 114,34 C 106,48 100,64 94,72 Z"
+                      fill="url(#fanBladeHighlight)"
+                    />
+                  </g>
+                ))}
+              </g>
             </svg>
           </div>
 
@@ -255,7 +257,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
         <div className="flex flex-col items-center -mt-2 z-0 pointer-events-none transition-all duration-500">
           {/* Fan neck connector */}
           <div
-            className="w-7 h-8"
+            className="w-6 h-7"
             style={{
               background: 'linear-gradient(180deg, #64748B 0%, #475569 100%)',
               boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
@@ -263,7 +265,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           />
           {/* Circular stepped pedestal upper tier */}
           <div
-            className="w-36 h-5 rounded-full"
+            className="w-32 h-4 rounded-full"
             style={{
               background: 'var(--fan-base-tier1)',
               boxShadow: '0 8px 16px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255,255,255,0.2)',
@@ -272,7 +274,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           />
           {/* Circular stepped pedestal base tier */}
           <div
-            className="w-44 h-4 rounded-full -mt-2"
+            className="w-40 h-3.5 rounded-full -mt-1.5"
             style={{
               background: 'var(--fan-base-tier2)',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',

@@ -56,7 +56,7 @@ export const FanControlPage: React.FC = () => {
             <span>Fan Control</span>
           </div>
 
-          <h1 className="text-4xl xl:text-5xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.15]">
+          <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.18]">
             Control Your Fan
             <br />
             <span className="text-gradient-airloop">with Precision</span>
