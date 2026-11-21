@@ -273,11 +273,11 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   }, [settings.simulationMode, settings.esp32Ip, settings.port]);
 
   const showToast = useCallback((message: string, type: ToastState['type'] = 'info', title?: string) => {
-    const id = 'toast-' + Date.now();
+    const id = 'toast-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6);
     setToasts((prev) => [...prev, { id, message, type, title }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
-    }, 6000);
+    }, 5000);
   }, []);
 
   const dismissToast = useCallback((id: string) => {

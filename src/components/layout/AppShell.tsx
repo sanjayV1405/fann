@@ -60,9 +60,9 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               key={toast.id}
               initial={{ opacity: 0, y: 20, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 15, scale: 0.95 }}
+              exit={{ opacity: 0, y: 15, scale: 0.95, transition: { duration: 0.2 } }}
               transition={{ duration: 0.25 }}
-              className="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border"
+              className="relative overflow-hidden pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-2xl shadow-xl border"
               style={{
                 background: 'var(--dropdown-bg)',
                 backdropFilter: 'blur(20px)',
@@ -99,6 +99,16 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
               >
                 <X className="w-4 h-4" />
               </button>
+
+              {/* 5-second animated progress line */}
+              <motion.div
+                initial={{ width: '100%' }}
+                animate={{ width: '0%' }}
+                transition={{ duration: 5, ease: 'linear' }}
+                className={`absolute bottom-0 left-0 h-[2.5px] ${
+                  toast.type === 'error' ? 'bg-rose-500/70' : 'bg-emerald-500/70'
+                }`}
+              />
             </motion.div>
           ))}
         </AnimatePresence>
