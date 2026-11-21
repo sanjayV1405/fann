@@ -12,10 +12,12 @@ import {
   Leaf,
   Zap,
   Rocket,
+  Cpu,
 } from 'lucide-react';
 import { useHardware } from '../context/HardwareContext';
 import { ThreeFan3D } from '../components/ui/ThreeFan3D';
 import { MetricCard } from '../components/ui/MetricCard';
+import { calculateAutoSpeed } from '../types';
 
 export const FanControlPage: React.FC = () => {
   const {
@@ -24,13 +26,15 @@ export const FanControlPage: React.FC = () => {
     pendingSpeed,
     setPendingSpeed,
     pendingMode,
-    setPendingMode,
+    setFanMode,
     isApplyingSpeed,
     applyFanSettings,
   } = useHardware();
 
   const isConnected = connectionStatus === 'connected';
   const isFanRunning = isConnected && climateData.fanStatus === 'running';
+  const currentMode = climateData.fanMode || pendingMode;
+  const autoSpeed = calculateAutoSpeed(climateData.temperature);
 
   const presets = [
     { label: 'Low', val: 25, icon: Leaf },
@@ -99,10 +103,10 @@ export const FanControlPage: React.FC = () => {
             {/* Segmented Mode Control */}
             <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10 mb-5">
               <button
-                onClick={() => setPendingMode('manual')}
-                disabled={!isConnected}
+                onClick={() => setFanMode('manual')}
+                disabled={!isConnected || isApplyingSpeed}
                 className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
-                  pendingMode === 'manual'
+                  currentMode === 'manual'
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                 }`}
@@ -112,10 +116,10 @@ export const FanControlPage: React.FC = () => {
               </button>
 
               <button
-                onClick={() => setPendingMode('automatic')}
-                disabled={!isConnected}
+                onClick={() => setFanMode('automatic')}
+                disabled={!isConnected || isApplyingSpeed}
                 className={`py-2.5 px-3 rounded-xl text-xs font-bold flex items-center justify-center gap-2 transition-all duration-200 cursor-pointer ${
-                  pendingMode === 'automatic'
+                  currentMode === 'automatic'
                     ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-md shadow-blue-500/25'
                     : 'text-[var(--text-muted)] hover:text-[var(--text-main)]'
                 }`}
@@ -125,77 +129,168 @@ export const FanControlPage: React.FC = () => {
               </button>
             </div>
 
-            {/* Speed Section */}
-            <div className="mb-4">
-              <div className="flex items-center justify-between mb-1.5">
-                <div className="flex items-center gap-2 text-xs font-bold text-[var(--text-main)]">
-                  <Gauge className="w-4 h-4 text-blue-500" />
-                  <span>Fan Speed</span>
+            {currentMode === 'automatic' ? (
+              /* Automatic Mode: No manual speed controls; shows live room temp and auto-regulated speed based on sensors */
+              <div className="space-y-4">
+                <div className="p-4 rounded-2xl bg-slate-100/50 dark:bg-slate-800/50 border border-slate-200/50 dark:border-slate-700/50">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
+                      <Thermometer className="w-4 h-4 text-amber-500" />
+                      Room Temperature
+                    </span>
+                    <span className="text-2xl font-black text-amber-500">
+                      {isConnected ? `${climateData.temperature}°C` : '--°C'}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-2 border-t border-black/5 dark:border-white/10">
+                    <span className="text-xs font-bold text-[var(--text-main)] flex items-center gap-1.5">
+                      <Gauge className="w-4 h-4 text-blue-500" />
+                      Auto Fan Speed
+                    </span>
+                    <span className="text-3xl font-extrabold text-[var(--text-main)]">
+                      {isConnected ? `${autoSpeed}%` : '--%'}
+                    </span>
+                  </div>
                 </div>
 
-                <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40 text-[11px] font-semibold">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                  <span>Optimal Range</span>
+                {/* Sensor Regulation Info Box */}
+                <div className="p-4 rounded-2xl bg-blue-500/10 dark:bg-blue-500/10 border border-blue-500/20 space-y-2.5">
+                  <div className="flex items-center justify-between text-xs font-bold text-blue-600 dark:text-blue-400">
+                    <span className="flex items-center gap-1.5">
+                      <Cpu className="w-4 h-4" />
+                      Sensor Auto-Regulation Active
+                    </span>
+                    <span className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 text-[11px] font-bold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping" />
+                      Regulating
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[var(--text-muted)] leading-relaxed">
+                    In automatic mode, manual level setting is disabled. The onboard ESP32 sensor reads room temperature and automatically switches fan speed to keep the environment optimal.
+                  </p>
+
+                  <div className="grid grid-cols-4 gap-1.5 pt-2 border-t border-black/5 dark:border-white/10 text-center">
+                    <div
+                      className={`p-2 rounded-xl transition-all ${
+                        autoSpeed === 25
+                          ? 'bg-blue-500 text-white font-bold shadow-md shadow-blue-500/25'
+                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
+                      }`}
+                    >
+                      <div className="text-[10px] opacity-80">&lt;22°C</div>
+                      <div className="text-xs font-bold">25%</div>
+                    </div>
+                    <div
+                      className={`p-2 rounded-xl transition-all ${
+                        autoSpeed === 50
+                          ? 'bg-blue-500 text-white font-bold shadow-md shadow-blue-500/25'
+                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
+                      }`}
+                    >
+                      <div className="text-[10px] opacity-80">22-26°C</div>
+                      <div className="text-xs font-bold">50%</div>
+                    </div>
+                    <div
+                      className={`p-2 rounded-xl transition-all ${
+                        autoSpeed === 80
+                          ? 'bg-blue-500 text-white font-bold shadow-md shadow-blue-500/25'
+                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
+                      }`}
+                    >
+                      <div className="text-[10px] opacity-80">26-30°C</div>
+                      <div className="text-xs font-bold">80%</div>
+                    </div>
+                    <div
+                      className={`p-2 rounded-xl transition-all ${
+                        autoSpeed === 100
+                          ? 'bg-blue-500 text-white font-bold shadow-md shadow-blue-500/25'
+                          : 'bg-black/5 dark:bg-white/5 text-[var(--text-subtle)]'
+                      }`}
+                    >
+                      <div className="text-[10px] opacity-80">&gt;30°C</div>
+                      <div className="text-xs font-bold">100%</div>
+                    </div>
+                  </div>
                 </div>
               </div>
+            ) : (
+              /* Manual Mode: Precision slider, presets, Apply Speed button */
+              <div>
+                {/* Speed Section */}
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center gap-2 text-xs font-bold text-[var(--text-main)]">
+                      <Gauge className="w-4 h-4 text-blue-500" />
+                      <span>Fan Speed</span>
+                    </div>
 
-              {/* Large Speed Percentage Readout */}
-              <div className="flex items-baseline gap-1 my-2">
-                <span className="text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
-                  {isConnected ? `${pendingSpeed}%` : '--%'}
-                </span>
+                    <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-emerald-200/60 dark:border-emerald-800/40 text-[11px] font-semibold">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                      <span>Optimal Range</span>
+                    </div>
+                  </div>
+
+                  {/* Large Speed Percentage Readout */}
+                  <div className="flex items-baseline gap-1 my-2">
+                    <span className="text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+                      {isConnected ? `${pendingSpeed}%` : '--%'}
+                    </span>
+                  </div>
+
+                  {/* Precision Slider Bar */}
+                  <div className="relative flex items-center py-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      step="5"
+                      disabled={!isConnected}
+                      value={pendingSpeed}
+                      onChange={(e) => setPendingSpeed(Number(e.target.value))}
+                      className="w-full h-3 rounded-full appearance-none cursor-pointer accent-blue-600 focus:outline-none"
+                      style={{
+                        background: `linear-gradient(to right, #3B82F6 0%, #60A5FA ${pendingSpeed}%, var(--slider-bg) ${pendingSpeed}%, var(--slider-bg) 100%)`,
+                      }}
+                    />
+                  </div>
+                </div>
+
+                {/* Speed Presets */}
+                <div className="grid grid-cols-4 gap-2 mb-5">
+                  {presets.map((preset) => {
+                    const Icon = preset.icon;
+                    const isActive = pendingSpeed === preset.val;
+                    return (
+                      <button
+                        key={preset.label}
+                        onClick={() => setPendingSpeed(preset.val)}
+                        disabled={!isConnected}
+                        className={`py-2 px-1.5 rounded-xl text-xs font-bold flex flex-col items-center gap-1 transition-all duration-200 cursor-pointer ${
+                          isActive
+                            ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25 border border-blue-400'
+                            : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/10'
+                        }`}
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        <span className="text-[11px]">{preset.label}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Apply Speed Button */}
+                <button
+                  onClick={applyFanSettings}
+                  disabled={!isConnected || isApplyingSpeed}
+                  className="btn-primary-gradient w-full py-3 px-4 rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                >
+                  <Play className="w-3.5 h-3.5 fill-white text-white" />
+                  <span>{isApplyingSpeed ? 'Transmitting to ESP32...' : 'Apply Speed'}</span>
+                </button>
               </div>
-
-              {/* Precision Slider Bar */}
-              <div className="relative flex items-center py-2">
-                <input
-                  type="range"
-                  min="0"
-                  max="100"
-                  step="5"
-                  disabled={!isConnected}
-                  value={pendingSpeed}
-                  onChange={(e) => setPendingSpeed(Number(e.target.value))}
-                  className="w-full h-3 rounded-full appearance-none cursor-pointer accent-blue-600 focus:outline-none"
-                  style={{
-                    background: `linear-gradient(to right, #3B82F6 0%, #60A5FA ${pendingSpeed}%, var(--slider-bg) ${pendingSpeed}%, var(--slider-bg) 100%)`,
-                  }}
-                />
-              </div>
-            </div>
-
-            {/* Speed Presets */}
-            <div className="grid grid-cols-4 gap-2 mb-5">
-              {presets.map((preset) => {
-                const Icon = preset.icon;
-                const isActive = pendingSpeed === preset.val;
-                return (
-                  <button
-                    key={preset.label}
-                    onClick={() => setPendingSpeed(preset.val)}
-                    disabled={!isConnected}
-                    className={`py-2 px-1.5 rounded-xl text-xs font-bold flex flex-col items-center gap-1 transition-all duration-200 cursor-pointer ${
-                      isActive
-                        ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25 border border-blue-400'
-                        : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/10'
-                    }`}
-                  >
-                    <Icon className="w-3.5 h-3.5" />
-                    <span className="text-[11px]">{preset.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Apply Speed Button */}
-            <button
-              onClick={applyFanSettings}
-              disabled={!isConnected || isApplyingSpeed}
-              className="btn-primary-gradient w-full py-3 px-4 rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
-            >
-              <Play className="w-3.5 h-3.5 fill-white text-white" />
-              <span>{isApplyingSpeed ? 'Transmitting to ESP32...' : 'Apply Speed'}</span>
-            </button>
+            )}
           </div>
         </div>
       </div>

@@ -2,6 +2,20 @@ export type ConnectionStatus = 'connected' | 'connecting' | 'disconnected' | 'er
 
 export type FanMode = 'manual' | 'automatic';
 
+/**
+ * Calculates fan speed based on room temperature in automatic mode:
+ * < 22°C  -> Low (25%)
+ * 22-26°C -> Medium (50%)
+ * 26-30°C -> High (80%)
+ * >= 30°C -> Max (100%)
+ */
+export const calculateAutoSpeed = (temp: number): number => {
+  if (temp < 22) return 25;
+  if (temp < 26) return 50;
+  if (temp < 30) return 80;
+  return 100;
+};
+
 export type FanStatus = 'running' | 'idle' | 'stopped';
 
 export type AirQualityLevel = 'Good' | 'Moderate' | 'Poor';

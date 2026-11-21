@@ -1,4 +1,4 @@
-import { ClimateData, ClimateTrendPoint, FanMode, SensorDetail, SystemEvent } from '../types';
+import { ClimateData, ClimateTrendPoint, FanMode, SensorDetail, SystemEvent, calculateAutoSpeed } from '../types';
 
 export interface IHardwareAdapter {
   connect(ip: string, port: number): Promise<boolean>;
@@ -306,15 +306,25 @@ export class SimulatedESP32Adapter implements IHardwareAdapter {
     this.state.humidity = Math.round(62 + (Math.random() - 0.5) * 1.5);
     this.state.aqi = Math.round(32 + (Math.random() - 0.5) * 2);
     this.state.lastUpdated = 'Just now';
+
+    // In automatic mode, speed is dynamically governed by temperature sensor
+    if (this.state.fanMode === 'automatic') {
+      const autoSpd = calculateAutoSpeed(this.state.temperature);
+      this.state.fanSpeed = autoSpd;
+      this.state.fanTargetSpeed = autoSpd;
+      this.state.fanStatus = 'running';
+    }
+
     return { ...this.state };
   }
 
   async setFan(speed: number, mode: FanMode): Promise<boolean> {
     if (!this.connected) return false;
-    this.state.fanSpeed = speed;
-    this.state.fanTargetSpeed = speed;
+    const targetSpeed = mode === 'automatic' ? calculateAutoSpeed(this.state.temperature) : speed;
+    this.state.fanSpeed = targetSpeed;
+    this.state.fanTargetSpeed = targetSpeed;
     this.state.fanMode = mode;
-    this.state.fanStatus = speed > 0 ? 'running' : 'stopped';
+    this.state.fanStatus = targetSpeed > 0 ? 'running' : 'stopped';
     return true;
   }
 

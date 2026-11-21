@@ -10,6 +10,7 @@ import {
   SensorDetail,
   SystemEvent,
   UserSettings,
+  calculateAutoSpeed,
 } from '../types';
 import {
   IHardwareAdapter,
@@ -59,6 +60,7 @@ interface HardwareContextType {
   setPendingSpeed: (speed: number) => void;
   pendingMode: FanMode;
   setPendingMode: (mode: FanMode) => void;
+  setFanMode: (mode: FanMode) => Promise<boolean>;
   isApplyingSpeed: boolean;
   applyFanSettings: () => Promise<boolean>;
 
@@ -603,6 +605,22 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     const interval = setInterval(async () => {
       try {
         const nextData = await adapter.getStatus();
+        if (nextData.fanMode === 'automatic') {
+          setPendingSpeed(nextData.fanSpeed);
+          setFans((prev) =>
+            prev.map((f) =>
+              f.id === activeFanId && f.mode === 'automatic'
+                ? {
+                    ...f,
+                    speed: nextData.fanSpeed,
+                    targetSpeed: nextData.fanSpeed,
+                    rpm: Math.round((nextData.fanSpeed / 100) * 1800),
+                    powerWatts: +(10 + (nextData.fanSpeed / 100) * 25).toFixed(1),
+                  }
+                : f
+            )
+          );
+        }
         setClimateData((prev) => ({
           ...nextData,
           fanTargetSpeed: prev.fanTargetSpeed,
@@ -699,26 +717,31 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
 
     setIsApplyingSpeed(true);
     try {
-      const ok = await adapter.setFan(pendingSpeed, pendingMode);
+      const targetSpeed =
+        pendingMode === 'automatic' ? calculateAutoSpeed(climateData.temperature) : pendingSpeed;
+      if (pendingMode === 'automatic') {
+        setPendingSpeed(targetSpeed);
+      }
+      const ok = await adapter.setFan(targetSpeed, pendingMode);
       if (ok) {
         setClimateData((prev) => ({
           ...prev,
-          fanSpeed: pendingSpeed,
-          fanTargetSpeed: pendingSpeed,
+          fanSpeed: targetSpeed,
+          fanTargetSpeed: targetSpeed,
           fanMode: pendingMode,
-          fanStatus: pendingSpeed > 0 ? 'running' : 'stopped',
+          fanStatus: targetSpeed > 0 ? 'running' : 'stopped',
         }));
         setFans((prev) => {
           const next = prev.map((f) =>
             f.id === activeFanId
               ? {
                   ...f,
-                  speed: pendingSpeed,
-                  targetSpeed: pendingSpeed,
+                  speed: targetSpeed,
+                  targetSpeed: targetSpeed,
                   mode: pendingMode,
-                  status: pendingSpeed > 0 ? ('running' as FanStatus) : ('stopped' as FanStatus),
-                  rpm: Math.round((pendingSpeed / 100) * 1800),
-                  powerWatts: +(10 + (pendingSpeed / 100) * 25).toFixed(1),
+                  status: targetSpeed > 0 ? ('running' as FanStatus) : ('stopped' as FanStatus),
+                  rpm: Math.round((targetSpeed / 100) * 1800),
+                  powerWatts: +(10 + (targetSpeed / 100) * 25).toFixed(1),
                 }
               : f
           );
@@ -728,15 +751,20 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           return next;
         });
         showToast(
-          `Fan speed set to ${pendingSpeed}% (${pendingMode === 'manual' ? 'Manual' : 'Automatic'}).`,
+          pendingMode === 'automatic'
+            ? `Automatic mode enabled. Regulated to ${targetSpeed}% based on room temp (${climateData.temperature}°C).`
+            : `Fan speed set to ${targetSpeed}% (Manual).`,
           'success',
-          'Speed Applied'
+          pendingMode === 'automatic' ? 'Auto Mode Active' : 'Speed Applied'
         );
         addEvent({
           type: 'fan',
           severity: 'info',
-          title: 'Speed Confirmed',
-          description: `PWM set to ${pendingSpeed}%, Mode: ${pendingMode.toUpperCase()}.`,
+          title: pendingMode === 'automatic' ? 'Automatic Mode Active' : 'Speed Confirmed',
+          description:
+            pendingMode === 'automatic'
+              ? `Sensors regulating fan speed: PWM ${targetSpeed}% at ${climateData.temperature}°C.`
+              : `PWM set to ${targetSpeed}%, Mode: MANUAL.`,
         });
         return true;
       } else {
@@ -750,7 +778,86 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     } finally {
       setIsApplyingSpeed(false);
     }
-  }, [connectionStatus, adapter, pendingSpeed, pendingMode, activeFanId, showToast, addEvent]);
+  }, [connectionStatus, adapter, pendingSpeed, pendingMode, climateData.temperature, activeFanId, showToast, addEvent]);
+
+  // Direct Fan Mode Switcher
+  const setFanMode = useCallback(
+    async (mode: FanMode): Promise<boolean> => {
+      setPendingMode(mode);
+      if (connectionStatus !== 'connected') {
+        showToast(
+          `Switched to ${mode === 'automatic' ? 'Automatic' : 'Manual'} mode (Offline).`,
+          'info'
+        );
+        return true;
+      }
+
+      setIsApplyingSpeed(true);
+      try {
+        const targetSpeed =
+          mode === 'automatic' ? calculateAutoSpeed(climateData.temperature) : pendingSpeed;
+        if (mode === 'automatic') {
+          setPendingSpeed(targetSpeed);
+        }
+        const ok = await adapter.setFan(targetSpeed, mode);
+        if (ok) {
+          setClimateData((prev) => ({
+            ...prev,
+            fanSpeed: targetSpeed,
+            fanTargetSpeed: targetSpeed,
+            fanMode: mode,
+            fanStatus: targetSpeed > 0 ? 'running' : 'stopped',
+          }));
+          setFans((prev) => {
+            const next = prev.map((f) =>
+              f.id === activeFanId
+                ? {
+                    ...f,
+                    speed: targetSpeed,
+                    targetSpeed: targetSpeed,
+                    mode: mode,
+                    status: targetSpeed > 0 ? ('running' as FanStatus) : ('stopped' as FanStatus),
+                    rpm: Math.round((targetSpeed / 100) * 1800),
+                    powerWatts: +(10 + (targetSpeed / 100) * 25).toFixed(1),
+                  }
+                : f
+            );
+            try {
+              localStorage.setItem('airloop_fans', JSON.stringify(next));
+            } catch {}
+            return next;
+          });
+          showToast(
+            mode === 'automatic'
+              ? `Automatic mode enabled. Regulated to ${targetSpeed}% based on room temp (${climateData.temperature}°C).`
+              : `Switched to Manual mode. Manual slider and presets active.`,
+            'success',
+            mode === 'automatic' ? 'Automatic Mode Active' : 'Manual Mode Active'
+          );
+          addEvent({
+            type: 'fan',
+            severity: 'info',
+            title: mode === 'automatic' ? 'Automatic Mode Activated' : 'Manual Mode Activated',
+            description:
+              mode === 'automatic'
+                ? `Sensors regulating fan speed: PWM ${targetSpeed}% at ${climateData.temperature}°C.`
+                : `User switched to manual fan speed control.`,
+          });
+          return true;
+        } else {
+          showToast('Failed to switch fan mode.', 'error', 'Command Failed');
+          return false;
+        }
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : 'Mode switch failed';
+        showToast(msg, 'error', 'Mode Error');
+        return false;
+      } finally {
+        setIsApplyingSpeed(false);
+      }
+    },
+    [connectionStatus, adapter, pendingSpeed, climateData.temperature, activeFanId, showToast, addEvent]
+  );
 
   // Refresh Sensors
   const refreshSensors = useCallback(async () => {
@@ -1019,6 +1126,7 @@ export const HardwareProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         setPendingSpeed,
         pendingMode,
         setPendingMode,
+        setFanMode,
         isApplyingSpeed,
         applyFanSettings,
         fans,
