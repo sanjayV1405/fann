@@ -45,34 +45,34 @@ export const FanControlPage: React.FC = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.3 }}
-      className="min-h-[calc(100vh-6.5rem)] flex flex-col justify-center gap-7 py-3 max-w-[1440px] mx-auto w-full"
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className="min-h-full flex flex-col gap-4 sm:gap-7 py-1 sm:py-3 max-w-[1440px] mx-auto w-full"
     >
       {/* Top Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-center">
         {/* Left Column */}
-        <div className="lg:col-span-3 xl:col-span-3 space-y-3.5">
+        <div className="lg:col-span-3 xl:col-span-3 space-y-1.5 sm:space-y-3.5">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-blue-600 dark:text-blue-400">
             <Fan className="w-3.5 h-3.5 text-blue-500 animate-spin" style={{ animationDuration: '6s' }} />
             <span>Fan Control</span>
           </div>
 
-          <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.18]">
+          <h1 className="text-xl sm:text-2xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.18]">
             Control Your Fan
             <br />
             <span className="text-gradient-airloop">with Precision</span>
           </h1>
 
-          <p className="text-sm text-[var(--text-muted)] font-medium max-w-sm">
+          <p className="hidden sm:block text-xs sm:text-sm text-[var(--text-muted)] font-medium max-w-sm">
             Adjust fan speed and mode for optimal comfort.
           </p>
         </div>
 
         {/* Center Column: 3D Fan Visual with Pedestal Base */}
-        <div className="lg:col-span-5 xl:col-span-5 flex items-center justify-center py-4 px-2 overflow-visible">
+        <div className="lg:col-span-5 xl:col-span-5 flex items-center justify-center py-1 sm:py-4 px-2 overflow-visible">
           <ThreeFan3D
             size="lg"
             speed={climateData.fanSpeed}
@@ -85,7 +85,7 @@ export const FanControlPage: React.FC = () => {
         {/* Right Column: Fan Operation Mode & Speed Control Panel */}
         <div className="lg:col-span-4 xl:col-span-4">
           <div
-            className="rounded-[30px] p-6 select-none relative glass-card"
+            className="rounded-[24px] sm:rounded-[30px] p-4 sm:p-6 select-none relative glass-card"
             style={{
               background: 'var(--glass-card-bg)',
               borderColor: 'var(--glass-card-border)',
@@ -93,15 +93,15 @@ export const FanControlPage: React.FC = () => {
             }}
           >
             {/* Header */}
-            <div className="flex items-center gap-2.5 mb-4">
-              <div className="w-8 h-8 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/50 dark:border-blue-800/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
-                <Fan className="w-4 h-4" />
+            <div className="flex items-center gap-2.5 mb-3 sm:mb-4">
+              <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-50/80 dark:bg-blue-950/60 border border-blue-200/50 dark:border-blue-800/40 flex items-center justify-center text-blue-600 dark:text-blue-400">
+                <Fan className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
               </div>
-              <h3 className="text-sm font-bold text-[var(--text-main)]">Fan Operation Mode</h3>
+              <h3 className="text-xs sm:text-sm font-bold text-[var(--text-main)]">Fan Operation Mode</h3>
             </div>
 
             {/* Segmented Mode Control */}
-            <div className="grid grid-cols-2 gap-2 p-1.5 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10 mb-5">
+            <div className="grid grid-cols-2 gap-2 p-1 sm:p-1.5 rounded-2xl bg-slate-100/70 dark:bg-slate-800/70 border border-white/80 dark:border-white/10 mb-3 sm:mb-5">
               <button
                 onClick={() => setFanMode('manual')}
                 disabled={!isConnected || isApplyingSpeed}
@@ -283,10 +283,10 @@ export const FanControlPage: React.FC = () => {
                   <button
                     onClick={applyFanSettings}
                     disabled={!isConnected || isApplyingSpeed}
-                    className="btn-primary-gradient w-full py-3 px-4 rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+                    className="btn-primary-gradient w-full py-3.5 px-4 min-h-[48px] rounded-2xl text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
                   >
                     <Play className="w-3.5 h-3.5 fill-white text-white" />
-                    <span>{isApplyingSpeed ? 'Transmitting to ESP32...' : 'Apply Speed'}</span>
+                    <span>{isApplyingSpeed ? 'Transmitting to Device...' : 'Apply Speed'}</span>
                   </button>
                 </div>
               )}
@@ -295,8 +295,8 @@ export const FanControlPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom 4 Metric Cards (Centered and Evenly Spaced) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-1">
+      {/* Bottom 4 Metric Cards (Mobile: Compact 2x2 grid; Desktop: 4-col) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6 pt-1">
         {/* 1. Current Temperature */}
         <MetricCard
           icon={Thermometer}

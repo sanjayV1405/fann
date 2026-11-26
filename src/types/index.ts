@@ -59,7 +59,7 @@ export interface ClimateData {
   lastUpdated: string;
   uptimeSeconds: number;
   wifiRssi: number; // e.g. -58 dBm
-  esp32Ip: string;
+  deviceIp: string;
   port: number;
 }
 
@@ -74,7 +74,7 @@ export interface FanDevice {
   rpm: number;
   powerWatts: number;
   temperature: number;
-  espPinOrIp?: string;
+  pinOrIp?: string;
   isDemo?: boolean;
 }
 
@@ -112,7 +112,7 @@ export interface UserSettings {
   theme: 'light' | 'dark';
   themeMode: ThemeMode;
   tempUnit: 'C' | 'F';
-  esp32Ip: string;
+  deviceIp: string;
   port: number;
   pollingIntervalMs: number;
   autoTargetTemp: number;

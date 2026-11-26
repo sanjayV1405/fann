@@ -30,32 +30,37 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
   const tipY = 155 + radius * Math.sin(sweptRadians);
 
   return (
-    <div className="relative flex items-center justify-center select-none">
+    <motion.div
+      initial={{ opacity: 0, scale: 0.96 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+      className="relative flex items-center justify-center select-none py-1 sm:py-2 max-w-full"
+    >
       {/* Outer Glow Halo with Living Breathing Animation */}
       <div
-        className="absolute w-[360px] h-[360px] rounded-full pointer-events-none transition-all duration-700 animate-dial-halo"
+        className="absolute w-[116%] h-[116%] max-w-[340px] max-h-[340px] rounded-full pointer-events-none transition-all duration-700 animate-dial-halo"
         style={{
           background: 'var(--dial-glow)',
-          filter: 'blur(28px)',
+          filter: 'blur(24px)',
         }}
       />
 
       {/* Atmospheric Orbiting Micro Particles */}
-      <div className="absolute w-[320px] h-[320px] rounded-full pointer-events-none animate-spin-slow">
+      <div className="absolute w-[104%] h-[104%] max-w-[300px] max-h-[300px] rounded-full pointer-events-none animate-spin-slow">
         <div className="absolute top-2 left-1/4 w-2 h-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#38BDF8] blur-[0.5px]" />
         <div className="absolute bottom-5 right-1/4 w-1.5 h-1.5 rounded-full bg-purple-400 shadow-[0_0_8px_#C084FC] blur-[0.5px]" />
       </div>
-      <div className="absolute w-[320px] h-[320px] rounded-full pointer-events-none animate-spin-reverse-slow">
+      <div className="absolute w-[104%] h-[104%] max-w-[300px] max-h-[300px] rounded-full pointer-events-none animate-spin-reverse-slow">
         <div className="absolute top-1/2 -right-1 w-1.5 h-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_#34D399] blur-[0.5px]" />
       </div>
 
       {/* Outer 3D Glass Layer Ring */}
       <div
-        className="relative w-[310px] h-[310px] rounded-full flex items-center justify-center p-3 transition-all duration-500"
+        className="relative w-[min(230px,64vw)] h-[min(230px,64vw)] sm:w-[310px] sm:h-[310px] rounded-full flex items-center justify-center p-2 sm:p-3 transition-all duration-500 shrink-0"
         style={{
           background: 'var(--dial-outer-bg)',
-          backdropFilter: 'blur(24px)',
-          WebkitBackdropFilter: 'blur(24px)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
           border: '2px solid var(--dial-border)',
           boxShadow: 'var(--glass-shadow)',
         }}
@@ -144,7 +149,7 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
 
         {/* Inner Glass Sphere Content Disc */}
         <div
-          className="relative w-[215px] h-[215px] rounded-full flex flex-col items-center justify-center p-4 transition-all duration-500 overflow-hidden"
+          className="relative w-[69%] h-[69%] rounded-full flex flex-col items-center justify-center p-3 sm:p-4 transition-all duration-500 overflow-hidden"
           style={{
             background: 'var(--dial-inner-bg)',
             border: '1.5px solid var(--dial-border)',
@@ -155,11 +160,11 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
           <div className="absolute -top-8 -left-8 w-28 h-28 rounded-full bg-gradient-to-br from-white/15 to-transparent blur-sm pointer-events-none -rotate-45" />
 
           {/* Large Hero Temperature Value (24°C) */}
-          <div className="flex items-baseline font-bold tracking-tight text-[var(--text-main)] leading-none my-1 relative z-10">
-            <span className="text-[58px] font-extrabold tracking-tight transition-transform duration-300">
+          <div className="flex items-baseline font-bold tracking-tight text-[var(--text-main)] leading-none my-0.5 sm:my-1 relative z-10">
+            <span className="text-[38px] sm:text-[58px] font-extrabold tracking-tight transition-transform duration-300">
               {isConnected ? Math.round(temperature) : '--'}
             </span>
-            <span className="text-2xl font-bold ml-0.5 text-[var(--text-muted)]">{unit}</span>
+            <span className="text-lg sm:text-2xl font-bold ml-0.5 text-[var(--text-muted)]">{unit}</span>
           </div>
 
           {/* Comfortable Status Pill with Living Breathing Pulse */}
@@ -173,18 +178,18 @@ export const ClimateRing3D: React.FC<ClimateRing3DProps> = ({
               scale: [1, 1.025, 1],
             }}
             transition={{ duration: 2.8, repeat: Infinity, ease: 'easeInOut' }}
-            className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold mt-2 relative z-10 backdrop-blur-md cursor-default"
+            className="flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[11px] sm:text-xs font-semibold mt-1.5 sm:mt-2 relative z-10 backdrop-blur-md cursor-default shrink-0"
             style={{
               background: 'rgba(34, 197, 94, 0.16)',
               border: '1px solid rgba(34, 197, 94, 0.3)',
               color: '#10B981',
             }}
           >
-            <Leaf className="w-3.5 h-3.5 text-emerald-500 fill-emerald-500/30 animate-pulse" />
+            <Leaf className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-500 fill-emerald-500/30 animate-pulse" />
             <span>{isConnected ? statusText : 'Offline'}</span>
           </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };

@@ -25,7 +25,7 @@ export const initialClimateData: ClimateData = {
   lastUpdated: 'Offline',
   uptimeSeconds: 0,
   wifiRssi: 0,
-  esp32Ip: '192.168.1.184',
+  deviceIp: '192.168.1.184',
   port: 80,
 };
 
@@ -115,7 +115,7 @@ export const initialSensors: SensorDetail[] = [
     unit: 'RPM',
     status: 'Disconnected',
     accuracy: '±10 RPM',
-    busInterface: 'ESP32 GPIO 18 (PCNT)',
+    busInterface: 'GPIO 18 (PCNT)',
     lastPing: 'Never',
     description: 'High-speed hardware pulse counter measuring true blade aerodynamic angular velocity.',
   },
@@ -128,14 +128,14 @@ export const initialSensors: SensorDetail[] = [
     unit: '% PWM',
     status: 'Disconnected',
     accuracy: '12-bit LEDC (25 kHz)',
-    busInterface: 'ESP32 GPIO 23',
+    busInterface: 'GPIO 23',
     lastPing: 'Never',
     description: 'Ultrasonic 25kHz silent frequency PWM drive stage with overload flyback protection.',
   },
   {
-    id: 'esp32-core',
-    name: 'ESP32 MCU Core & Wi-Fi',
-    model: 'ESP32-WROOM-32D',
+    id: 'mcu-core',
+    name: 'MCU Core & Wi-Fi',
+    model: 'Dual-Core MCU-32',
     type: 'Microcontroller',
     value: '--',
     unit: 'RSSI',
@@ -150,13 +150,13 @@ export const initialSensors: SensorDetail[] = [
 export const initialEvents: SystemEvent[] = [];
 
 /**
- * Real ESP32 HTTP/REST Adapter
- * Sends commands and polls physical ESP32 endpoints with strict timeouts:
+ * Real Device HTTP/REST Adapter
+ * Sends commands and polls physical hardware endpoints with strict timeouts:
  * - GET /api/status (or /status)
  * - POST /api/fan  { speed: number, mode: 'manual'|'automatic' }
  * - GET /api/sensors
  */
-export class RealESP32Adapter implements IHardwareAdapter {
+export class RealDeviceAdapter implements IHardwareAdapter {
   private ip: string;
   private port: number;
 
@@ -205,7 +205,7 @@ export class RealESP32Adapter implements IHardwareAdapter {
         });
       });
       clearTimeout(timeoutId);
-      if (!res || !res.ok) throw new Error('ESP32 unreachable');
+      if (!res || !res.ok) throw new Error('Device unreachable');
       return await res.json();
     } catch (err) {
       clearTimeout(timeoutId);
@@ -269,7 +269,7 @@ export class RealESP32Adapter implements IHardwareAdapter {
  * Hardware Simulator Adapter
  * Used only when simulation mode is explicitly enabled by the user in Settings.
  */
-export class SimulatedESP32Adapter implements IHardwareAdapter {
+export class SimulatedDeviceAdapter implements IHardwareAdapter {
   private state: ClimateData = { ...initialClimateData };
   private connected: boolean = false;
 
@@ -285,7 +285,7 @@ export class SimulatedESP32Adapter implements IHardwareAdapter {
       fanTargetSpeed: 75,
       fanStatus: 'running',
       sensorHealth: 'Healthy',
-      esp32Ip: ip,
+      deviceIp: ip,
       port: port,
       lastUpdated: 'Just now',
     };
@@ -381,7 +381,7 @@ export class SimulatedESP32Adapter implements IHardwareAdapter {
         unit: 'RPM',
         status: 'Healthy',
         accuracy: '±10 RPM',
-        busInterface: 'ESP32 GPIO 18 (PCNT)',
+        busInterface: 'GPIO 18 (PCNT)',
         lastPing: '1s ago',
         description: 'High-speed hardware pulse counter measuring true blade aerodynamic angular velocity.',
       },
@@ -394,14 +394,14 @@ export class SimulatedESP32Adapter implements IHardwareAdapter {
         unit: '% PWM',
         status: 'Healthy',
         accuracy: '12-bit LEDC (25 kHz)',
-        busInterface: 'ESP32 GPIO 23',
+        busInterface: 'GPIO 23',
         lastPing: '1s ago',
         description: 'Ultrasonic 25kHz silent frequency PWM drive stage with overload flyback protection.',
       },
       {
-        id: 'esp32-core',
-        name: 'ESP32 MCU Core & Wi-Fi',
-        model: 'ESP32-WROOM-32D',
+        id: 'mcu-core',
+        name: 'MCU Core & Wi-Fi',
+        model: 'Dual-Core MCU-32',
         type: 'Microcontroller',
         value: '240 MHz / -58 dBm',
         unit: 'RSSI',

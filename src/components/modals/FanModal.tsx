@@ -19,7 +19,7 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
   const [room, setRoom] = useState('');
   const [speed, setSpeed] = useState(60);
   const [mode, setMode] = useState<FanMode>('manual');
-  const [espPinOrIp, setEspPinOrIp] = useState('ESP32 GPIO 21');
+  const [pinOrIp, setPinOrIp] = useState('GPIO 21');
 
   useEffect(() => {
     if (fanToEdit) {
@@ -27,14 +27,14 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
       setRoom(fanToEdit.room);
       setSpeed(fanToEdit.speed);
       setMode(fanToEdit.mode);
-      setEspPinOrIp(fanToEdit.espPinOrIp || 'ESP32 GPIO 18');
+      setPinOrIp(fanToEdit.pinOrIp || 'GPIO 18');
     } else {
       const nextNum = fans.length + 1;
       setName(`Fan ${nextNum}`);
       setRoom(nextNum === 3 ? 'Study Room' : nextNum === 4 ? 'Dining Room' : `Room ${nextNum}`);
       setSpeed(50);
       setMode('manual');
-      setEspPinOrIp(`ESP32 GPIO ${20 + nextNum}`);
+      setPinOrIp(`GPIO ${20 + nextNum}`);
     }
   }, [fanToEdit, isOpen, fans.length]);
 
@@ -51,7 +51,7 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
         speed,
         targetSpeed: speed,
         mode,
-        espPinOrIp: espPinOrIp.trim(),
+        pinOrIp: pinOrIp.trim(),
       });
     } else {
       addFan({
@@ -64,7 +64,7 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
         rpm: Math.round((speed / 100) * 1800),
         powerWatts: +(10 + (speed / 100) * 25).toFixed(1),
         temperature: 24.0,
-        espPinOrIp: espPinOrIp.trim(),
+        pinOrIp: pinOrIp.trim(),
         isDemo: true,
       });
     }
@@ -96,7 +96,7 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 15 }}
           transition={{ duration: 0.2 }}
-          className="relative w-full max-w-md rounded-[32px] p-6 shadow-2xl z-10 glass-card"
+          className="relative w-full max-w-md rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 shadow-2xl z-10 glass-card max-h-[90vh] overflow-y-auto"
           style={{
             background: 'var(--dropdown-bg)',
             borderColor: 'var(--dropdown-border)',
@@ -104,16 +104,16 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
           }}
         >
           {/* Header */}
-          <div className="flex items-center justify-between pb-4 border-b border-[var(--border-divider)] mb-5">
+          <div className="flex items-center justify-between pb-3.5 sm:pb-4 border-b border-[var(--border-divider)] mb-4 sm:mb-5">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40">
+              <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-950/60 flex items-center justify-center text-blue-600 dark:text-blue-400 border border-blue-200/50 dark:border-blue-800/40 shrink-0">
                 {isEdit ? <Edit2 className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
               </div>
               <div>
-                <h3 className="text-base font-bold text-[var(--text-main)]">
+                <h3 className="text-sm sm:text-base font-bold text-[var(--text-main)]">
                   {isEdit ? 'Edit Fan Device' : 'Add New Fan Unit'}
                 </h3>
-                <p className="text-xs text-[var(--text-subtle)]">
+                <p className="text-[11px] sm:text-xs text-[var(--text-subtle)]">
                   {isEdit ? 'Modify name, room or PWM pins' : 'Configure dynamic Fan unit & telemetry'}
                 </p>
               </div>
@@ -121,7 +121,7 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
 
             <button
               onClick={onClose}
-              className="w-8 h-8 rounded-full flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-main)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
+              className="w-9 h-9 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[var(--text-subtle)] hover:text-[var(--text-main)] hover:bg-black/5 dark:hover:bg-white/5 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -214,24 +214,24 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
             {/* Hardware Pin or IP */}
             <div>
               <label className="font-semibold text-[var(--text-subtle)] block mb-1.5">
-                ESP32 GPIO Pin / IP Endpoint
+                GPIO Pin / IP Endpoint
               </label>
               <input
                 type="text"
-                value={espPinOrIp}
-                onChange={(e) => setEspPinOrIp(e.target.value)}
-                placeholder="ESP32 GPIO 21 or 192.168.1.184:80"
+                value={pinOrIp}
+                onChange={(e) => setPinOrIp(e.target.value)}
+                placeholder="GPIO 21 or 192.168.1.184:80"
                 className="w-full px-3.5 py-2.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 border border-slate-200/80 dark:border-slate-700 text-sm font-mono text-[var(--text-main)] placeholder-[var(--text-subtle)] focus:outline-none focus:ring-2 focus:ring-blue-500/30"
               />
             </div>
 
             {/* Buttons */}
-            <div className="flex items-center justify-between pt-3 border-t border-[var(--border-divider)] mt-5">
+            <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-3 border-t border-[var(--border-divider)] mt-5">
               {isEdit && fans.length > 1 ? (
                 <button
                   type="button"
                   onClick={handleDelete}
-                  className="px-3.5 py-2 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold flex items-center gap-1.5 cursor-pointer transition-colors"
+                  className="min-h-[44px] px-3.5 py-2.5 rounded-xl text-rose-500 hover:bg-rose-50 dark:hover:bg-rose-950/40 text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors"
                 >
                   <Trash2 className="w-3.5 h-3.5" />
                   <span>Delete</span>
@@ -244,13 +244,13 @@ export const FanModal: React.FC<FanModalProps> = ({ isOpen, onClose, fanToEdit }
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-xl text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 font-semibold text-xs cursor-pointer transition-colors"
+                  className="flex-1 sm:flex-none min-h-[44px] px-4 py-2.5 rounded-xl text-[var(--text-muted)] hover:bg-black/5 dark:hover:bg-white/5 font-semibold text-xs cursor-pointer transition-colors flex items-center justify-center"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="btn-primary-gradient px-5 py-2 rounded-xl text-white font-bold text-xs shadow-md flex items-center gap-1.5 cursor-pointer"
+                  className="flex-1 sm:flex-none min-h-[44px] btn-primary-gradient px-5 py-2.5 rounded-xl text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5 cursor-pointer"
                 >
                   <Check className="w-3.5 h-3.5" />
                   <span>{isEdit ? 'Save Changes' : 'Add Fan'}</span>

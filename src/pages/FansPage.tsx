@@ -50,11 +50,11 @@ export const FansPage: React.FC = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6 max-w-6xl pb-8"
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className="space-y-4 sm:space-y-6 max-w-6xl pb-8"
     >
       {/* Page Header */}
       <div className="space-y-1">
@@ -62,16 +62,16 @@ export const FansPage: React.FC = () => {
           <Fan className="w-3.5 h-3.5 text-blue-500" />
           <span>Multi-Fan Unit Network</span>
         </div>
-        <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
           Connected Fan <span className="text-gradient-airloop">Units</span>
         </h1>
-        <p className="text-sm text-[var(--text-muted)]">
+        <p className="text-xs sm:text-sm text-[var(--text-muted)]">
           Switch between Fan 1, Fan 2, and any custom fan units. View live statistics in dedicated telemetry boxes.
         </p>
       </div>
 
       {/* Fans Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {fans.map((fan) => {
           const isActive = fan.id === activeFanId;
           const isRunning = fan.status === 'running' && fan.speed > 0;
@@ -80,7 +80,7 @@ export const FansPage: React.FC = () => {
             <div
               key={fan.id}
               onClick={() => setActiveFanId(fan.id)}
-              className={`rounded-[32px] p-6 select-none glass-card transition-all duration-300 relative overflow-hidden cursor-pointer flex flex-col justify-between ${
+              className={`rounded-[28px] sm:rounded-[32px] p-5 sm:p-6 select-none glass-card transition-all duration-300 relative overflow-hidden cursor-pointer flex flex-col justify-between ${
                 isActive
                   ? 'ring-2 ring-blue-500/50 border-blue-500/30 shadow-lg shadow-blue-500/10'
                   : 'hover:border-slate-300/60 dark:hover:border-slate-700/60'
@@ -96,7 +96,7 @@ export const FansPage: React.FC = () => {
                 <div className="flex items-start justify-between gap-3 mb-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-300 ${
+                      className={`w-12 h-12 rounded-2xl flex items-center justify-center border transition-all duration-300 shrink-0 ${
                         isActive
                           ? 'bg-blue-500/15 text-blue-500 border-blue-500/30'
                           : 'bg-slate-100 dark:bg-slate-800 text-[var(--text-muted)] border-slate-200 dark:border-slate-700'
@@ -114,25 +114,25 @@ export const FansPage: React.FC = () => {
                       />
                     </div>
 
-                    <div>
-                      <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-1.5">
-                        <span>{fan.name}</span>
+                    <div className="min-w-0">
+                      <h3 className="text-sm font-bold text-[var(--text-main)] flex items-center gap-1.5 truncate">
+                        <span className="truncate">{fan.name}</span>
                         {fan.isDemo && (
-                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 font-semibold uppercase">
+                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/15 text-amber-600 dark:text-amber-400 font-semibold uppercase shrink-0">
                             Demo
                           </span>
                         )}
                       </h3>
-                      <p className="text-xs text-[var(--text-subtle)] mt-0.5">
-                        {fan.room} • {fan.espPinOrIp || 'PWM Channel'}
+                      <p className="text-xs text-[var(--text-subtle)] mt-0.5 truncate">
+                        {fan.room} • {fan.pinOrIp || 'PWM Channel'}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 shrink-0">
                     <button
                       onClick={(e) => handleOpenEdit(fan, e)}
-                      className="w-8 h-8 rounded-xl bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-muted)] hover:text-[var(--text-main)] border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center transition-colors cursor-pointer"
+                      className="w-9 h-9 sm:w-8 sm:h-8 rounded-xl bg-white/70 dark:bg-slate-800/70 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-muted)] hover:text-[var(--text-main)] border border-slate-200/60 dark:border-slate-700/60 flex items-center justify-center transition-colors cursor-pointer"
                       title="Edit Fan"
                     >
                       <Edit2 className="w-3.5 h-3.5" />
@@ -250,7 +250,7 @@ export const FansPage: React.FC = () => {
                     e.stopPropagation();
                     setActiveFanId(fan.id);
                   }}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
+                  className={`min-h-[40px] px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer flex items-center gap-1.5 ${
                     isActive
                       ? 'bg-blue-600 text-white shadow-md'
                       : 'bg-white/80 dark:bg-slate-800 text-[var(--text-main)] hover:bg-blue-50 dark:hover:bg-blue-950/40 border border-slate-200 dark:border-slate-700'
@@ -280,7 +280,7 @@ export const FansPage: React.FC = () => {
           </div>
           <h3 className="text-sm font-bold text-[var(--text-main)] mb-1">Add Another Fan Unit</h3>
           <p className="text-xs text-[var(--text-muted)] max-w-xs">
-            Connect Fan 3, Fan 4, or nth fan to control independently with live simulated or physical ESP32 PWM pins.
+            Connect Fan 3, Fan 4, or nth fan to control independently with live simulated or physical PWM pins.
           </p>
         </div>
       </div>

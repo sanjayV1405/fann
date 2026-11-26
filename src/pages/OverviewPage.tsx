@@ -42,16 +42,16 @@ export const OverviewPage: React.FC = () => {
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.3 }}
-      className="min-h-[calc(100vh-6.5rem)] flex flex-col justify-center gap-7 py-3 max-w-[1440px] mx-auto w-full"
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className="min-h-full flex flex-col gap-4 sm:gap-7 py-1 sm:py-3 max-w-[1440px] mx-auto w-full"
     >
       {/* Top Main Hero Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 sm:gap-6 items-center">
         {/* Left Column: Greeting & CTA */}
-        <div className="lg:col-span-4 space-y-4">
+        <div className="lg:col-span-4 space-y-2 sm:space-y-4">
           {/* Live Climate Control Pill Badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full glass-pill text-xs font-semibold text-emerald-600 dark:text-emerald-400">
             <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
@@ -60,7 +60,7 @@ export const OverviewPage: React.FC = () => {
 
           {/* Heading */}
           <div>
-            <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.2]">
+            <h1 className="text-xl sm:text-2xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight leading-[1.2]">
               Your smart environment,
               <br />
               <span className="text-gradient-airloop">
@@ -69,8 +69,8 @@ export const OverviewPage: React.FC = () => {
             </h1>
           </div>
 
-          {/* Explore Features Button */}
-          <div className="pt-2">
+          {/* Explore Features Button (Desktop Only) */}
+          <div className="hidden lg:flex pt-2">
             <button
               onClick={() => setActivePage('fan')}
               className="btn-primary-gradient px-6 py-3 rounded-full text-white text-sm font-semibold flex items-center gap-2 cursor-pointer"
@@ -85,7 +85,7 @@ export const OverviewPage: React.FC = () => {
         </div>
 
         {/* Center Column: Signature 3D Glass Climate Dial */}
-        <div className="lg:col-span-4 flex items-center justify-center py-2">
+        <div className="lg:col-span-4 flex items-center justify-center py-1 sm:py-2">
           <ClimateRing3D
             temperature={tempObj.num}
             tempDisplay={tempObj.display}
@@ -95,8 +95,8 @@ export const OverviewPage: React.FC = () => {
           />
         </div>
 
-        {/* Right Column: Fan Control Glass Widget */}
-        <div className="lg:col-span-4">
+        {/* Right Column: Fan Control Glass Widget (Desktop Only) */}
+        <div className="hidden lg:block lg:col-span-4">
           <div
             className="rounded-[30px] p-6 transition-all duration-300 relative select-none glass-card"
             style={{
@@ -166,7 +166,7 @@ export const OverviewPage: React.FC = () => {
                       key={preset.label}
                       onClick={() => setPendingSpeed(preset.val)}
                       disabled={!isConnected}
-                      className={`py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${isActive
+                      className={`py-2 sm:py-1.5 min-h-[38px] rounded-xl text-xs font-semibold transition-all duration-200 cursor-pointer ${isActive
                         ? 'bg-blue-500 text-white shadow-md shadow-blue-500/25 border border-blue-400'
                         : 'bg-black/5 dark:bg-white/10 text-[var(--text-muted)] hover:bg-black/10 dark:hover:bg-white/20 border border-black/5 dark:border-white/10'
                         }`}
@@ -182,7 +182,7 @@ export const OverviewPage: React.FC = () => {
             <button
               onClick={applyFanSettings}
               disabled={!isConnected || isApplyingSpeed}
-              className="w-full py-2.5 px-4 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/90 dark:border-white/10 shadow-sm flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-md cursor-pointer disabled:opacity-50"
+              className="w-full py-3 sm:py-2.5 min-h-[44px] px-4 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/90 dark:border-white/10 shadow-sm flex items-center justify-center gap-2 transition-all duration-200 hover:shadow-md cursor-pointer disabled:opacity-50"
             >
               <Zap className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 fill-blue-500" />
               <span>{isApplyingSpeed ? 'Transmitting...' : 'Apply Speed'}</span>
@@ -191,18 +191,20 @@ export const OverviewPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom 4 Metric Cards (Centered and Evenly Spaced) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 pt-1">
-        {/* 1. Current Temperature */}
-        <MetricCard
-          icon={Thermometer}
-          iconBgColor="bg-sky-50 dark:bg-sky-950/40 text-sky-500"
-          iconColor="text-sky-500"
-          label="Current Temperature"
-          value={isConnected ? `${climateData.temperature}°C` : '--°C'}
-          badge={{ text: '↑ 0.2°', type: 'green' }}
-          waveType="blue"
-        />
+      {/* Bottom Metric Cards (Mobile: Compact 2x2 grid; Desktop: 4-col) */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-6 pt-1">
+        {/* 1. Current Temperature (Desktop Only) */}
+        <div className="hidden lg:block">
+          <MetricCard
+            icon={Thermometer}
+            iconBgColor="bg-sky-50 dark:bg-sky-950/40 text-sky-500"
+            iconColor="text-sky-500"
+            label="Current Temperature"
+            value={isConnected ? `${climateData.temperature}°C` : '--°C'}
+            badge={{ text: '↑ 0.2°', type: 'green' }}
+            waveType="blue"
+          />
+        </div>
 
         {/* 2. Humidity */}
         <MetricCard
@@ -239,6 +241,19 @@ export const OverviewPage: React.FC = () => {
           badge={{ text: 'Optimal', type: 'green' }}
           waveType="green"
         />
+
+        {/* 5. Power Draw (Mobile 4th card in 2x2 grid) */}
+        <div className="block lg:hidden">
+          <MetricCard
+            icon={Zap}
+            iconBgColor="bg-amber-50 dark:bg-amber-950/40 text-amber-500"
+            iconColor="text-amber-500"
+            label="Power Draw"
+            value={isConnected && isFanRunning ? `${(12 + (climateData.fanSpeed / 100) * 28).toFixed(1)}W` : '0W'}
+            badge={{ text: 'Eco', type: 'green' }}
+            waveType="green"
+          />
+        </div>
       </div>
     </motion.div>
   );

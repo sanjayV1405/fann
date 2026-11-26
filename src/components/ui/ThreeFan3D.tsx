@@ -22,18 +22,17 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
     return +((105 - clamped) * 0.018 + 0.28).toFixed(3);
   }, [speed, isRunning]);
 
-  const sizeDimensions = {
-    sm: { w: 140, h: 140 },
-    md: { w: 200, h: 200 },
-    lg: { w: 260, h: 260 },
+  const sizeClasses = {
+    sm: 'w-[140px] h-[140px]',
+    md: 'w-[170px] h-[170px] sm:w-[200px] sm:h-[200px]',
+    lg: 'w-[min(210px,56vw)] h-[min(210px,56vw)] sm:w-[260px] sm:h-[260px]',
   }[size];
 
   return (
-    <div className="relative flex flex-col items-center justify-center select-none">
+    <div className="relative flex flex-col items-center justify-center select-none max-w-full">
       {/* FAN HEAD CONTAINER */}
       <div
-        className="relative flex items-center justify-center shrink-0"
-        style={{ width: sizeDimensions.w, height: sizeDimensions.h }}
+        className={`relative flex items-center justify-center shrink-0 ${sizeClasses}`}
       >
         {/* Dynamic Air Vortex & Flow Rings */}
         {showVortex && isRunning && (
@@ -250,10 +249,8 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
 
           {/* CENTER HUB */}
           <div
-            className="absolute rounded-full flex items-center justify-center z-10 pointer-events-none transition-all duration-500"
+            className="absolute w-[28%] h-[28%] rounded-full flex items-center justify-center z-10 pointer-events-none transition-all duration-500"
             style={{
-              width: sizeDimensions.w * 0.28,
-              height: sizeDimensions.h * 0.28,
               background:
                 'linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(212, 227, 251, 0.8) 60%, rgba(171, 197, 245, 0.8) 100%)',
               boxShadow:
@@ -280,10 +277,10 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
 
       {/* PEDESTAL BASE & STAND */}
       {showBase && (
-        <div className="flex flex-col items-center -mt-2 z-0 pointer-events-none transition-all duration-500">
+        <div className="flex flex-col items-center -mt-1.5 sm:-mt-2 z-0 pointer-events-none transition-all duration-500">
           {/* Fan neck connector */}
           <div
-            className="w-6 h-7"
+            className="w-5 sm:w-6 h-5 sm:h-7"
             style={{
               background: 'linear-gradient(180deg, #64748B 0%, #475569 100%)',
               boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.2)',
@@ -291,7 +288,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           />
           {/* Circular stepped pedestal upper tier */}
           <div
-            className="w-32 h-4 rounded-full"
+            className="w-[min(108px,30vw)] sm:w-32 h-3 sm:h-4 rounded-full"
             style={{
               background: 'var(--fan-base-tier1)',
               boxShadow: '0 8px 16px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255,255,255,0.2)',
@@ -300,7 +297,7 @@ export const ThreeFan3D: React.FC<ThreeFan3DProps> = ({
           />
           {/* Circular stepped pedestal base tier */}
           <div
-            className="w-40 h-3.5 rounded-full -mt-1.5"
+            className="w-[min(136px,38vw)] sm:w-40 h-2.5 sm:h-3.5 rounded-full -mt-1.5"
             style={{
               background: 'var(--fan-base-tier2)',
               boxShadow: '0 12px 24px rgba(0, 0, 0, 0.3)',

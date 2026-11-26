@@ -33,50 +33,50 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 }) => {
   return (
     <div
-      className="relative overflow-hidden rounded-[28px] p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-none select-none glass-card flex flex-col justify-between dark:shadow-none min-h-[156px]"
+      className="relative overflow-hidden rounded-[22px] sm:rounded-[28px] p-3.5 sm:p-5 transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg dark:hover:shadow-none select-none glass-card flex flex-col justify-between dark:shadow-none min-h-[124px] sm:min-h-[156px]"
       style={{
         background: 'var(--glass-card-bg)',
-        backdropFilter: 'blur(24px)',
-        WebkitBackdropFilter: 'blur(24px)',
+        backdropFilter: 'blur(20px)',
+        WebkitBackdropFilter: 'blur(20px)',
         border: '1.5px solid var(--glass-card-border)',
         boxShadow: 'var(--glass-card-shadow)',
       }}
     >
       <div>
         {/* Top row: Circular Icon Container + Label */}
-        <div className="flex items-center gap-3 mb-2.5">
+        <div className="flex items-center gap-2 sm:gap-3 mb-1.5 sm:mb-2.5">
           <div
-            className={`w-10 h-10 rounded-full flex items-center justify-center border border-white/90 dark:border-white/10 shadow-sm ${iconBgColor}`}
+            className={`w-7 h-7 sm:w-10 sm:h-10 rounded-full flex items-center justify-center border border-white/90 dark:border-white/10 shadow-sm shrink-0 ${iconBgColor}`}
           >
-            <Icon className={`w-5 h-5 ${iconColor}`} />
+            <Icon className={`w-3.5 h-3.5 sm:w-5 sm:h-5 ${iconColor}`} />
           </div>
-          <span className="text-xs font-semibold text-[var(--text-muted,text-slate-500)] tracking-wide">
+          <span className="text-[11px] sm:text-xs font-semibold text-[var(--text-muted,text-slate-500)] tracking-wide truncate">
             {label}
           </span>
         </div>
 
         {/* Middle row: Large Value & Badges OR Status Text with Glowing Dot */}
-        <div className="flex items-baseline justify-between mb-2">
+        <div className="flex items-baseline justify-between mb-1 sm:mb-2">
           {statusText ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <span
-                className="w-2.5 h-2.5 rounded-full shrink-0"
+                className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0"
                 style={{
                   backgroundColor: statusDotColor,
                   boxShadow: `0 0 8px ${statusDotColor}`,
                 }}
               />
-              <span className="text-[24px] font-extrabold text-[var(--text-main,#172033)] tracking-tight">
+              <span className="text-lg sm:text-[24px] font-extrabold text-[var(--text-main,#172033)] tracking-tight">
                 {statusText}
               </span>
             </div>
           ) : (
             <div className="flex items-baseline gap-1">
-              <span className="text-[28px] font-extrabold text-[var(--text-main,#172033)] tracking-tight">
+              <span className="text-xl sm:text-[28px] font-extrabold text-[var(--text-main,#172033)] tracking-tight">
                 {value}
               </span>
               {unit && (
-                <span className="text-sm font-semibold text-[var(--text-muted,text-slate-500)]">
+                <span className="text-xs sm:text-sm font-semibold text-[var(--text-muted,text-slate-500)]">
                   {unit}
                 </span>
               )}
@@ -85,7 +85,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
 
           {badge && (
             <div
-              className={`text-xs font-bold px-2.5 py-0.5 rounded-full flex items-center gap-0.5 ${badge.type === 'purple'
+              className={`text-[10px] sm:text-xs font-bold px-2 sm:px-2.5 py-0.5 rounded-full flex items-center gap-0.5 shrink-0 ${badge.type === 'purple'
                 ? 'text-purple-600 dark:text-purple-400 bg-purple-50/80 dark:bg-purple-950/40 border border-purple-200/50'
                 : 'text-emerald-600 dark:text-emerald-400 bg-emerald-50/80 dark:bg-emerald-950/40 border border-emerald-200/50'
                 }`}
@@ -97,7 +97,7 @@ export const MetricCard: React.FC<MetricCardProps> = ({
       </div>
 
       {/* Bottom Visualization: Exact Waves & Ascending Bars matching the design */}
-      <div className="h-10 w-full flex items-end overflow-hidden pt-1">
+      <div className="h-8 sm:h-10 w-full flex items-end overflow-hidden pt-0.5 sm:pt-1">
         {waveType === 'bars' ? (
           // Symmetric Centered Equalizer Bars for Fan Status
           <div className="w-full flex items-end justify-center gap-1.5 h-9 px-2">

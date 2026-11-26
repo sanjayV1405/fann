@@ -25,7 +25,7 @@ export const Sidebar: React.FC = () => {
 
   return (
     <aside
-      className="w-64 h-[calc(100vh-2rem)] my-4 ml-4 mr-2 flex flex-col justify-between p-5 rounded-[32px] select-none shrink-0 z-30 transition-all duration-300 glass-surface overflow-hidden"
+      className="hidden lg:flex w-64 h-[calc(100vh-2rem)] my-4 ml-4 mr-2 flex-col justify-between p-5 rounded-[32px] select-none shrink-0 z-30 transition-all duration-300 glass-surface overflow-hidden"
       style={{
         background: 'var(--glass-bg)',
         borderColor: 'var(--glass-border)',

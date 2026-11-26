@@ -10,6 +10,7 @@ export const Header: React.FC = () => {
     events,
     clearEvents,
     clearToasts,
+    setActivePage,
   } = useHardware();
 
   const [showNotifications, setShowNotifications] = useState(false);
@@ -26,9 +27,37 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="relative flex items-center justify-end h-16 px-6 z-20 select-none">
+    <header className="relative flex items-center justify-between lg:justify-end h-auto min-h-[4rem] px-4 sm:px-6 py-2 pt-[max(0.5rem,env(safe-area-inset-top,0.5rem))] z-20 select-none">
+      {/* Mobile Branding (lg:hidden) */}
+      <div
+        onClick={() => setActivePage('overview')}
+        className="flex items-center gap-2.5 lg:hidden cursor-pointer group shrink-0"
+      >
+        <div className="relative w-8 h-5 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+          <svg viewBox="0 0 100 60" className="w-full h-full drop-shadow-sm" fill="none">
+            <defs>
+              <linearGradient id="headerLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#3B82F6" />
+                <stop offset="50%" stopColor="#6366F1" />
+                <stop offset="100%" stopColor="#A855F7" />
+              </linearGradient>
+            </defs>
+            <path
+              d="M 30,12 C 16,12 8,20 8,30 C 8,40 16,48 30,48 C 45,48 55,12 70,12 C 84,12 92,20 92,30 C 92,40 84,48 70,48 C 55,48 45,12 30,12 Z"
+              stroke="url(#headerLogoGrad)"
+              strokeWidth="11"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </div>
+        <span className="text-base font-extrabold tracking-[0.14em] text-[var(--text-main)]">
+          AIRLOOP
+        </span>
+      </div>
+
       {/* Right Controls: Status Pill + Theme Toggle + Notification Bell */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2 sm:gap-3">
         {/* Connected Status Pill */}
         <button
           onClick={toggleConnection}
@@ -42,10 +71,10 @@ export const Header: React.FC = () => {
           }}
           title={
             connectionStatus === 'connecting'
-              ? 'Checking ESP32 endpoint...'
+              ? 'Checking Device endpoint...'
               : isConnected
-              ? 'ESP32 Connected. Click to disconnect'
-              : 'ESP32 Offline. Click to reconnect'
+              ? 'Device Connected. Click to disconnect'
+              : 'Device Offline. Click to reconnect'
           }
         >
           <span
@@ -98,7 +127,7 @@ export const Header: React.FC = () => {
           {/* Notifications Dropdown Drawer */}
           {showNotifications && (
             <div
-              className="absolute right-0 mt-3 w-80 rounded-2xl p-4 shadow-xl border z-50 animate-in fade-in zoom-in-95 duration-200"
+              className="absolute right-0 mt-3 w-[calc(100vw-2rem)] sm:w-80 max-w-xs rounded-2xl p-4 shadow-xl border z-50 animate-in fade-in zoom-in-95 duration-200"
               style={{
                 background: 'var(--dropdown-bg)',
                 backdropFilter: 'blur(28px)',

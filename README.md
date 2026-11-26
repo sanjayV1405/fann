@@ -1,7 +1,7 @@
 # AIRLOOP — Smart Climate Control
 
 > **Premium 3D Glassmorphism Smart Climate Control Platform**  
-> Built from scratch to replicate the primary visual specifications with absolute precision, pure light glassmorphism, 3D climate objects, editorial typography, and full IoT ESP32 hardware telemetry.
+> Built from scratch to replicate the primary visual specifications with absolute precision, pure light glassmorphism, 3D climate objects, editorial typography, and full IoT hardware telemetry.
 
 ---
 
@@ -32,7 +32,7 @@ The platform accurately reproduces the composition, typography, gradients, glass
    - **Living Atmosphere Card**: Ceramic potted plant visual, translucent refractive glass spheres, and *"A healthier space, a happier you."* motif.
 
 4. **Sensor Status** (`SensorStatusPage.tsx`)
-   - Real-time diagnostics for 6 sensors: BME280 Temperature, BME280 Humidity, Sensirion SGP30 Air Quality, Fan Optical Tachometer (1450 RPM), Brushless PWM Motor Driver (25kHz), and ESP32 Microcontroller Core.
+   - Real-time diagnostics for 6 sensors: BME280 Temperature, BME280 Humidity, Sensirion SGP30 Air Quality, Fan Optical Tachometer (1450 RPM), Brushless PWM Motor Driver (25kHz), and MCU Controller Core.
    - System health summary: CPU load, Free Heap, Wi-Fi RSSI, Uptime, and Bus health.
    - Filterable by status (`All`, `Healthy`, `Warning`, `Disconnected`).
 
@@ -42,8 +42,8 @@ The platform accurately reproduces the composition, typography, gradients, glass
    - Chronological hardware and system event audit log table.
 
 6. **Settings & Hardware Configuration** (`SettingsPage.tsx`)
-   - ESP32 Network Endpoint configuration: IP address and port input with live connection test.
-   - Hardware Simulation Mode toggle (switch between live realistic simulation and physical ESP32 HTTP requests).
+   - Device Network Endpoint configuration: IP address and port input with live connection test.
+   - Hardware Simulation Mode toggle (switch between live realistic simulation and physical hardware HTTP requests).
    - Temperature Unit toggle: **Celsius (°C)** vs **Fahrenheit (°F)** with instant live conversion across the entire platform.
    - Climate automation thresholds and interface preferences (High blur glass, Reduced motion, Audio feedback).
    - Complete hardware and firmware registry details.
@@ -93,11 +93,11 @@ npm run preview
 
 ---
 
-## 🔌 ESP32 Hardware Integration
+## 🔌 IoT Hardware Integration
 
 AIRLOOP includes an IoT hardware communication layer (`src/adapters/hardwareAdapter.ts` and `src/context/HardwareContext.tsx`).
 
-### REST API Endpoints on ESP32
+### REST API Endpoints on Controller
 
 When connected to physical hardware:
 
@@ -117,7 +117,7 @@ When connected to physical hardware:
      "sensorHealth": "Healthy",
      "uptimeSeconds": 14280,
      "wifiRssi": -58,
-     "esp32Ip": "192.168.1.184"
+     "deviceIp": "192.168.1.184"
    }
    ```
 

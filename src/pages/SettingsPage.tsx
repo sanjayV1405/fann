@@ -58,7 +58,7 @@ export const SettingsPage: React.FC = () => {
     setThemeMode,
   } = useHardware();
 
-  const [ipInput, setIpInput] = useState(settings.esp32Ip);
+  const [ipInput, setIpInput] = useState(settings.deviceIp);
   const [portInput, setPortInput] = useState(settings.port.toString());
   const [isSaving, setIsSaving] = useState(false);
 
@@ -69,22 +69,22 @@ export const SettingsPage: React.FC = () => {
     setIsSaving(true);
 
     const portNum = parseInt(portInput, 10) || 80;
-    updateSettings({ esp32Ip: ipInput, port: portNum });
+    updateSettings({ deviceIp: ipInput, port: portNum });
 
     const ok = await connectDevice(ipInput, portNum);
     setIsSaving(false);
     if (ok) {
-      showToast('Settings saved & ESP32 connected.', 'success', 'Saved');
+      showToast('Settings saved & device connected.', 'success', 'Saved');
     }
   };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 12 }}
+      initial={{ opacity: 0, y: 6 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -12 }}
-      transition={{ duration: 0.3 }}
-      className="space-y-6 max-w-5xl"
+      exit={{ opacity: 0, y: -6 }}
+      transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+      className="space-y-4 sm:space-y-6 max-w-5xl"
     >
       {/* Header */}
       <div className="space-y-1">
@@ -92,20 +92,20 @@ export const SettingsPage: React.FC = () => {
           <Settings className="w-3.5 h-3.5 text-[var(--text-subtle)]" />
           <span>System Configuration</span>
         </div>
-        <h1 className="text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
+        <h1 className="text-2xl sm:text-3xl xl:text-4xl font-extrabold text-[var(--text-main)] tracking-tight">
           Platform & Device <span className="text-gradient-airloop">Settings</span>
         </h1>
-        <p className="text-sm text-[var(--text-muted)]">
-          Configure ESP32 network endpoints, theme appearance, temperature units, and UI preferences.
+        <p className="hidden sm:block text-xs sm:text-sm text-[var(--text-muted)]">
+          Configure device network endpoints, theme appearance, temperature units, and UI preferences.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Left Column: ESP32 Connection & IP Configuration */}
-        <div className="lg:col-span-7 space-y-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6">
+        {/* Left Column: Device Connection & IP Configuration */}
+        <div className="lg:col-span-7 space-y-4 sm:space-y-6">
           {/* Hardware Demo Mode Card */}
           <div
-            className={`rounded-[32px] p-6 select-none glass-card transition-all duration-300 relative overflow-hidden ${
+            className={`rounded-2xl sm:rounded-[32px] p-4 sm:p-6 select-none glass-card transition-all duration-300 relative overflow-hidden ${
               demoMode
                 ? 'ring-2 ring-emerald-500/40 border-emerald-500/30'
                 : ''
@@ -116,10 +116,10 @@ export const SettingsPage: React.FC = () => {
               boxShadow: 'var(--glass-card-shadow)',
             }}
           >
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-3.5">
+            <div className="flex items-start justify-between gap-3 sm:gap-4">
+              <div className="flex items-center gap-3 sm:gap-3.5">
                 <div
-                  className={`w-11 h-11 rounded-2xl flex items-center justify-center border transition-all duration-300 ${
+                  className={`w-10 h-10 sm:w-11 sm:h-11 rounded-2xl flex items-center justify-center border transition-all duration-300 shrink-0 ${
                     demoMode
                       ? 'bg-emerald-500/15 text-emerald-500 border-emerald-500/30 shadow-sm shadow-emerald-500/20'
                       : 'bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 border-indigo-200/50 dark:border-indigo-800/40'
@@ -128,22 +128,22 @@ export const SettingsPage: React.FC = () => {
                   <Sparkles className="w-5 h-5" />
                 </div>
                 <div>
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-sm font-bold text-[var(--text-main)]">Hardware Demo Mode</h3>
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <h3 className="text-xs sm:text-sm font-bold text-[var(--text-main)]">Hardware Demo Mode</h3>
                     <span
-                      className={`text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider transition-colors ${
+                      className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider transition-colors ${
                         demoMode
                           ? 'bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30'
                           : 'bg-slate-200/70 dark:bg-slate-800 text-[var(--text-muted)] border border-slate-300/40 dark:border-slate-700'
                       }`}
                     >
-                      {demoMode ? 'Simulated Connected' : 'Physical Hardware Only'}
+                      {demoMode ? 'Simulated' : 'Physical Only'}
                     </span>
                   </div>
-                  <p className="text-xs text-[var(--text-subtle)] mt-1 max-w-md leading-relaxed">
+                  <p className="hidden sm:block text-xs text-[var(--text-subtle)] mt-1 max-w-md leading-relaxed">
                     {demoMode
-                      ? 'Simulating an active ESP32 connection with real-time sensor telemetry, speed controls, and 3D fan dynamics.'
-                      : 'Real hardware mode: strictly verifies physical ESP32. Shows Offline if unreachable on local network.'}
+                      ? 'Simulating an active device connection with real-time sensor telemetry, speed controls, and 3D fan dynamics.'
+                      : 'Real hardware mode: strictly verifies physical device. Shows Offline if unreachable on local network.'}
                   </p>
                 </div>
               </div>
@@ -173,8 +173,8 @@ export const SettingsPage: React.FC = () => {
                 />
                 <span className="font-medium text-[11px]">
                   {demoMode
-                    ? 'ESP32 simulated connection active. All pages and widgets respond in real-time.'
-                    : 'Demo mode is off. Switch on to test without physical ESP32 hardware.'}
+                    ? 'Simulated connection active. All pages and widgets respond in real-time.'
+                    : 'Demo mode is off. Switch on to test without physical hardware.'}
                 </span>
               </div>
               <button
@@ -201,14 +201,14 @@ export const SettingsPage: React.FC = () => {
                 <Wifi className="w-4 h-4" />
               </div>
               <div>
-                <h3 className="text-sm font-bold text-[var(--text-main)]">ESP32 Network Endpoint</h3>
+                <h3 className="text-sm font-bold text-[var(--text-main)]">Device Network Endpoint</h3>
                 <p className="text-xs text-[var(--text-subtle)]">Direct HTTP REST and WebSocket configuration</p>
               </div>
             </div>
 
             <form onSubmit={handleSaveConnection} className="space-y-4">
-              <div className="grid grid-cols-3 gap-3">
-                <div className="col-span-2">
+              <div className="grid grid-cols-1 min-[420px]:grid-cols-3 gap-3">
+                <div className="min-[420px]:col-span-2">
                   <label className="text-xs font-semibold text-[var(--text-subtle)] block mb-1.5">
                     IP Address or Hostname
                   </label>
@@ -238,7 +238,7 @@ export const SettingsPage: React.FC = () => {
                 <div>
                   <p className="text-xs font-bold text-[var(--text-main)]">Hardware Demo Mode</p>
                   <p className="text-[11px] text-[var(--text-muted)]">
-                    Simulates ESP32 connection & live sensor dynamics when running without hardware
+                    Simulates device connection & live sensor dynamics when running without hardware
                   </p>
                 </div>
                 <ToggleSwitch
@@ -249,11 +249,11 @@ export const SettingsPage: React.FC = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-between pt-2">
+              <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                 <button
                   type="button"
                   onClick={isConnected ? disconnectDevice : () => connectDevice(ipInput, parseInt(portInput, 10))}
-                  className="px-4 py-2.5 rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/80 dark:border-white/10 shadow-sm flex items-center gap-2 cursor-pointer transition-colors"
+                  className="w-full sm:w-auto px-4 py-2.5 min-h-[44px] rounded-2xl bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-[var(--text-main)] text-xs font-bold border border-white/80 dark:border-white/10 shadow-sm flex items-center justify-center gap-2 cursor-pointer transition-colors"
                 >
                   <Power className={`w-3.5 h-3.5 ${isConnected ? 'text-rose-500' : 'text-emerald-500'}`} />
                   <span>{isConnected ? 'Disconnect Device' : 'Connect Device'}</span>
@@ -262,7 +262,7 @@ export const SettingsPage: React.FC = () => {
                 <button
                   type="submit"
                   disabled={isSaving}
-                  className="btn-primary-gradient px-5 py-2.5 rounded-2xl text-white text-xs font-bold flex items-center gap-2 cursor-pointer shadow-md"
+                  className="w-full sm:w-auto btn-primary-gradient px-5 py-2.5 min-h-[44px] rounded-2xl text-white text-xs font-bold flex items-center justify-center gap-2 cursor-pointer shadow-md"
                 >
                   <Save className="w-3.5 h-3.5" />
                   <span>{isSaving ? 'Connecting...' : 'Save & Connect'}</span>
@@ -479,7 +479,7 @@ export const SettingsPage: React.FC = () => {
             <div className="space-y-2.5 text-xs">
               <div className="flex justify-between py-1 border-b border-[var(--border-divider)]">
                 <span className="text-[var(--text-subtle)]">Controller</span>
-                <span className="font-mono font-bold text-[var(--text-main)]">ESP32-WROOM-32D</span>
+                <span className="font-mono font-bold text-[var(--text-main)]">MCU-Core-32</span>
               </div>
               <div className="flex justify-between py-1 border-b border-[var(--border-divider)]">
                 <span className="text-[var(--text-subtle)]">Firmware</span>

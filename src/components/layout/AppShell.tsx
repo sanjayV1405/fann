@@ -1,6 +1,7 @@
 import React from 'react';
 import { Sidebar } from './Sidebar';
 import { Header } from './Header';
+import { MobileNav } from './MobileNav';
 import { useHardware } from '../../context/HardwareContext';
 import { Check, X, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -44,16 +45,19 @@ export const AppShell: React.FC<{ children: React.ReactNode }> = ({ children }) 
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col min-h-screen relative z-10 overflow-hidden pr-5">
+      <div className="flex-1 flex flex-col min-h-screen relative z-10 overflow-hidden pr-0 lg:pr-5">
         <Header />
 
-        <main className="flex-1 overflow-y-auto px-6 pb-6 pt-2 flex flex-col">
+        <main className="flex-1 overflow-y-auto overflow-x-hidden px-4 sm:px-6 pb-24 lg:pb-6 pt-2 flex flex-col">
           {children}
         </main>
       </div>
 
+      {/* Floating Bottom Mobile Navigation */}
+      <MobileNav />
+
       {/* Floating System Notification Toast */}
-      <div className="fixed bottom-6 right-8 z-50 flex flex-col gap-2.5 pointer-events-none select-none">
+      <div className="fixed bottom-20 lg:bottom-6 right-4 sm:right-8 z-50 flex flex-col gap-2.5 pointer-events-none select-none max-w-[calc(100vw-2rem)]">
         <AnimatePresence>
           {toasts.map((toast) => (
             <motion.div
